@@ -84,3 +84,4 @@ def resampled_merge(original, resampled):
     resampled.index = range(len(resampled))
     dataframe = merge(original, resampled, on='date', how='left')
     return dataframe
+
