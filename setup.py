@@ -19,7 +19,8 @@ setup(name='technical',
       install_requires=[
           'TA-Lib',
           'pyti',
-          'pandas'
+          'pandas',
+          'simplejson'
       ],
       include_package_data=True,
       zip_safe=False,
