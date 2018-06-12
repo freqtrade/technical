@@ -39,4 +39,5 @@ def test_resampled_merge_contains_indicator(testdata_1m_btc):
     resampled['cmf'] = cmf(resampled, 5)
     merged = resampled_merge(testdata_1m_btc, resampled)
 
+    print(merged)
     assert "resample_5_cmf" in merged
