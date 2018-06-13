@@ -25,23 +25,12 @@ open/close/high/low/volume columns
 1. [cmf](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - chaikow money flow, requires dataframe and period
 2. [accumulation_distribtuion](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
 3. osc - requires a dataframe and the periods
-4. [aroon_up](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field
-5. [aroon_down](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field
-6. [atr](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
-7. [atr_percent](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
-8. [bollinger_bands](https://www.investopedia.com/terms/b/bollingerbands.asp) - dataframe, period, stdv, field, prefix
-9. [cmo](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp) - dataframe, period, field
-10. [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
-11.
-12
-13.
-14.
-15.
-16.
-17.
-18.
-19.
-20.
+4. [aroon](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field
+5. [atr](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
+6. [atr_percent](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
+7. [bollinger_bands](https://www.investopedia.com/terms/b/bollingerbands.asp) - dataframe, period, stdv, field, prefix
+8. [cmo](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp) - dataframe, period, field
+9. [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but
 also super boring work.
