@@ -64,6 +64,3 @@ from technical.util import resample_to_interval, resampled_merge
 
 have fun!
 
-
-p.s. writing these super boring wrapper takes a lot of Beer to do, please send me some IPA's to (btc): 1AoyvVpGSg9TatyCNZbTgkQveFHZXssutW
-
