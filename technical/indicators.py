@@ -5,7 +5,36 @@ This file contains a collection of common indicators, which are based on third p
 from pandas import Series
 
 
-def cmf(dataframe, period):
+def aroon_up(dataframe, period=25, field='close'):
+    from pyti.aroon import aroon_up as up
+    return up(dataframe[field], period)
+
+
+def aroon_down(dataframe, period=25, field='close'):
+    from pyti.aroon import aroon_down as down
+    return down(dataframe[field], period)
+
+
+def atr(dataframe, period, field='close'):
+    from pyti.average_true_range import average_true_range
+    return average_true_range(dataframe[field], period)
+
+
+def atr_percent(dataframe, period, field='close'):
+    from pyti.average_true_range_percent import average_true_range_percent
+    return average_true_range_percent(dataframe[field], period)
+
+
+def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="bb"):
+    from pyti.bollinger_bands import lower_bollinger_band, middle_bollinger_band, upper_bollinger_band
+    dataframe["{}_lower".format(colum_prefix)] = lower_bollinger_band(dataframe[field],period,stdv)
+    dataframe["{}_middle".format(colum_prefix)] = middle_bollinger_band(dataframe[field], period, stdv)
+    dataframe["{}_upper".format(colum_prefix)] = upper_bollinger_band(dataframe[field], period, stdv)
+
+    return dataframe
+
+
+def cmf(dataframe, period=14):
     from pyti.chaikin_money_flow import chaikin_money_flow
 
     return chaikin_money_flow(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'], period)
@@ -17,7 +46,7 @@ def accumulation_distribution(dataframe):
     return acd(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'])
 
 
-def osc(dataframe, periods):
+def osc(dataframe, periods=14):
     """
     1. Calculating DM (i).
         If HIGH (i) > HIGH (i - 1), DM (i) = HIGH (i) - HIGH (i - 1), otherwise DM (i) = 0.
@@ -26,7 +55,7 @@ def osc(dataframe, periods):
     3. Calculating value of OSC:
         OSC (i) = SMA (DM, N) / (SMA (DM, N) + SMA (DMn, N)).
 
-    :param df:
+    :param dataframe:
     :param periods:
     :return:
     """
