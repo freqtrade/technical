@@ -45,3 +45,25 @@ open/close/high/low/volume columns
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but
 also super boring work.
+
+
+### Usage
+
+to use the library, please install it with pip
+
+```bash
+pip install git+https://github.com/berlinguyinca/technical
+```
+
+and than import the required packages
+
+```python
+from technical.indicators import accumulation_distribution, ...
+from technical.util import resample_to_interval, resampled_merge
+```
+
+have fun!
+
+
+p.s. writing these super boring wrapper takes a lot of Beer to do, please send me some IPA's to (btc): 1AoyvVpGSg9TatyCNZbTgkQveFHZXssutW
+
