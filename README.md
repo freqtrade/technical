@@ -30,8 +30,8 @@ open/close/high/low/volume columns
 6. [atr](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
 7. [atr_percent](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
 8. [bollinger_bands](https://www.investopedia.com/terms/b/bollingerbands.asp) - dataframe, period, stdv, field, prefix
-9.
-10.
+9. [cmo](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp) - dataframe, period, field
+10. [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
 11.
 12
 13.
