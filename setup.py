@@ -21,7 +21,8 @@ setup(name='technical',
           'pyti',
           'pandas',
           'simplejson',
-          'arrow'
+          'arrow',
+          'SQLAlchemy'
       ],
       include_package_data=True,
       zip_safe=False,

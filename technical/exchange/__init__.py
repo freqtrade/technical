@@ -48,7 +48,7 @@ def load_ticker(stake, asset, ccxt_api=None):
 def _create_exchange(ccxt_api):
     if ccxt_api is None:
         # create new exchange object to fetch data
-        ccxt_api = getattr(ccxt, "binance")({
+        return getattr(ccxt, "binance")({
             'apiKey': "",
             'secret': "",
             'password': "",
@@ -56,14 +56,15 @@ def _create_exchange(ccxt_api):
             'enableRateLimit': True,
         })
     elif isinstance(ccxt_api, str):
-        ccxt_api = getattr(ccxt, ccxt_api)({
+        return getattr(ccxt, ccxt_api)({
             'apiKey': "",
             'secret': "",
             'password': "",
             'uid': "",
             'enableRateLimit': True,
         })
-    return ccxt_api
+    else:
+        return ccxt_api
 
 
 def historical_data(stake, currency, interval, days, ccxt_api=None):
