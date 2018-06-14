@@ -20,7 +20,8 @@ setup(name='technical',
           'TA-Lib',
           'pyti',
           'pandas',
-          'simplejson'
+          'simplejson',
+          'arrow'
       ],
       include_package_data=True,
       zip_safe=False,
