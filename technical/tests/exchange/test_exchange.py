@@ -23,3 +23,11 @@ def test_historical_data_ploniex():
         "USDT", "ETH", "1d", 90, "poloniex")
 
     assert len(data) == 90
+
+
+def test_historical_data_ploniex_long():
+    """ this one is awesome since you can download years worth of data"""
+    data = historical_data(
+        "USDT", "ETH", "1d", 365, "poloniex")
+
+    assert len(data) == 365
