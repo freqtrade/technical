@@ -5,8 +5,8 @@
 """
 import datetime
 
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 _DECL_BASE = declarative_base()
