@@ -22,7 +22,9 @@ setup(name='technical',
           'pandas',
           'simplejson',
           'arrow',
-          'SQLAlchemy'
+          'SQLAlchemy',
+          'keras',
+          'tensorflow'
       ],
       include_package_data=True,
       zip_safe=False,
