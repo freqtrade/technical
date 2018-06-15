@@ -26,15 +26,14 @@ def init():
     _DECL_BASE.metadata.create_all(engine)
 
 
-def load_data(stake, asset, interval, days, ccxt_api="poloniex", force=False):
+def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
     """
         this method will try to load historical ticker data for the specified attribute
         from the local database, if they don't exist, it will download them from the remote
         exchange to it's best ability.
 
         By default it will utilize poloniex, since we can download years worth of data from them
-    :param stake: stake currency, like USDT
-    :param asset: asset, like ETH
+    :param pair: which pair we want to use
     :param interval: a defined interval, like 5m
     :param days: how many days worth of data do we need, like 90
     :param ccxt_api: our cxxt object or the name of an exchange
@@ -44,12 +43,19 @@ def load_data(stake, asset, interval, days, ccxt_api="poloniex", force=False):
 
     # generate exchange
     from technical.exchange import _create_exchange, historical_data
-
     ccxt_api = _create_exchange(ccxt_api)
+
+    pair = pair.upper().split("/")
+    stake = pair[1]
+    asset = pair[0]
 
     # get newest data from the internal store for this pair
 
-    latest_time = OHLCV.session.query(func.max(OHLCV.timestamp)).one()[0]
+    latest_time = OHLCV.session.query(func.max(OHLCV.timestamp)).filter(
+            OHLCV.exchange == ccxt_api.name,
+            OHLCV.pair == "{}/{}".format(asset.upper(), stake.upper()),
+            OHLCV.interval == interval
+    ).one()[0]
 
     if force:
         print("forcing database refresh and downloading all data!")

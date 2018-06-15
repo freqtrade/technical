@@ -66,7 +66,7 @@ def resampled_merge(original, resampled):
     """
 
     interval = int((original['date'] - original['date'].shift()).min().seconds / 60)
-    resampled_interval = int((resampled['date'] - resampled['date'].shift()).min().seconds / 60)
+    resampled_interval = compute_interval(resampled)
 
     # no point in interpolating these colums
     resampled = resampled.drop(columns=['date', 'volume'])
@@ -85,3 +85,24 @@ def resampled_merge(original, resampled):
     dataframe = merge(original, resampled, on='date', how='left')
     return dataframe
 
+
+def compute_interval(dataframe: DataFrame, exchange_interval=False) -> int:
+    """
+        calculates the interval of the given dataframe for us
+    :param dataframe:
+    :return:
+    """
+    resampled_interval = int((dataframe['date'] - dataframe['date'].shift()).min().seconds / 60)
+
+    if exchange_interval:
+        # convert to our allowed ticker values
+        from technical.exchange import TICKER_INTERVAL_MINUTES
+        converted = list(TICKER_INTERVAL_MINUTES.keys())[
+            list(TICKER_INTERVAL_MINUTES.values()).index(exchange_interval)]
+        if len(converted) > 0:
+            return converted[0]
+        else:
+            raise Exception(
+                "sorry, your interval of {} is not supported in {}".format(resampled_interval, TICKER_INTERVAL_MINUTES))
+
+    return resampled_interval
