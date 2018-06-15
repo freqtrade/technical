@@ -8,6 +8,7 @@ import datetime
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+import os
 
 _DECL_BASE = declarative_base()
 
@@ -18,7 +19,7 @@ def init():
     :return:
     """
 
-    engine = create_engine('sqlite:///history.db')
+    engine = create_engine(os.environ.get("TECHNICAL_HISTORY_DB", 'sqlite:///history.db'))
     session = scoped_session(sessionmaker(bind=engine, autoflush=True, autocommit=True))
     OHLCV.session = session
     OHLCV.query = session.query_property()
