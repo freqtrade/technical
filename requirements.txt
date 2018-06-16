@@ -7,3 +7,4 @@ arrow
 SQLAlchemy==1.2.7
 keras
 tensorflow
+matplotlib
