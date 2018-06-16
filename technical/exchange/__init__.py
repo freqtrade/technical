@@ -68,7 +68,7 @@ def _create_exchange(ccxt_api):
         return ccxt_api
 
 
-def historical_data(stake, currency, interval, days, ccxt_api=None):
+def historical_data(stake, currency, interval, days=1, ccxt_api=None):
     """
 
     :param stake: the stake currency, like USDT, BTC, ETH

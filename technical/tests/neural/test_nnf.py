@@ -1,12 +1,13 @@
 from technical.neural import nnf
-from technical.exchange import load_ticker
-from technical.util import ticker_to_dataframe, resample_to_interval
+from technical.exchange import historical_data
+from technical.util import ticker_history_to_dataframe, resample_to_interval
 
 
 def test_nnf():
-    ticker = load_ticker("USDT", "BTC")
+    print("populate intial data set")
+    ticker = historical_data("USDT", "BTC", "5m")
 
-    dataframe = ticker_to_dataframe(ticker)
-    dataframe = resample_to_interval(dataframe, 15)
-
-    result = nnf(dataframe, "BTC/USDT")
+    dataframe = ticker_history_to_dataframe(ticker)
+    #
+    print("execute neural network")
+    result = nnf(dataframe, "BTC/USDT", historical_data_set_size=1)

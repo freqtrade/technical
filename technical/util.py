@@ -3,10 +3,12 @@
 """
 from pandas import DatetimeIndex, merge, DataFrame, to_datetime
 
+from technical.exchange import TICKER_INTERVAL_MINUTES
 
-def ticker_to_dataframe(ticker: list) -> DataFrame:
+
+def ticker_history_to_dataframe(ticker: list) -> DataFrame:
     """
-    builds a dataframe based on the given ticker
+    builds a dataframe based on the given ticker history
 
     :param ticker: See exchange.get_ticker_history
     :return: DataFrame
@@ -32,6 +34,9 @@ def ticker_to_dataframe(ticker: list) -> DataFrame:
 
 
 def resample_to_interval(dataframe, interval):
+    if isinstance(interval, str):
+        interval = TICKER_INTERVAL_MINUTES[interval]
+
     """
         resamples the given dataframe to the desired interval. Please be aware you need to upscale this to join the results
         with the other dataframe
@@ -86,10 +91,11 @@ def resampled_merge(original, resampled):
     return dataframe
 
 
-def compute_interval(dataframe: DataFrame, exchange_interval=False) -> int:
+def compute_interval(dataframe: DataFrame, exchange_interval=False):
     """
         calculates the interval of the given dataframe for us
     :param dataframe:
+    :param exchange_interval: should we convert the result to an exchange interval or just a number
     :return:
     """
     resampled_interval = int((dataframe['date'] - dataframe['date'].shift()).min().seconds / 60)
@@ -100,7 +106,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False) -> int:
         converted = list(TICKER_INTERVAL_MINUTES.keys())[
             list(TICKER_INTERVAL_MINUTES.values()).index(exchange_interval)]
         if len(converted) > 0:
-            return converted[0]
+            return converted
         else:
             raise Exception(
                 "sorry, your interval of {} is not supported in {}".format(resampled_interval, TICKER_INTERVAL_MINUTES))
