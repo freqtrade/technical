@@ -1,13 +1,21 @@
+import datetime
+
 from technical.history import load_data
 
 
 def test_load_ticker():
-    ticker = load_data("ETH/USDT", "1d", 10, "poloniex", True)
+    days = datetime.datetime.today() - datetime.timedelta(days=10)
+
+    ticker = load_data("ETH/USDT", "1d", from_date=days.timestamp(), ccxt_api="poloniex", force=True)
     print(len(ticker))
     assert len(ticker) == 10
-    ticker = load_data("BTC/USDT", "1d", 100, "poloniex", True)
+    days = datetime.datetime.today() - datetime.timedelta(days=100)
+
+    ticker = load_data("BTC/USDT", "1d", days.timestamp(), ccxt_api="poloniex", force=True)
     print(len(ticker))
     assert len(ticker) == 100
-    ticker = load_data("BTC/USDT", "4h", 10, "poloniex", False)
+    days = datetime.datetime.today() - datetime.timedelta(days=10)
+
+    ticker = load_data("BTC/USDT", "4h", days.timestamp(), ccxt_api="poloniex", force=False)
     print(len(ticker))
     assert len(ticker) == 60

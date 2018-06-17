@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy
 import numpy as np
 import pandas as pd
 from keras.layers import TimeDistributed, Flatten
@@ -14,14 +15,54 @@ class NNF:
     this neural network forecasts
     """
 
-    def run(self, dataframe, input_len_for_prediction=20, n_epochs=50,
-            features=('open', 'high', 'low', 'volume', 'close')):
+    def __init__(self, dataframe, input_len_for_prediction, n_epochs,
+                 features):
 
-        print("evaluating features: {} ({})".format(len(features), features))
-        model = self.build(dataframe[:-input_len_for_prediction], input_len_for_prediction, n_epochs, features)
+        self.batch_size = 512
+        self.model = None
+        self.preprocessor = None
+        self.input_len_for_prediction = input_len_for_prediction
 
-    def build(self, dataframe, input_len_for_prediction, n_epochs,
-              features) -> Sequential:
+        self._build(
+            dataframe=dataframe,
+            input_len_for_prediction=input_len_for_prediction,
+            n_epochs=n_epochs,
+            features=features
+        )
+
+    # inverse scaling for a forecasted value
+    def invert_scale(self, X, value):
+        new_row = [x for x in X] + [value]
+        array = numpy.array(new_row)
+        array = array.reshape(1, len(array))
+        inverted = self.preprocessor.inverse_transform(array)
+        return inverted[0, -1]
+
+    def forecast(self, row):
+        """
+            forcasts a value
+        :param row:
+        :return:
+        """
+        elements = self.input_len_for_prediction - 1
+        X = row[-elements:]
+        # print('Xdata - shape: {}'.format(X.shape))
+
+
+        # print(self.preprocessor.transform([[6000,6000]]))
+
+        X = X.reshape(1, elements, 1)
+
+        # print("input: {}".format(X))
+        # print('Forecasting data: {}'.format(X.shape))
+        yhat = self.model.predict(X, batch_size=self.batch_size)
+        # print('Unscaled: {}'.format(yhat))
+        output = self.invert_scale(X, yhat[0, 0])
+        # print("output: {}".format(output))
+        return output
+
+    def _build(self, dataframe, input_len_for_prediction, n_epochs,
+               features) -> Sequential:
         """
             this builds the actual model. The dataframe will be split into training and validation data
 
@@ -42,8 +83,6 @@ class NNF:
         n_features = len(data.columns)
         val_ratio = 0.1
 
-        batch_size = 512
-
         data = data.as_matrix()
         data_processed = []
         for index in range(len(data) - sequence_length):
@@ -60,9 +99,11 @@ class NNF:
         train = train.reshape((train_samples, train_nx * train_ny))
         val = val.reshape((val_samples, val_nx * val_ny))
 
-        preprocessor = MinMaxScaler().fit(train)
-        train = preprocessor.transform(train)
-        val = preprocessor.transform(val)
+        self.preprocessor = MinMaxScaler().fit(train)
+        train = self.preprocessor.transform(train)
+        val = self.preprocessor.transform(val)
+        print('Validation data - shape: {}'.format(val.shape))
+        print('Validation data - {}'.format(val))
 
         train = train.reshape((train_samples, train_nx, train_ny))
         val = val.reshape((val_samples, val_nx, val_ny))
@@ -93,13 +134,12 @@ class NNF:
         history = model.fit(
             X_train,
             y_train,
-            batch_size=batch_size,
+            batch_size=self.batch_size,
             epochs=n_epochs,
             verbose=0
         )
 
         print('Prediction input data: {}'.format(X_val.shape))
-        print(X_val)
 
         preds_val = model.predict(X_val)
         diff = []
@@ -108,8 +148,8 @@ class NNF:
             diff.append(y_val[i] - pred)
 
         index = n_features * sequence_length - 1
-        real_min = preprocessor.data_min_[index]
-        real_max = preprocessor.data_max_[index]
+        real_min = self.preprocessor.data_min_[index]
+        real_max = self.preprocessor.data_max_[index]
 
         # re normalize data
         preds_real = preds_val * (real_max - real_min) + real_min
@@ -123,7 +163,4 @@ class NNF:
         plt.legend(loc=0)
         plt.show()
 
-        # print(preds_real)
-        # print(y_val_real)
-
-        return model
+        self.model = model

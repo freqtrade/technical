@@ -26,7 +26,8 @@ def init():
     _DECL_BASE.metadata.create_all(engine)
 
 
-def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
+def load_data(pair, interval, from_date=0, ccxt_api="poloniex", force=False,
+              till_date=datetime.datetime.now().timestamp(), days=None):
     """
         this method will try to load historical ticker data for the specified attribute
         from the local database, if they don't exist, it will download them from the remote
@@ -35,11 +36,17 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
         By default it will utilize poloniex, since we can download years worth of data from them
     :param pair: which pair we want to use
     :param interval: a defined interval, like 5m
-    :param days: how many days worth of data do we need, like 90
     :param ccxt_api: our cxxt object or the name of an exchange
     :param force: should we fetch all data and ignored previous persisted onces
+    :param till_date: until when do we want to load data (default is now)
+    :param from_date: when do we want to start loading data (default is epoch 0)
+    :params days: if specified we will calculates the from data based on days
+
     :return: a dataframe of all the related data, be aware that this can contain a lot of memory!
     """
+
+    if days:
+        from_date = (datetime.datetime.today() - datetime.timedelta(days=days)).timestamp()
 
     # generate exchange
     from technical.exchange import _create_exchange, historical_data
@@ -52,9 +59,9 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
     # get newest data from the internal store for this pair
 
     latest_time = OHLCV.session.query(func.max(OHLCV.timestamp)).filter(
-            OHLCV.exchange == ccxt_api.name,
-            OHLCV.pair == "{}/{}".format(asset.upper(), stake.upper()),
-            OHLCV.interval == interval
+        OHLCV.exchange == ccxt_api.name,
+        OHLCV.pair == "{}/{}".format(asset.upper(), stake.upper()),
+        OHLCV.interval == interval
     ).one()[0]
 
     if force:
@@ -63,10 +70,9 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
 
     # add additional data on top
     if latest_time is None:
-        print("init database for the last {} days".format(days))
 
         # store data for all
-        for row in historical_data(stake, asset, interval, days, ccxt_api):
+        for row in historical_data(stake, asset, interval, from_date, ccxt_api):
             o = OHLCV(
                 id="{}-{}-{}/{}:{}".format(ccxt_api.name, interval, asset.upper(), stake.upper(), row[0]),
                 exchange=ccxt_api.name,
@@ -77,18 +83,14 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
                 high=row[2],
                 low=row[3],
                 volume=row[5],
-                timestamp=datetime.datetime.utcfromtimestamp(row[0] / 1000)
+                timestamp=row[0]
             )
             OHLCV.session.merge(o)
 
     else:
         # calculate the difference in days and download and merge the data files
-        date = datetime.datetime.now()
 
-        to_fetch = (date - latest_time).days
-        print("loading additional days: {}".format(to_fetch))
-
-        for row in historical_data(stake, asset, interval, to_fetch, ccxt_api):
+        for row in historical_data(stake, asset, interval, latest_time, ccxt_api):
             o = OHLCV(
                 id="{}-{}-{}/{}:{}".format(ccxt_api.name, interval, asset.upper(), stake.upper(), row[0]),
                 exchange=ccxt_api.name,
@@ -99,7 +101,7 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
                 high=row[2],
                 low=row[3],
                 volume=row[5],
-                timestamp=datetime.datetime.utcfromtimestamp(row[0] / 1000)
+                timestamp=row[0]
             )
             OHLCV.session.merge(o)
 
@@ -110,9 +112,11 @@ def load_data(pair, interval, days, ccxt_api="poloniex", force=False):
     for row in OHLCV.session.query(OHLCV).filter(
             OHLCV.exchange == ccxt_api.name,
             OHLCV.pair == "{}/{}".format(asset.upper(), stake.upper()),
-            OHLCV.interval == interval
+            OHLCV.interval == interval,
+            OHLCV.timestamp >= from_date * 1000,
+            OHLCV.timestamp <= till_date * 1000,
     ).all():
-        result.append([row.timestamp.timestamp(), row.open, row.high, row.low, row.close, row.volume])
+        result.append([row.timestamp, row.open, row.high, row.low, row.close, row.volume])
 
     return result
 
@@ -124,15 +128,15 @@ class OHLCV(_DECL_BASE):
     __tablename__ = 'ohlcv'
 
     id = Column(String, primary_key=True)
-    exchange = Column(String, nullable=False)
-    pair = Column(String, nullable=False)
-    interval = Column(String, nullable=False)
+    exchange = Column(String, nullable=False, index=True)
+    pair = Column(String, nullable=False, index=True)
+    interval = Column(String, nullable=False, index=True)
     open = Column(Float, nullable=False)
     close = Column(Float, nullable=False)
     high = Column(Float, nullable=False)
     low = Column(Float, nullable=False)
     volume = Column(Float, nullable=False)
-    timestamp = Column(DateTime, nullable=False)
+    timestamp = Column(Integer, nullable=False, index=True)
 
     def __repr__(self):
         return 'OHLCV(' \

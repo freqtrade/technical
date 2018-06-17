@@ -11,23 +11,29 @@ def test_load_ticker():
 
 
 def test_historical_data():
+    days = datetime.datetime.today() - datetime.timedelta(days=7)
+    print(days)
     data = historical_data(
-        "USDT", "ETH", "1d", 7)
+        "USDT", "BNB", "1d", days.timestamp())
 
     assert len(data) == 7
 
 
 def test_historical_data_ploniex():
     """ this one is awesome since you can download years worth of data"""
+    days = datetime.datetime.today() - datetime.timedelta(days=90)
+
     data = historical_data(
-        "USDT", "ETH", "1d", 90, "poloniex")
+        "BTC", "ETH", "1d", days.timestamp(), "poloniex")
 
     assert len(data) == 90
 
 
 def test_historical_data_ploniex_long():
     """ this one is awesome since you can download years worth of data"""
+    days = datetime.datetime.today() - datetime.timedelta(days=365)
+
     data = historical_data(
-        "USDT", "ETH", "1d", 365, "poloniex")
+        "BTC", "ETC", "1d", days.timestamp(), "poloniex")
 
     assert len(data) == 365

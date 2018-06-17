@@ -9,7 +9,8 @@ def nnf(dataframe: DataFrame,
         training_data: DataFrame,
         features=('open', 'high', 'low', 'volume', 'close'),
         epoch=100,
-        input_len_for_prediction=2
+        input_len_for_prediction=20,
+        forecast=10
         ) -> dict:
     """
         this neural network will classify if the price goes up (1) or down (-1)
@@ -22,8 +23,24 @@ def nnf(dataframe: DataFrame,
     :return:
     """
     from technical.neural.NNF import NNF
+    from numpy import append
 
-    NNF().run(training_data, features=features, n_epochs=epoch, input_len_for_prediction=input_len_for_prediction)
+    model = NNF(training_data, features=features, n_epochs=epoch,
+                input_len_for_prediction=input_len_for_prediction)
+
+    values = dataframe['close'].values
+    for i in range(forecast):
+        print("evaluating: {}".format(len(values)))
+        forecasted = model.forecast(values)
+        values = append(values, forecasted)
+
+    import matplotlib.pyplot as plt
+
+    plt.plot(values, label='Forecasted')
+    plt.plot(dataframe[features[0]], label='Actual values')
+    plt.xlabel('real prediction - {}'.format(features))
+    plt.legend(loc=0)
+    plt.show()
 
     pass
 
@@ -34,7 +51,7 @@ def mnnf(dataframe: DataFrame,
          epoch=100,
          input_len_for_prediction=2
          ):
-    from technical.neural.NNF import MNNF
+    from technical.neural.MNNF import MNNF
     MNNF().run(input=dataframe,
                training=training_data, features=features, n_epochs=epoch,
                input_len_for_prediction=input_len_for_prediction)
