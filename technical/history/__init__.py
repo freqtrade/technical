@@ -19,7 +19,7 @@ def init():
     :return:
     """
 
-    engine = create_engine(os.environ.get("TECHNICAL_HISTORY_DB", 'sqlite:///history.db'))
+    engine = create_engine(os.environ.get("TECHNICAL_HISTORY_DB", 'sqlite://'))
     session = scoped_session(sessionmaker(bind=engine, autoflush=True, autocommit=True))
     OHLCV.session = session
     OHLCV.query = session.query_property()
@@ -46,6 +46,7 @@ def load_data(pair, interval, from_date=0, ccxt_api="poloniex", force=False,
     """
 
     if days:
+        print("ignoring from data and fetching {}".format(days))
         from_date = (datetime.datetime.today() - datetime.timedelta(days=days)).timestamp()
 
     # generate exchange

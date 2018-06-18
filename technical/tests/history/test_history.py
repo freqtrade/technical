@@ -11,11 +11,11 @@ def test_load_ticker():
     assert len(ticker) == 10
     days = datetime.datetime.today() - datetime.timedelta(days=100)
 
-    ticker = load_data("BTC/USDT", "1d", days.timestamp(), ccxt_api="poloniex", force=True)
+    ticker = load_data("BTC/USDT", "1d", from_date=days.timestamp(), ccxt_api="poloniex", force=True)
     print(len(ticker))
     assert len(ticker) == 100
     days = datetime.datetime.today() - datetime.timedelta(days=10)
 
-    ticker = load_data("BTC/USDT", "4h", days.timestamp(), ccxt_api="poloniex", force=False)
+    ticker = load_data("BTC/USDT", "4h", from_date=days.timestamp(), ccxt_api="poloniex", force=False)
     print(len(ticker))
     assert len(ticker) == 60
