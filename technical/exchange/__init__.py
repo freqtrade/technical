@@ -3,6 +3,7 @@ from typing import List, Dict, Optional
 
 import arrow
 import ccxt
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ def _create_exchange(ccxt_api):
         return ccxt_api
 
 
-def historical_data(stake, currency, interval, days, ccxt_api=None):
+def historical_data(stake, currency, interval, from_date=0, ccxt_api=None, days=None):
     """
 
     :param stake: the stake currency, like USDT, BTC, ETH
@@ -80,8 +81,12 @@ def historical_data(stake, currency, interval, days, ccxt_api=None):
 
     :param days: how many days in the past we want to download data for
     :param ccxt_api: If None we create our own api other we reuse it
+    :param days if specified we fetch the last n days
     :return: the dataframe, containing the aggregated data
     """
+
+    if days:
+        from_date = (datetime.today() - timedelta(days=days)).timestamp()
 
     pair = "{}/{}".format(currency.upper(), stake.upper())
 
@@ -107,7 +112,7 @@ def historical_data(stake, currency, interval, days, ccxt_api=None):
                 if not data_part:
                     break
 
-                logger.debug('Downloaded data for %s time range [%s, %s]',
+                logging.info('Downloaded data for %s time range [%s, %s]',
                              pair,
                              arrow.get(data_part[0][0] / 1000).format(),
                              arrow.get(data_part[-1][0] / 1000).format())
@@ -128,4 +133,4 @@ def historical_data(stake, currency, interval, days, ccxt_api=None):
         except ccxt.BaseError as e:
             raise Exception('Could not fetch ticker data. Msg: {}'.format(e))
 
-    return get_ticker_history(pair, interval, since_ms=arrow.utcnow().shift(days=-days).timestamp * 1000)
+    return get_ticker_history(pair, interval, since_ms=int(from_date * 1000))
