@@ -5,6 +5,7 @@ simplejson
 ccxt==1.14.24
 arrow
 SQLAlchemy==1.2.7
-keras
-tensorflow
-matplotlib
+# keras
+# matplotlib
+# tensorflow - install if no gpu
+# tensorflow-gpu - install if gpu
