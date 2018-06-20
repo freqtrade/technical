@@ -7,7 +7,7 @@ if version_info.major == 3 and version_info.minor < 6 or \
     exit(1)
 
 setup(name='technical',
-      version=1.0,
+      version='1.0.1',
       description='Technical Indicators',
       url='https://github.com/berlinguyinca/technical',
       author='Gert Wohlgemuth and Contributors',
