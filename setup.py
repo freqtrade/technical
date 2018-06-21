@@ -1,5 +1,5 @@
 from sys import version_info
-from setuptools import setup
+from setuptools import setup, find_packages
 
 if version_info.major == 3 and version_info.minor < 6 or \
         version_info.major < 3:
@@ -7,13 +7,13 @@ if version_info.major == 3 and version_info.minor < 6 or \
     exit(1)
 
 setup(name='technical',
-      version='1.0.1',
+      version='1.0.2',
       description='Technical Indicators',
       url='https://github.com/berlinguyinca/technical',
       author='Gert Wohlgemuth and Contributors',
       author_email='berlinguyinca@gmail.com',
       license='GPLv3',
-      packages=['technical'],
+      packages=find_packages(),
       setup_requires=['pytest-runner'],
       tests_require=['pytest', 'pytest-mock', 'pytest-cov'],
       install_requires=[
