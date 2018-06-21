@@ -6,11 +6,11 @@ from numpy.core.records import ndarray
 from pandas import Series, DataFrame
 
 
-def aroon(dataframe, period=25, field='close', colum_prefix="bb") -> DataFrame:
+def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
     from pyti.aroon import aroon_up as up
     from pyti.aroon import aroon_down as down
-    dataframe["{}_aroon_up".format(colum_prefix)] = up(dataframe[field], period)
-    dataframe["{}_aroon_down".format(colum_prefix)] = down(dataframe[field], period)
+    dataframe["{}_up".format(colum_prefix)] = up(dataframe[field], period)
+    dataframe["{}_down".format(colum_prefix)] = down(dataframe[field], period)
     return dataframe
 
 

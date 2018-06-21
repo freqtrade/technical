@@ -10,7 +10,7 @@ from technical.util import ticker_history_to_dataframe
 logging.getLogger('').setLevel(logging.INFO)
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def testdata_1m_btc() -> DataFrame:
     with open('technical/tests/testdata/UNITTEST_BTC-1m.json') as data_file:
         return ticker_history_to_dataframe(json.load(data_file))
