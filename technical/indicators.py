@@ -5,7 +5,7 @@ This file contains a collection of common indicators, which are based on third p
 from numpy.core.records import ndarray
 from pandas import Series, DataFrame
 from math import log
-from statistics import stdev
+
 
 def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
     from pyti.aroon import aroon_up as up
@@ -138,7 +138,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     plot( vfi, title="vfi", color=green,linewidth=2)
     """
     import talib as ta
-    from pyti.exponential_moving_average import exponential_moving_average as ema
+    from math import log
     from pyti.simple_moving_average import simple_moving_average as sma
     from numpy import where
 
@@ -174,18 +174,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df['vfi'] = (df['vcp'] + length) / df['vave']
     if smoothVFI == True :
         df['vfi'] = sma(df['vfi'], 3)
-    df['vfima'] = ta.EMA( df['vfi'] , 5)
+    df['vfima'] = ta.EMA( df['vfi'] , signalLength)
     df['histogram']  = df['vfi'] - df['vfima']
 
-    # df['inter'] = df['hlc_log'] - df['hlc_log'].shift(+1)
-    # df['v2'] =  df['volume'] - df['volume'].shift(+1)
-    # df['c2'] = df['close'] - df['close'].shift(+1)
-    # print(df.dtypes)
-    # lets get last row and 2nd last row
-    # l2=len(df)-2
-
-    # import pandas as pd
-    # pd.set_option('display.max_rows', 5000)
-    #print(df.loc[(l2 - 40):l1,['date', 'close', 'vinter', \
-    #df.to_csv("vfi.csv")
     return df
