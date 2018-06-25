@@ -106,16 +106,16 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     """"
     Original Pinescript 
     From: https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/
-    
+
     length = input(130, title="VFI length")
     coef = input(0.2)
     vcoef = input(2.5, title="Max. vol. cutoff")
     signalLength=input(5)
     smoothVFI=input(false, type=bool)
-    
+
     #### Conversion summary to python 
       - ma(x,y) => smoothVFI ? sma(x,y) : x // Added as smoothVFI test on vfi
-    
+
       - typical = hlc3  // Added to DF as HLC
       - inter = log(typical) - log(typical[1]) // Added to DF as inter
       - vinter = stdev(inter, 30) // Added to DF as vinter
@@ -129,7 +129,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
       - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi. Will sma vfi 3 if smoothVFI flag set
       - vfima = ema(vfi, signalLength) // added to DF as vfima
       - d = vfi-vfima // Added to df as histogram
-    
+
     ### Pinscript plotout - nothing to do here for freqtrade.
     plot(0, color=gray, style=3)
     showHisto=input(false, type=bool)
@@ -147,18 +147,15 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     vcoef = vcoef
     signalLength = signalLength
     smoothVFI = smoothVFI
-    df=dataframe
-    #Add hlc3 and populate inter to the dataframe
-    df['hlc'] = ((df['high'] + df['low'] + df['close'])/3).astype(float)
-    df['hlc_log'] = df['hlc'].map(log)
-    df['hlc_log_1'] = df['hlc'].shift(+1).map(log)
-    df['inter'] =  df['hlc_log'] - df['hlc_log_1']
-    #df['inter'] = df['hlc'].map(log) - df['hlc'].shift(+1).map(log)
+    df = dataframe
+    # Add hlc3 and populate inter to the dataframe
+    df['hlc'] = ((df['high'] + df['low'] + df['close']) / 3).astype(float)
+    df['inter'] = df['hlc'].map(log) - df['hlc'].shift(+1).map(log)
     df['vinter'] = df['inter'].rolling(30).std(ddof=0)
-    df['cutoff'] = ( coef * df['vinter'] * df['close'] )
+    df['cutoff'] = (coef * df['vinter'] * df['close'])
     # Vave is to be calculated on volume of the past bar
     df['vave'] = sma(df['volume'].shift(+1), length)
-    df['vmax'] =  df['vave'] * vcoef
+    df['vmax'] = df['vave'] * vcoef
     df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
     df['mf'] = df['hlc'] - df['hlc'].shift(+1)
     # more logic for vcp, so create a def and df.apply it
@@ -171,10 +168,10 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
             return 0
     df['vcp'] = df.apply(vcp, axis=1)
     # vfi has a smooth option passed over def call, sma if set
-    df['vfi'] = (df['vcp'] + length) / df['vave']
-    if smoothVFI == True :
+    df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
+    if smoothVFI == True:
         df['vfi'] = sma(df['vfi'], 3)
-    df['vfima'] = ta.EMA( df['vfi'] , signalLength)
-    df['histogram']  = df['vfi'] - df['vfima']
+    df['vfima'] = ta.EMA(df['vfi'], signalLength)
+    df['histogram'] = df['vfi'] - df['vfima']
 
     return df
