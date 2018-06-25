@@ -94,13 +94,20 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     * histogram can be used against self -1 to check if upward or downward momentum
 
 
+    Call from strategy to populate vfi, vfima, vfi_hist into dataframe
+
+    Example how to call:
+    # Volume Flow Index: Add VFI, VFIMA, Histogram to DF
+    dataframe['vfi'], dataframe['vfima'], dataframe['vfi_hist'] =  \
+        vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False)
+
     :param dataframe:
     :param length: - VFI Length - 130 default
     :param coef:  - price coef  - 0.2 default
     :param vcoef: - volume coef  - 2.5 default
     :param signalLength: - 5 default
     :param smoothVFI:  bool - False detault
-    :return: vfi, vfima, histogram
+    :return: vfi, vfima, vfi_hist
     """
 
     """"
@@ -158,6 +165,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df['vmax'] = df['vave'] * vcoef
     df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
     df['mf'] = df['hlc'] - df['hlc'].shift(+1)
+
     # more logic for vcp, so create a def and df.apply it
     def vcp(x):
         if x['mf'] > x['cutoff']:
@@ -166,12 +174,24 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
             return -(x['vc'])
         else:
             return 0
+
     df['vcp'] = df.apply(vcp, axis=1)
     # vfi has a smooth option passed over def call, sma if set
     df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
     if smoothVFI == True:
         df['vfi'] = sma(df['vfi'], 3)
     df['vfima'] = ta.EMA(df['vfi'], signalLength)
-    df['histogram'] = df['vfi'] - df['vfima']
+    df['vfi_hist'] = df['vfi'] - df['vfima']
 
-    return df
+    # clean up columns used vfi calculation but not needed for strat
+    df.drop('hlc', axis=1, inplace=True)
+    df.drop('inter', axis=1, inplace=True)
+    df.drop('vinter', axis=1, inplace=True)
+    df.drop('cutoff', axis=1, inplace=True)
+    df.drop('vave', axis=1, inplace=True)
+    df.drop('vmax', axis=1, inplace=True)
+    df.drop('vc', axis=1, inplace=True)
+    df.drop('mf', axis=1, inplace=True)
+    df.drop('vcp', axis=1, inplace=True)
+
+    return df['vfi'], df['vfima'], df['vfi_hist']
