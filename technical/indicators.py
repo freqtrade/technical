@@ -195,3 +195,359 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df.drop('vcp', axis=1, inplace=True)
 
     return df['vfi'], df['vfima'], df['vfi_hist']
+
+
+def mmar(self, dataframe, matype="EMA", src="close", debug=False):
+    """
+    Madrid Moving Average Ribbon
+
+    Returns: MMAR
+    """
+    """
+    Author(Freqtrade): Creslinux
+    Original Author(TrdingView): "Madrid"
+
+    Pinescript from TV Source Code and Description 
+    //
+    // Madrid : 17/OCT/2014 22:51M: Moving Average Ribbon : 2.0 : MMAR
+    // http://madridjourneyonws.blogspot.com/
+    //
+    // This plots a moving average ribbon, either exponential or standard.
+    // This study is best viewed with a dark background.  It provides an easy
+    // and fast way to determine the trend direction and possible reversals.
+    //
+    // Lime : Uptrend. Long trading
+    // Green : Reentry (buy the dip) or downtrend reversal warning
+    // Red : Downtrend. Short trading
+    // Maroon : Short Reentry (sell the peak) or uptrend reversal warning
+    //
+    // To best determine if this is a reentry point or a trend reversal
+    // the MMARB (Madrid Moving Average Ribbon Bar) study is used.
+    // This is the bar located at the bottom.  This bar signals when a
+    // current trend reentry is found (partially filled with opposite dark color)
+    // or when a trend reversal is ahead (completely filled with opposite dark color).
+    //
+
+    study(title="Madrid Moving Average Ribbon", shorttitle="MMAR", overlay=true)
+    exponential = input(true, title="Exponential MA")
+
+    src = close
+
+    ma05 = exponential ? ema(src, 05) : sma(src, 05)
+    ma10 = exponential ? ema(src, 10) : sma(src, 10)
+    ma15 = exponential ? ema(src, 15) : sma(src, 15)
+    ma20 = exponential ? ema(src, 20) : sma(src, 20)
+    ma25 = exponential ? ema(src, 25) : sma(src, 25)
+    ma30 = exponential ? ema(src, 30) : sma(src, 30)
+    ma35 = exponential ? ema(src, 35) : sma(src, 35)
+    ma40 = exponential ? ema(src, 40) : sma(src, 40)
+    ma45 = exponential ? ema(src, 45) : sma(src, 45)
+    ma50 = exponential ? ema(src, 50) : sma(src, 50)
+    ma55 = exponential ? ema(src, 55) : sma(src, 55)
+    ma60 = exponential ? ema(src, 60) : sma(src, 60)
+    ma65 = exponential ? ema(src, 65) : sma(src, 65)
+    ma70 = exponential ? ema(src, 70) : sma(src, 70)
+    ma75 = exponential ? ema(src, 75) : sma(src, 75)
+    ma80 = exponential ? ema(src, 80) : sma(src, 80)
+    ma85 = exponential ? ema(src, 85) : sma(src, 85)
+    ma90 = exponential ? ema(src, 90) : sma(src, 90)
+    ma100 = exponential ? ema(src, 100) : sma(src, 100)
+
+    leadMAColor = change(ma05)>=0 and ma05>ma100 ? lime
+                : change(ma05)<0  and ma05>ma100 ? maroon
+                : change(ma05)<=0 and ma05<ma100 ? red
+                : change(ma05)>=0 and ma05<ma100 ? green
+                : gray
+    maColor(ma, maRef) =>
+                  change(ma)>=0 and ma05>maRef ? lime
+                : change(ma)<0  and ma05>maRef ? maroon
+                : change(ma)<=0 and ma05<maRef ? red
+                : change(ma)>=0 and ma05<maRef ? green
+                : gray
+
+    plot( ma05, color=leadMAColor, style=line, title="MMA05", linewidth=3)
+    plot( ma10, color=maColor(ma10,ma100), style=line, title="MMA10", linewidth=1)
+    plot( ma15, color=maColor(ma15,ma100), style=line, title="MMA15", linewidth=1)
+    plot( ma20, color=maColor(ma20,ma100), style=line, title="MMA20", linewidth=1)
+    plot( ma25, color=maColor(ma25,ma100), style=line, title="MMA25", linewidth=1)
+    plot( ma30, color=maColor(ma30,ma100), style=line, title="MMA30", linewidth=1)
+    plot( ma35, color=maColor(ma35,ma100), style=line, title="MMA35", linewidth=1)
+    plot( ma40, color=maColor(ma40,ma100), style=line, title="MMA40", linewidth=1)
+    plot( ma45, color=maColor(ma45,ma100), style=line, title="MMA45", linewidth=1)
+    plot( ma50, color=maColor(ma50,ma100), style=line, title="MMA50", linewidth=1)
+    plot( ma55, color=maColor(ma55,ma100), style=line, title="MMA55", linewidth=1)
+    plot( ma60, color=maColor(ma60,ma100), style=line, title="MMA60", linewidth=1)
+    plot( ma65, color=maColor(ma65,ma100), style=line, title="MMA65", linewidth=1)
+    plot( ma70, color=maColor(ma70,ma100), style=line, title="MMA70", linewidth=1)
+    plot( ma75, color=maColor(ma75,ma100), style=line, title="MMA75", linewidth=1)
+    plot( ma80, color=maColor(ma80,ma100), style=line, title="MMA80", linewidth=1)
+    plot( ma85, color=maColor(ma85,ma100), style=line, title="MMA85", linewidth=1)
+    plot( ma90, color=maColor(ma90,ma100), style=line, title="MMA90", linewidth=3)
+    :return:
+    """
+    import talib as ta
+
+    matype = matype
+    src = src
+    df = dataframe
+    debug = debug
+
+    # Default to EMA, allow SMA if passed to def.
+    if matype == "EMA" or matype == "ema":
+        ma = ta.EMA
+    elif matype == "SMA" or matype == "sma":
+        ma = ta.SMA
+    else:
+        ma = ta.EMA
+
+    # Get MAs, also last MA in own column to pass to def later
+    df["ma05"] = ma(df[src], 5)
+    df['ma05l'] = df['ma05'].shift(+1)
+    df["ma10"] = ma(df[src], 10)
+    df['ma10l'] = df['ma10'].shift(+1)
+    df["ma20"] = ma(df[src], 20)
+    df['ma20l'] = df['ma20'].shift(+1)
+    df["ma30"] = ma(df[src], 30)
+    df['ma30l'] = df['ma30'].shift(+1)
+    df["ma40"] = ma(df[src], 40)
+    df['ma40l'] = df['ma40'].shift(+1)
+    df["ma50"] = ma(df[src], 50)
+    df['ma50l'] = df['ma50'].shift(+1)
+    df["ma60"] = ma(df[src], 60)
+    df['ma60l'] = df['ma60'].shift(+1)
+    df["ma70"] = ma(df[src], 70)
+    df['ma70l'] = df['ma70'].shift(+1)
+    df["ma80"] = ma(df[src], 80)
+    df['ma80l'] = df['ma80'].shift(+1)
+    df["ma90"] = ma(df[src], 90)
+    df['ma90l'] = df['ma90'].shift(+1)
+    df["ma100"] = ma(df[src], 100)
+    df['ma100l'] = df['ma100'].shift(+1)
+
+    """ logic for LeadMA
+    : change(ma05)>=0 and ma05>ma100 ? lime    +2
+    : change(ma05)<0  and ma05>ma100 ? maroon  -1
+    : change(ma05)<=0 and ma05<ma100 ? red     -2
+    : change(ma05)>=0 and ma05<ma100 ? green   +1
+    : gray
+    """
+
+    def leadMAc(x):
+        if (x['ma05'] - x['ma05l']) >= 0 and (x['ma05'] > x['ma100']):
+            # Lime: Uptrend.Long trading
+            x["leadMA"] = "lime"
+            return x["leadMA"]
+        elif (x['ma05'] - x['ma05l']) < 0 and (x['ma05'] > x['ma100']):
+            # Maroon : Short Reentry (sell the peak) or uptrend reversal warning
+            x["leadMA"] = "maroon"
+            return x["leadMA"]
+        elif (x['ma05'] - x['ma05l']) <= 0 and (x['ma05'] < x['ma100']):
+            # Red : Downtrend. Short trading
+            x["leadMA"] = "red"
+            return x["leadMA"]
+        elif (x['ma05'] - x['ma05l']) >= 0 and (x['ma05'] < x['ma100']):
+            # Green: Reentry(buy the dip) or downtrend reversal warning
+            x["leadMA"] = "green"
+            return x["leadMA"]
+        else:
+            # If its great it means not enough ticker data for lookback
+            x["leadMA"] = "grey"
+            return x["leadMA"]
+
+    df['leadMA'] = df.apply(leadMAc, axis=1)
+
+    """   Logic for MAs 
+    : change(ma)>=0 and ma05>ma100 ? lime
+    : change(ma)<0  and ma05>ma100 ? maroon
+    : change(ma)<=0 and ma05<ma100 ? red
+    : change(ma)>=0 and ma05<ma100 ? green
+    : gray
+    """
+
+    def maColor(x, ma):
+        col_label = '_'.join([ma, "c"])
+        col_lable_l = ''.join([ma, "l"])
+
+        if (x[ma] - x[col_lable_l]) >= 0 and (x[ma] > x['ma100']):
+            # Lime: Uptrend.Long trading
+            x[col_label] = "lime"
+            return x[col_label]
+        elif (x[ma] - x[col_lable_l]) < 0 and (x[ma] > x['ma100']):
+            # Maroon : Short Reentry (sell the peak) or uptrend reversal warning
+            x[col_label] = "maroon"
+            return x[col_label]
+
+        elif (x[ma] - x[col_lable_l]) <= 0 and (x[ma] < x['ma100']):
+            # Red : Downtrend. Short trading
+            x[col_label] = "red"
+            return x[col_label]
+
+        elif (x[ma] - x[col_lable_l]) >= 0 and (x[ma] < x['ma100']):
+            # Green: Reentry(buy the dip) or downtrend reversal warning
+            x[col_label] = "green"
+            return x[col_label]
+        else:
+            # If its great it means not enough ticker data for lookback
+            x[col_label] = 'grey'
+            return x[col_label]
+
+    df['ma05_c'] = df.apply(maColor, ma="ma05", axis=1)
+    df['ma10_c'] = df.apply(maColor, ma="ma10", axis=1)
+    df['ma20_c'] = df.apply(maColor, ma="ma20", axis=1)
+    df['ma30_c'] = df.apply(maColor, ma="ma30", axis=1)
+    df['ma40_c'] = df.apply(maColor, ma="ma40", axis=1)
+    df['ma50_c'] = df.apply(maColor, ma="ma50", axis=1)
+    df['ma60_c'] = df.apply(maColor, ma="ma60", axis=1)
+    df['ma70_c'] = df.apply(maColor, ma="ma70", axis=1)
+    df['ma80_c'] = df.apply(maColor, ma="ma80", axis=1)
+    df['ma90_c'] = df.apply(maColor, ma="ma90", axis=1)
+
+    if debug:
+        from pandas import set_option
+        set_option('display.max_rows', 2000)
+        print(df[["date", "leadMA",
+                  "ma05", "ma05l", "ma05_c",
+                  "ma10", "ma10l", "ma10_c",
+                  # "ma20", "ma20l", "ma20_c",
+                  # "ma30", "ma30l", "ma30_c",
+                  # "ma40", "ma40l", "ma40_c",
+                  # "ma50", "ma50l", "ma50_c",
+                  # "ma60", "ma60l", "ma60_c",
+                  # "ma70", "ma70l", "ma70_c",
+                  # "ma80", "ma80l", "ma80_c",
+                  "ma90", "ma90l", "ma90_c",
+                  "ma100", "leadMA"]].tail(200))
+
+        print(df[["date", 'close',
+                  "leadMA",
+                  "ma10_c",
+                  "ma20_c",
+                  "ma30_c",
+                  "ma40_c",
+                  "ma50_c",
+                  "ma60_c",
+                  "ma70_c",
+                  "ma80_c",
+                  "ma90_c"
+                  ]].tail(684))
+
+    return df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'], \
+           df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'], \
+           df['ma80_c'], df['ma90_c']
+
+
+def madrid_sqz(self, datafame, length=34, src='close', ref=13, sqzLen=5):
+    """
+    Squeeze Madrid Indicator
+
+    Author: Creslinux
+    Original Author: Madrid - Tradingview
+    https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/
+
+    :param datafame:
+    :param lenght: min 14 - default 34
+    :param src: default close
+    :param ref: default 13
+    :param sqzLen: default 5
+    :return: df['sqz_cma_c'], df['sqz_rma_c'], df['sqz_sma_c']
+
+
+    There are seven colors used for the study
+
+    Green : Uptrend in general
+    Lime : Spots the current uptrend leg
+    Aqua : The maximum profitability of the leg in a long trade
+    The Squeeze happens when Green+Lime+Aqua are aligned (the larger the values the better)
+
+    Maroon : Downtrend in general
+    Red : Spots the current downtrend leg
+    Fuchsia: The maximum profitability of the leg in a short trade
+    The Squeeze happens when Maroon+Red+Fuchsia are aligned (the larger the values the better)
+
+    Yellow : The trend has come to a pause and it is either a reversal warning or a continuation. These are the entry, re-entry or closing position points.
+    """
+
+    """ 
+    Original Pinescript source code
+
+    ma = ema(src, len)
+    closema = close - ma
+    refma = ema(src, ref) - ma
+    sqzma = ema(src, sqzLen) - ma
+
+    hline(0)
+    plotcandle(0, closema, 0, closema, color=closema >= 0?aqua: fuchsia)
+    plotcandle(0, sqzma, 0, sqzma, color=sqzma >= 0?lime: red)
+    plotcandle(0, refma, 0, refma, color=(refma >= 0 and closema < refma) or (
+                refma < 0 and closema > refma) ? yellow: refma >= 0 ? green: maroon)
+    """
+    import talib as ta
+    from numpy import where
+
+    len = length
+    src = src
+    ref = ref
+    sqzLen = sqzLen
+    df = datafame
+    ema = ta.EMA
+
+    """ Original code logic
+    ma = ema(src, len)
+    closema = close - ma
+    refma = ema(src, ref) - ma
+    sqzma = ema(src, sqzLen) - ma
+    """
+    df['sqz_ma'] = ema(df[src], len)
+    df['sqz_cma'] = df['close'] - df['sqz_ma']
+    df['sqz_rma'] = ema(df[src], ref) - df['sqz_ma']
+    df['sqz_sma'] = ema(df[src], sqzLen) - df['sqz_ma']
+
+    """ Original code logic
+    plotcandle(0, closema, 0, closema, color=closema >= 0?aqua: fuchsia)
+    plotcandle(0, sqzma, 0, sqzma, color=sqzma >= 0?lime: red)
+
+    plotcandle(0, refma, 0, refma, color=
+    (refma >= 0 and closema < refma) or (refma < 0 and closema > refma) ? yellow: 
+    refma >= 0 ? green: maroon)
+    """
+
+    # print(df[['sqz_cma', 'sqz_rma', 'sqz_sma']])
+
+    def sqz_cma_c(x):
+        if x['sqz_cma'] >= 0:
+            x['sqz_cma_c'] = "aqua"
+            return x['sqz_cma_c']
+        else:
+            x['sqz_cma_c'] = "fuchsia"
+            return x['sqz_cma_c']
+
+    df['sqz_cma_c'] = df.apply(sqz_cma_c, axis=1)
+
+    def sqz_sma_c(x):
+        if x['sqz_sma'] >= 0:
+            x['sqz_sma_c'] = "lime"
+            return x['sqz_sma_c']
+        else:
+            x['sqz_sma_c'] = "red"
+            return x['sqz_sma_c']
+
+    df['sqz_sma_c'] = df.apply(sqz_sma_c, axis=1)
+
+    def sqz_rma_c(x):
+        if x['sqz_rma'] >= 0 and x['sqz_cma'] < x['sqz_rma']:
+            x['sqz_rma_c'] = "yellow"
+            return x['sqz_rma_c']
+        elif x['sqz_rma'] < 0 and x['sqz_cma'] > x['sqz_rma']:
+            x['sqz_rma_c'] = "yellow"
+            return x['sqz_rma_c']
+        elif x['sqz_rma'] >= 0:
+            x['sqz_rma_c'] = "green"
+            return x['sqz_rma_c']
+        else:
+            x['sqz_rma_c'] = "maroon"
+            return x['sqz_rma_c']
+
+    df['sqz_rma_c'] = df.apply(sqz_rma_c, axis=1)
+
+    # print(df[['sqz_cma_c', 'sqz_rma_c', 'sqz_sma_c']])
+    return df['sqz_cma_c'], df['sqz_rma_c'], df['sqz_sma_c']
