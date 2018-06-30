@@ -7,6 +7,7 @@ from pandas import Series, DataFrame
 from math import log
 
 
+
 def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
     from pyti.aroon import aroon_up as up
     from pyti.aroon import aroon_down as down
@@ -551,3 +552,23 @@ def madrid_sqz(self, datafame, length=34, src='close', ref=13, sqzLen=5):
 
     # print(df[['sqz_cma_c', 'sqz_rma_c', 'sqz_sma_c']])
     return df['sqz_cma_c'], df['sqz_rma_c'], df['sqz_sma_c']
+
+
+def stc(self, dataframe, fast=23, slow=50, length=10):
+    import pandas as pd
+    # First, the 23-period and the 50-period EMA and the MACD values are calculated:
+    # EMA1 = EMA (Close, Short Length);
+    # EMA2 = EMA (Close, Long Length);
+    # MACD = EMA1 – EMA2.
+    # Second, the 10-period Stochastic from the MACD values is calculated:
+    # %K (MACD) = %KV (MACD, 10);
+    # %D (MACD) = %DV (MACD, 10);
+    # Schaff = 100 x (MACD – %K (MACD)) / (%D (MACD) – %K (MACD))
+
+    MACD = ta.EMA(dataframe, timeperiod=fast) - ta.EMA(dataframe, timeperiod=slow)
+    STOK = ((MACD - MACD.rolling(window=length).min()) / (
+                MACD.rolling(window=length).max() - MACD.rolling(window=length).min())) * 100
+    STOD = STOK.rolling(window=length).mean()
+    dataframe['stc'] = 100 * (MACD - (STOK * MACD)) / ((STOD * MACD) - (STOK * MACD))
+
+    return dataframe['stc']
