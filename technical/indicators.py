@@ -662,3 +662,4 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
             lrsi_l.append(0)
 
     return lrsi_l
+
