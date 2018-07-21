@@ -1,0 +1,460 @@
+import talib.abstract as ta
+import pandas as pd
+import numpy as np
+
+"""
+This file provides you with the consensus indicator and all associated helper methods.
+
+The idea is based on the concept that, if you have 1 indicators telling you to buy things are great
+if 100 indecators telling you to buy at the same time, things are better.
+
+If we can now have an easily understandalbe score, things should be perfect.
+
+Configuration:
+
+each of the utility methods, utilizes the default parameters as based in the literature. Assuming
+that these are the signals, most trades will use.
+
+Usage:
+
+1.
+
+from technical.consensus import Consensus
+
+c = Consensus(dataframe)
+
+2.
+
+call the indicators you would like to have evaluated in your consensus model
+with optional parameters. Like the impact
+
+c.evaluate_rsi()
+
+3. call the consensus method. This will basically compute 2 scores for you, which can be easily
+plotted
+
+
+"""
+
+
+def crossed(series1, series2, direction=None):
+    if isinstance(series1, np.ndarray):
+        series1 = pd.Series(series1)
+
+    if isinstance(series2, int) or isinstance(series2, float) or isinstance(series2, np.ndarray):
+        series2 = pd.Series(index=series1.index, data=series2)
+
+    if direction is None or direction == "above":
+        above = pd.Series((series1 > series2) & (
+                series1.shift(1) <= series2.shift(1)))
+
+    if direction is None or direction == "below":
+        below = pd.Series((series1 < series2) & (
+                series1.shift(1) >= series2.shift(1)))
+
+    if direction is None:
+        return above or below
+
+    return above if direction is "above" else below
+
+
+def crossed_above(series1, series2):
+    return crossed(series1, series2, "above")
+
+
+def crossed_below(series1, series2):
+    return crossed(series1, series2, "below")
+
+
+class Consensus:
+
+    def __init__(self, dataframe, copy=False):
+        """
+        initializes the conesensus object.
+        :param dataframe: dataframe to evaluate
+        :param copy: do we want to copy it, to that the orignal doesn't get
+        all the indicator values added
+        """
+        if copy:
+            self.dataframe = dataframe.copy()
+        else:
+            self.dataframe = dataframe
+
+        self.buy_weights = 0
+        self.sell_weights = 0
+
+    def _weights(self, impact_buy, impact_sell):
+        """
+            helper method to compute total count of utilized indicators and their weigths
+        :param impact_buy:
+        :param impact_sell:
+        :return:
+        """
+        self.buy_weights = self.buy_weights + impact_buy
+        self.sell_weights = self.sell_weights + impact_sell
+
+    def score(self, prefix="consensus"):
+        """
+        this computes the consensus score, which should always be between 0 and 100
+        :return:
+        """
+        dataframe = self.dataframe
+        scores = dataframe.filter(regex="^(buy|sell)_.*").fillna(0)
+
+        # computes a score between 0 and 100. The closer to 100 the more aggrement
+        dataframe["{}_score_sell".format(prefix)] = scores.filter(regex="^(sell)_.*").sum(
+            axis=1) / self.sell_weights * 100
+        dataframe["{}_score_buy".format(prefix)] = scores.filter(regex="^(buy)_.*").sum(axis=1) / self.buy_weights * 100
+
+        return {'sell':
+                    dataframe["{}_score_sell".format(prefix)],
+                'buy': dataframe["{}_score_buy".format(prefix)]}
+
+    def evaluate_rsi(self, period=14, prefix="rsi", impact_buy=1, impact_sell=1):
+        """
+        evaluates a s
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        self._weights(impact_buy,impact_sell)
+
+        name = '{}_{}'.format(prefix, period)
+        dataframe = self.dataframe
+        dataframe[name] = ta.RSI(dataframe, timeperiod=period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < 30)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 70)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_stoch(self, prefix="stoch", impact_buy=1, impact_sell=1):
+        """
+        evaluates a s
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        name = '{}'.format(prefix)
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        stoch_fast = ta.STOCHF(dataframe, 5.0, 3.0, 0.0, 3.0, 0.0)
+
+        dataframe['{}_fastd'.format(name)] = stoch_fast['fastd']
+        dataframe['{}_fastk'.format(name)] = stoch_fast['fastk']
+
+        dataframe.loc[
+            (
+                (dataframe['{}_fastk'.format(name)] < 20)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe['{}_fastk'.format(name)] > 80)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_macd_cross_over(self, prefix="macd_crossover", impact_buy=2, impact_sell=2):
+        """
+            evaluates the MACD if we should buy or sale based on a crossover
+        :param dataframe:
+        :return:
+        """
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        macd = ta.MACD(dataframe)
+        dataframe['macd'] = macd['macd']
+        dataframe['macdsignal'] = macd['macdsignal']
+        dataframe['macdhist'] = macd['macdhist']
+
+        dataframe.loc[
+            (
+                crossed_above(dataframe['macdsignal'], dataframe['macd'])
+            ),
+            'sell_{}'.format(prefix)
+        ] = (1 * impact_sell)
+
+        dataframe.loc[
+            (
+                crossed_above(dataframe['macd'], dataframe['macdsignal'])
+            ),
+            'buy_{}'.format(prefix)
+        ] = (1 * impact_buy)
+
+        return dataframe
+
+    def evaluate_macd(self, prefix="macd", impact_buy=1, impact_sell=1):
+        """
+            evaluates the MACD if we should buy or sale
+        :param dataframe:
+        :return:
+        """
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        macd = ta.MACD(dataframe)
+        dataframe['macd'] = macd['macd']
+        dataframe['macdsignal'] = macd['macdsignal']
+        dataframe['macdhist'] = macd['macdhist']
+
+        # macd < macds & macd < 0 == sell
+        dataframe.loc[
+            (
+                    (dataframe['macd'] < dataframe['macdsignal']) &
+                    (dataframe['macd'] < 0)
+            ),
+            'sell_{}'.format(prefix)
+        ] = (1 * impact_sell)
+
+        # macd > macds & macd > 0 == buy
+        dataframe.loc[
+            (
+                    (dataframe['macd'] > dataframe['macdsignal']) &
+                    (dataframe['macd'] > 0)
+            ),
+            'buy_{}'.format(prefix)
+        ] = (1 * impact_buy)
+
+        return dataframe
+
+    def evaluate_tema(self, period, field="close", prefix="tema", impact_buy=1, impact_sell=1):
+        """
+        evaluates a tema moving average
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}_{}'.format(prefix, field, period)
+        dataframe[name] = ta.TEMA(dataframe, timeperiod=period, field=field)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > dataframe[field])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < dataframe[field])
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_ema(self, period, field="close", prefix="ema", impact_buy=1, impact_sell=1):
+        """
+        evaluates a sma moving average
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}_{}'.format(prefix, field, period)
+        dataframe[name] = ta.EMA(dataframe, timeperiod=period, field=field)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > dataframe[field])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < dataframe[field])
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_sma(self, period, field="close", prefix="sma", impact_buy=1, impact_sell=1):
+        """
+        evaluates a sma moving average
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        self._weights(impact_buy,impact_sell)
+        name = '{}_{}_{}'.format(prefix, field, period)
+        dataframe = self.dataframe
+        dataframe[name] = ta.SMA(dataframe, timeperiod=period, field=field)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > dataframe[field])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < dataframe[field])
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_laguerre(self, prefix="lag", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import laguerre
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}'.format(prefix)
+        dataframe[name] = laguerre(dataframe)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < 0.1)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 0.9)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_osc(self, period=12, prefix="osc", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import osc
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = osc(dataframe, period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < 0.3)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 0.8)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_cmf(self, period=12, prefix="cmf", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import cmf
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = cmf(dataframe, period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 0.5)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < -0.5)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_cci(self, period=20, prefix="cci", impact_buy=1, impact_sell=1, sell_signal=100,
+                     buy_signal=-100):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import cci
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = cci(dataframe, period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < buy_signal)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > sell_signal)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_cmo(self, period=20, prefix="cmo", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import cmo
+
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = cmo(dataframe, period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < -50)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 50)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
