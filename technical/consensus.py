@@ -30,8 +30,16 @@ with optional parameters. Like the impact
 
 c.evaluate_rsi()
 
-3. call the consensus method. This will basically compute 2 scores for you, which can be easily
+3. call the score method. This will basically compute 2 scores for you, which can be easily
 plotted
+
+c.score()
+
+if you like to apply some smoothing, you can call
+
+c.score(smooth=3)
+
+for example.
 
 
 """
@@ -93,9 +101,10 @@ class Consensus:
         self.buy_weights = self.buy_weights + impact_buy
         self.sell_weights = self.sell_weights + impact_sell
 
-    def score(self, prefix="consensus"):
+    def score(self, prefix="consensus",smooth=None):
         """
         this computes the consensus score, which should always be between 0 and 100
+        :param smooth: Allows to specify an integer for a smoothing interval
         :return:
         """
         dataframe = self.dataframe
@@ -105,6 +114,10 @@ class Consensus:
         dataframe["{}_score_sell".format(prefix)] = scores.filter(regex="^(sell)_.*").sum(
             axis=1) / self.sell_weights * 100
         dataframe["{}_score_buy".format(prefix)] = scores.filter(regex="^(buy)_.*").sum(axis=1) / self.buy_weights * 100
+
+        if smooth is not None:
+            dataframe["{}_score_buy".format(prefix)] = dataframe["{}_score_buy".format(prefix)].rolling(smooth).mean()
+            dataframe["{}_score_sell".format(prefix)] = dataframe["{}_score_sell".format(prefix)].rolling(smooth).mean()
 
         return {'sell':
                     dataframe["{}_score_sell".format(prefix)],
@@ -232,6 +245,35 @@ class Consensus:
 
         return dataframe
 
+    def evaluate_hull(self, period=9, field="close", prefix="hull", impact_buy=1, impact_sell=1):
+        """
+        evaluates a tema moving average
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import hull_moving_average
+        self._weights(impact_buy,impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}_{}'.format(prefix, field, period)
+        dataframe[name] = hull_moving_average(dataframe, period, field)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > dataframe[field])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < dataframe[field])
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+
     def evaluate_tema(self, period, field="close", prefix="tema", impact_buy=1, impact_sell=1):
         """
         evaluates a tema moving average
@@ -258,6 +300,7 @@ class Consensus:
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
+
 
     def evaluate_ema(self, period, field="close", prefix="ema", impact_buy=1, impact_sell=1):
         """

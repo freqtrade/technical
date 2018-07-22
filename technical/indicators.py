@@ -71,6 +71,11 @@ def cmo(dataframe, period, field='close') -> ndarray:
     return chande_momentum_oscillator(dataframe[field], period)
 
 
+def hull_moving_average(dataframe, period, field='close') -> ndarray:
+    from pyti.hull_moving_average import hull_moving_average as hma
+    return hma(dataframe[field], period)
+
+
 def cci(dataframe, period) -> ndarray:
     from pyti.commodity_channel_index import commodity_channel_index
 
@@ -662,4 +667,3 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
             lrsi_l.append(0)
 
     return lrsi_l
-

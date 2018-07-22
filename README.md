@@ -13,11 +13,12 @@ around TA-Lib, PyTi and others, as we find them. So you have one place, to find 
 We will happily add your custom indicators to this repo!
 
 1. Consensus - an indicator which is based on a consensus model, across several indicators
-you can easily customize these.
-3. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
-4. [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
-5. madrid_sqz
-6. [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
+you can easily customize these. It is based on the [tradinvg view](https://www.tradingview.com/symbols/BTCUSD/technicals/) 
+buy/sell graph.
+2. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
+3. [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
+4. madrid_sqz
+5. [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
 
 ### Utilities
 
