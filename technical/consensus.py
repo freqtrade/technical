@@ -76,18 +76,12 @@ def crossed_below(series1, series2):
 
 class Consensus:
 
-    def __init__(self, dataframe, copy=False):
+    def __init__(self, dataframe):
         """
         initializes the conesensus object.
         :param dataframe: dataframe to evaluate
-        :param copy: do we want to copy it, to that the orignal doesn't get
-        all the indicator values added
         """
-        if copy:
-            self.dataframe = dataframe.copy()
-        else:
-            self.dataframe = dataframe
-
+        self.dataframe = dataframe.copy()
         self.buy_weights = 0
         self.sell_weights = 0
 
@@ -98,6 +92,7 @@ class Consensus:
         :param impact_sell:
         :return:
         """
+        print("{}:{}-{}".format(self.__class__,self.buy_weights,self.sell_weights))
         self.buy_weights = self.buy_weights + impact_buy
         self.sell_weights = self.sell_weights + impact_sell
 

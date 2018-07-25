@@ -9,8 +9,8 @@ class MovingAverageConsensus(Consensus):
     https://www.tradingview.com/symbols/BTCUSD/technicals/
     """
 
-    def __init__(self, dataframe, public=False):
-        super(MovingAverageConsensus, self).__init__(dataframe, public)
+    def __init__(self, dataframe):
+        super().__init__(dataframe)
 
         self.evaluate_sma(period=10)
         self.evaluate_sma(period=20)
@@ -32,11 +32,12 @@ class MovingAverageConsensus(Consensus):
 
 class OscillatorConsensus(Consensus):
     """
-    consensus based indicator, based on several
+    consensus based indicator, based on several oscillators. Rule of thumb for entry should be
+    that buy is larger than sell line.
     """
 
-    def __init__(self,dataframe,public=False):
-        super(OscillatorConsensus,self).__init__(dataframe,public)
+    def __init__(self,dataframe):
+        super().__init__(dataframe)
         self.evaluate_rsi(period=14)
         self.evaluate_stoch()
         self.evaluate_cci(period=20)
