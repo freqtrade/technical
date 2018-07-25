@@ -101,7 +101,7 @@ class Consensus:
         self.buy_weights = self.buy_weights + impact_buy
         self.sell_weights = self.sell_weights + impact_sell
 
-    def score(self, prefix="consensus",smooth=None):
+    def score(self, prefix="consensus", smooth=None):
         """
         this computes the consensus score, which should always be between 0 and 100
         :param smooth: Allows to specify an integer for a smoothing interval
@@ -121,7 +121,15 @@ class Consensus:
 
         return {'sell':
                     dataframe["{}_score_sell".format(prefix)],
-                'buy': dataframe["{}_score_buy".format(prefix)]}
+                'buy': dataframe["{}_score_buy".format(prefix)],
+                "buy_agreement": scores.filter(regex="^(buy)_.*").sum(axis=1),
+                "sell_agreement": scores.filter(regex="^(sell)_.*").sum(axis=1),
+                "buy_disagreement": scores.filter(regex="^(buy)_.*").count(axis=1) - scores.filter(regex="^(buy)_.*").sum(
+                    axis=1),
+                "sell_disagreement": scores.filter(regex="^(sell)_.*").count(axis=1) - scores.filter(regex="^(sell)_.*").sum(
+                    axis=1),
+
+                }
 
     def evaluate_rsi(self, period=14, prefix="rsi", impact_buy=1, impact_sell=1):
         """
@@ -131,7 +139,7 @@ class Consensus:
         :param prefix:
         :return:
         """
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
 
         name = '{}_{}'.format(prefix, period)
         dataframe = self.dataframe
@@ -160,7 +168,7 @@ class Consensus:
         :return:
         """
         name = '{}'.format(prefix)
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         stoch_fast = ta.STOCHF(dataframe, 5.0, 3.0, 0.0, 3.0, 0.0)
 
@@ -188,7 +196,7 @@ class Consensus:
         :return:
         """
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         macd = ta.MACD(dataframe)
         dataframe['macd'] = macd['macd']
@@ -218,7 +226,7 @@ class Consensus:
         :return:
         """
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         macd = ta.MACD(dataframe)
         dataframe['macd'] = macd['macd']
@@ -254,7 +262,7 @@ class Consensus:
         :return:
         """
         from technical.indicators import hull_moving_average
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}_{}'.format(prefix, field, period)
         dataframe[name] = hull_moving_average(dataframe, period, field)
@@ -273,6 +281,33 @@ class Consensus:
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
 
+    def evaluate_vwma(self, period=9, prefix="hull", impact_buy=1, impact_sell=1):
+        """
+        evaluates a volume weighted moving average
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import vwma
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = vwma(dataframe, period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > dataframe['close'])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < dataframe['close'])
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
 
     def evaluate_tema(self, period, field="close", prefix="tema", impact_buy=1, impact_sell=1):
         """
@@ -282,7 +317,7 @@ class Consensus:
         :param prefix:
         :return:
         """
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}_{}'.format(prefix, field, period)
         dataframe[name] = ta.TEMA(dataframe, timeperiod=period, field=field)
@@ -301,7 +336,6 @@ class Consensus:
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
 
-
     def evaluate_ema(self, period, field="close", prefix="ema", impact_buy=1, impact_sell=1):
         """
         evaluates a sma moving average
@@ -310,7 +344,7 @@ class Consensus:
         :param prefix:
         :return:
         """
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}_{}'.format(prefix, field, period)
         dataframe[name] = ta.EMA(dataframe, timeperiod=period, field=field)
@@ -337,7 +371,7 @@ class Consensus:
         :param prefix:
         :return:
         """
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         name = '{}_{}_{}'.format(prefix, field, period)
         dataframe = self.dataframe
         dataframe[name] = ta.SMA(dataframe, timeperiod=period, field=field)
@@ -366,7 +400,7 @@ class Consensus:
         """
         from technical.indicators import laguerre
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}'.format(prefix)
         dataframe[name] = laguerre(dataframe)
@@ -395,7 +429,7 @@ class Consensus:
         """
         from technical.indicators import osc
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
         dataframe[name] = osc(dataframe, period)
@@ -424,7 +458,7 @@ class Consensus:
         """
         from technical.indicators import cmf
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
         dataframe[name] = cmf(dataframe, period)
@@ -454,7 +488,7 @@ class Consensus:
         """
         from technical.indicators import cci
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
         dataframe[name] = cci(dataframe, period)
@@ -473,6 +507,44 @@ class Consensus:
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
 
+    def evaluate_consensus(self, consensus, prefix, smooth=0, buy_score=80, sell_score=80, impact_buy=1, impact_sell=1):
+        """
+        evaluates another consensus indicator
+        and integrates it into this indicator
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}_'.format(prefix)
+
+        result = {}
+        if smooth > 0:
+            result = consensus.score(smooth=smooth)
+        else:
+            result = consensus.score()
+
+        dataframe['{}_buy'.format(name)] = result['buy']
+        dataframe['{}_sell'.format(name)] = result['sell']
+
+        dataframe.loc[
+            (
+                (dataframe['{}_buy'.format(name)] > buy_score)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+
+                (dataframe['{}_sell'.format(name)] > sell_score)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
     def evaluate_cmo(self, period=20, prefix="cmo", impact_buy=1, impact_sell=1):
         """
         evaluates the osc
@@ -483,7 +555,7 @@ class Consensus:
         """
         from technical.indicators import cmo
 
-        self._weights(impact_buy,impact_sell)
+        self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
         dataframe[name] = cmo(dataframe, period)
@@ -498,6 +570,132 @@ class Consensus:
         dataframe.loc[
             (
                 (dataframe[name] > 50)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_ichimoku(self, prefix="ichimoku", impact_buy=1, impact_sell=1):
+        """
+        evaluates the ichimoku
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import ichimoku
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}'.format(prefix)
+        ichimoku = ichimoku(dataframe)
+
+        dataframe['{}_tenkan_sen'.format(name)] = ichimoku['tenkan_sen']
+        dataframe['{}_kijun_sen'.format(name)] = ichimoku['kijun_sen']
+        dataframe['{}_senkou_span_a'.format(name)] = ichimoku['senkou_span_a']
+        dataframe['{}_senkou_span_b'.format(name)] = ichimoku['senkou_span_b']
+        dataframe['{}_chikou_span'.format(name)] = ichimoku['chikou_span']
+
+        # price is above the cloud
+        dataframe.loc[
+            (
+                    (dataframe['{}_senkou_span_a'.format(name)] > dataframe['open']) &
+                    (dataframe['{}_senkou_span_b'.format(name)] > dataframe['open'])
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        # price is below the cloud
+        dataframe.loc[
+            (
+                    (dataframe['{}_senkou_span_a'.format(name)] < dataframe['open']) &
+                    (dataframe['{}_senkou_span_b'.format(name)] < dataframe['open'])
+
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_williams(self, prefix="williams", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import williams_percent
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}'.format(prefix)
+        dataframe[name] = williams_percent(dataframe)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < -80)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > -20)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_momentum(self, period=20, prefix="momentum", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import momentum
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = momentum(dataframe, 'close', period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 100)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < 100)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
+    def evaluate_adx(self, period=14, prefix="momentum", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}_{}'.format(prefix, period)
+        dataframe[name] = ta.ADX(dataframe, timeperiod=period)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 25)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 25)
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)

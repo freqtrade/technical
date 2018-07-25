@@ -20,6 +20,9 @@ buy/sell graph.
 4. [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
 5. [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
 6. [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
+7. volume weighted moving average
+8. laguerre
+
 
 ### Utilities
 
@@ -40,6 +43,9 @@ open/close/high/low/volume columns
 7. [bollinger_bands](https://www.investopedia.com/terms/b/bollingerbands.asp) - dataframe, period, stdv, field, prefix
 8. [cmo](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp) - dataframe, period, field
 9. [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
+10. williams percent
+11. momentum oscilator
+12. hull moving average 
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but
 also super boring work.
