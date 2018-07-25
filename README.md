@@ -17,8 +17,9 @@ you can easily customize these. It is based on the [tradinvg view](https://www.t
 buy/sell graph.
 2. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
 3. [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
-4. madrid_sqz
+4. [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
 5. [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
+6. [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
 
 ### Utilities
 

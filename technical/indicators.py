@@ -667,3 +667,45 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
             lrsi_l.append(0)
 
     return lrsi_l
+
+
+def ichimoku(dataframe):
+
+    "Ichimoku cloud indicator"
+
+    from datetime import timedelta
+
+    df = dataframe.copy()
+
+    high_9 = df['high'].rolling(window= 9).max()
+    low_9 = df['low'].rolling(window= 9).min()
+    df['tenkan_sen'] = (high_9 + low_9) /2
+
+    high_26 = df['high'].rolling(window= 26).max()
+    low_26 = df['low'].rolling(window= 26).min()
+    df['kijun_sen'] = (high_26 + low_26) /2
+
+    # this is to extend the 'df' in future for 26 days
+    # the 'df' here is numerical indexed df
+    last_index = df.iloc[-1:].index[0]
+    last_date = df['date'].iloc[-1].date()
+    for i in range(26):
+        df.loc[last_index+1 +i, 'date'] = last_date + timedelta(days=i)
+
+    df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
+
+    high_52 = df['high'].rolling(window= 52).max()
+    low_52 = df['low'].rolling(window= 52).min()
+    df['senkou_span_b'] = ((high_52 + low_52) /2).shift(26)
+
+    # most charting softwares dont plot this line
+    df['chikou_span'] = df['close'].shift(-22) #sometimes -26
+
+
+    return {
+        'tenkan_sen': df['tenkan_sen'],
+        'kijun_sen': df['kijun_sen'],
+        'senkou_span_a': df['senkou_span_a'],
+        'senkou_span_b': df['senkou_span_b'],
+        'chikou_span': df['chikou_span'],
+    }
