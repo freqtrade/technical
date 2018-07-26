@@ -54,9 +54,12 @@ class OscillatorConsensus(Consensus):
 class SummaryConsensus(Consensus):
     """
      an overall consensus of the trading view based configurations
+     and it's basically a binary operation (on/off switch), meaning it needs
+     to be combined with a couple of other indicators to avoid false buys.
+
     """
 
     def __init__(self, dataframe):
         super().__init__(dataframe)
-        self.evaluate_consensus(OscillatorConsensus(dataframe), "osc", impact_buy=2)
-        self.evaluate_consensus(MovingAverageConsensus(dataframe), "moving_average_consensus")
+        self.evaluate_consensus(OscillatorConsensus(dataframe), "osc", average=False)
+        self.evaluate_consensus(MovingAverageConsensus(dataframe), "moving_average_consensus", average=False)
