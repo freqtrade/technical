@@ -15,10 +15,13 @@ We will happily add your custom indicators to this repo!
 1. Consensus - an indicator which is based on a consensus model, across several indicators
 you can easily customize these. It is based on the [tradinvg view](https://www.tradingview.com/symbols/BTCUSD/technicals/) 
 buy/sell graph.
+  1.1 MovingAverage Consensus
+  1.2 Oscillator Consensus
+  1.3 SUmmary Consensus
 2. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
 3. [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
 4. [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
-5. [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
+5. [stc](https://www.investoorpedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
 6. [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
 7. volume weighted moving average
 8. laguerre
@@ -46,6 +49,9 @@ open/close/high/low/volume columns
 10. williams percent
 11. momentum oscilator
 12. hull moving average 
+13. ultimate oscillator
+
+
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but
 also super boring work.

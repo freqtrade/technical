@@ -36,7 +36,7 @@ class OscillatorConsensus(Consensus):
     that buy is larger than sell line.
     """
 
-    def __init__(self,dataframe):
+    def __init__(self, dataframe):
         super().__init__(dataframe)
         self.evaluate_rsi(period=14)
         self.evaluate_stoch()
@@ -45,7 +45,18 @@ class OscillatorConsensus(Consensus):
         # awesome osc
         self.evaluate_macd()
         self.evaluate_momentum(period=10)
-        #stoch rsi
+        # stoch rsi
         self.evaluate_williams()
-        #bull bear
-        #ultimate osc
+        # bull bear
+        self.evaluate_ultimate_oscilator()
+
+
+class SummaryConsensus(Consensus):
+    """
+     an overall consensus of the trading view based configurations
+    """
+
+    def __init__(self, dataframe):
+        super().__init__(dataframe)
+        self.evaluate_consensus(OscillatorConsensus(dataframe), "osc", impact_buy=2)
+        self.evaluate_consensus(MovingAverageConsensus(dataframe), "moving_average_consensus")

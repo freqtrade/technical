@@ -92,7 +92,7 @@ class Consensus:
         :param impact_sell:
         :return:
         """
-        print("{}:{}-{}".format(self.__class__,self.buy_weights,self.sell_weights))
+        #print("{}:{}-{}".format(self.__class__,self.buy_weights,self.sell_weights))
         self.buy_weights = self.buy_weights + impact_buy
         self.sell_weights = self.sell_weights + impact_sell
 
@@ -608,6 +608,36 @@ class Consensus:
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
+
+    def evaluate_ultimate_oscilator(self, prefix="uo", impact_buy=1, impact_sell=1):
+        """
+        evaluates the osc
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.indicators import ultimate_oscilator
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = '{}'.format(prefix)
+        dataframe[name] = ultimate_oscilator(dataframe)
+
+        dataframe.loc[
+            (
+                (dataframe[name] < 30)
+            ),
+            'buy_{}'.format(name)
+        ] = (1 * impact_buy)
+
+        dataframe.loc[
+            (
+                (dataframe[name] > 70)
+            ),
+            'sell_{}'.format(name)
+        ] = (1 * impact_sell)
+
 
     def evaluate_williams(self, prefix="williams", impact_buy=1, impact_sell=1):
         """

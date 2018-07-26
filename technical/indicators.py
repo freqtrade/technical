@@ -718,7 +718,11 @@ def momentum(dataframe, field='close', period=9):
     from pyti.momentum import momentum as m
     return m(dataframe[field], period)
 
+
 def vwma(df, window):
     return df.apply(lambda x: x.close * x.volume, axis=1).rolling(window).sum() / df.volume.rolling(window).sum()
 
 
+def ultimate_oscilator(dataframe):
+    from pyti.ultimate_oscillator import ultimate_oscillator as uo
+    uo(dataframe['close'], dataframe['low'])
