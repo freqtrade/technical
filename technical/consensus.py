@@ -321,14 +321,14 @@ class Consensus:
 
         dataframe.loc[
             (
-                (dataframe[name] > dataframe[field])
+                (dataframe[name] < dataframe[field])
             ),
             'buy_{}'.format(name)
         ] = (1 * impact_buy)
 
         dataframe.loc[
             (
-                (dataframe[name] < dataframe[field])
+                (dataframe[name] > dataframe[field])
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
@@ -348,14 +348,14 @@ class Consensus:
 
         dataframe.loc[
             (
-                (dataframe[name] > dataframe[field])
+                (dataframe[name] < dataframe[field])
             ),
             'buy_{}'.format(name)
         ] = (1 * impact_buy)
 
         dataframe.loc[
             (
-                (dataframe[name] < dataframe[field])
+                (dataframe[name] > dataframe[field])
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)
@@ -375,14 +375,14 @@ class Consensus:
 
         dataframe.loc[
             (
-                (dataframe[name] > dataframe[field])
+                (dataframe[name] < dataframe[field])
             ),
             'buy_{}'.format(name)
         ] = (1 * impact_buy)
 
         dataframe.loc[
             (
-                (dataframe[name] < dataframe[field])
+                (dataframe[name] > dataframe[field])
             ),
             'sell_{}'.format(name)
         ] = (1 * impact_sell)

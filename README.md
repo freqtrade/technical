@@ -25,7 +25,7 @@ buy/sell graph.
 6. [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
 7. volume weighted moving average
 8. laguerre
-
+9. [vpci](https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/)
 
 ### Utilities
 
@@ -50,7 +50,9 @@ open/close/high/low/volume columns
 11. momentum oscilator
 12. hull moving average 
 13. ultimate oscillator
-
+14. sma
+15. ema
+16. tema
 
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but

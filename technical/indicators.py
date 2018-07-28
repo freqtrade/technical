@@ -709,6 +709,63 @@ def ichimoku(dataframe):
     }
 
 
+def ema(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.EMA(dataframe, timeperiod=period, price=field)
+
+
+def tema(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.TEMA(dataframe, timeperiod=period, price=field)
+
+
+def sma(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.SMA(dataframe, timeperiod=period, price=field)
+
+
+def vpcii(dataframe, period_short=5, period_long=20, hist=8,hist_long=30):
+    """
+    improved version of the vpcii
+
+
+    :param dataframe:
+    :param period_short:
+    :param period_long:
+    :param hist:
+    :return:
+    """
+
+    dataframe = dataframe.copy()
+    dataframe['vpci'] = vpci(dataframe,period_short,period_long)
+    dataframe['vpcis'] = dataframe['vpci'].rolling(hist).mean()
+    dataframe['vpci_hist'] = (dataframe['vpci'] - dataframe['vpcis']).pct_change()
+
+    return dataframe['vpci_hist'].abs()
+
+def vpci(dataframe, period_short=5,period_long=20):
+    """
+    volume confirming indicator as seen here
+
+    https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/
+
+
+    should be used with bollinger bands, for deccision making
+    :param dataframe:
+    :param period_long:
+    :param period_short:
+    :return:
+    """
+
+    vpc = vwma(dataframe, period_long) - sma(dataframe, period_long)
+    vpr = vwma(dataframe, period_short) / sma(dataframe, period_short)
+    vm = sma(dataframe, period_short,field='volume') / sma(dataframe, period_long,field='volume')
+
+    vpci = vpc * vpr * vm
+
+    return vpci
+
+
 def williams_percent(dataframe):
     from pyti.williams_percent_r import williams_percent_r
     return williams_percent_r(dataframe['close'])
