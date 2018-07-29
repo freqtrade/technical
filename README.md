@@ -26,6 +26,7 @@ buy/sell graph.
 7. volume weighted moving average
 8. laguerre
 9. [vpci](https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/)
+10. [trendlines](https://en.wikipedia.org/wiki/Trend_line_(technical_analysis)), 2 different algorithms to calculate trendlines
 
 ### Utilities
 
