@@ -55,7 +55,6 @@ def bounce(dataframe, level):
     open = dataframe['open']
     close = dataframe['close']
     touch = shift(touches(dataframe, level), 1, cval=np.NAN)
-    print(touch)
 
     return np.vectorize(_bounce)(open, close, level, touch)
 
