@@ -16,6 +16,7 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
     :param charts: Boolean value saying whether to print chart to screen
     """
 
+    print(dataframe)
     x = dataframe[field]
 
     import numpy as np
@@ -60,11 +61,16 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
     trends = pd.DataFrame(trends, index=np.arange(0, len(x)),
                           columns=['Data', 'Max Line', 'Min Line'])
 
-    if charts is True:
-        from matplotlib.pyplot import plot, grid, show
+    if charts:
+        from matplotlib.pyplot import plot, grid, show,savefig,close
         plot(trends)
         grid()
-        show()
+
+        if isinstance(charts,str):
+            savefig("{}.png".format(charts))
+        else:
+            savefig("{}_{}.png".format(x[0],x[len(x)-1]))
+        close()
 
     return trends
 

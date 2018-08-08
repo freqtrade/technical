@@ -669,36 +669,36 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     return lrsi_l
 
 
-def ichimoku(dataframe):
+def ichimoku(dataframe, conversion_line_period=20, base_line_periods=60, laggin_span=120, displacement=30):
     "Ichimoku cloud indicator"
 
     from datetime import timedelta
 
     df = dataframe.copy()
 
-    high_9 = df['high'].rolling(window=9).max()
-    low_9 = df['low'].rolling(window=9).min()
+    high_9 = df['high'].rolling(window=conversion_line_period).max()
+    low_9 = df['low'].rolling(window=conversion_line_period).min()
     df['tenkan_sen'] = (high_9 + low_9) / 2
 
-    high_26 = df['high'].rolling(window=26).max()
-    low_26 = df['low'].rolling(window=26).min()
+    high_26 = df['high'].rolling(window=base_line_periods).max()
+    low_26 = df['low'].rolling(window=base_line_periods).min()
     df['kijun_sen'] = (high_26 + low_26) / 2
 
     # this is to extend the 'df' in future for 26 days
     # the 'df' here is numerical indexed df
     last_index = df.iloc[-1:].index[0]
     last_date = df['date'].iloc[-1].date()
-    for i in range(26):
+    for i in range(displacement):
         df.loc[last_index + 1 + i, 'date'] = last_date + timedelta(days=i)
 
     df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
 
-    high_52 = df['high'].rolling(window=52).max()
-    low_52 = df['low'].rolling(window=52).min()
-    df['senkou_span_b'] = ((high_52 + low_52) / 2).shift(26)
+    high_52 = df['high'].rolling(window=laggin_span).max()
+    low_52 = df['low'].rolling(window=laggin_span).min()
+    df['senkou_span_b'] = ((high_52 + low_52) / 2).shift(displacement)
 
     # most charting softwares dont plot this line
-    df['chikou_span'] = df['close'].shift(-22)  # sometimes -26
+    df['chikou_span'] = df['close'].shift(-displacement)  # sometimes -26
 
     return {
         'tenkan_sen': df['tenkan_sen'],
@@ -706,6 +706,8 @@ def ichimoku(dataframe):
         'senkou_span_a': df['senkou_span_a'],
         'senkou_span_b': df['senkou_span_b'],
         'chikou_span': df['chikou_span'],
+        'cloud_green': df['senkou_span_a'] > df['senkou_span_b'],
+        'cloud_red': df['senkou_span_b'] > df['senkou_span_a']
     }
 
 
@@ -724,7 +726,7 @@ def sma(dataframe, period, field='close'):
     return ta.SMA(dataframe, timeperiod=period, price=field)
 
 
-def vpcii(dataframe, period_short=5, period_long=20, hist=8,hist_long=30):
+def vpcii(dataframe, period_short=5, period_long=20, hist=8, hist_long=30):
     """
     improved version of the vpcii
 
@@ -737,13 +739,14 @@ def vpcii(dataframe, period_short=5, period_long=20, hist=8,hist_long=30):
     """
 
     dataframe = dataframe.copy()
-    dataframe['vpci'] = vpci(dataframe,period_short,period_long)
+    dataframe['vpci'] = vpci(dataframe, period_short, period_long)
     dataframe['vpcis'] = dataframe['vpci'].rolling(hist).mean()
     dataframe['vpci_hist'] = (dataframe['vpci'] - dataframe['vpcis']).pct_change()
 
     return dataframe['vpci_hist'].abs()
 
-def vpci(dataframe, period_short=5,period_long=20):
+
+def vpci(dataframe, period_short=5, period_long=20):
     """
     volume confirming indicator as seen here
 
@@ -759,7 +762,7 @@ def vpci(dataframe, period_short=5,period_long=20):
 
     vpc = vwma(dataframe, period_long) - sma(dataframe, period_long)
     vpr = vwma(dataframe, period_short) / sma(dataframe, period_short)
-    vm = sma(dataframe, period_short,field='volume') / sma(dataframe, period_long,field='volume')
+    vm = sma(dataframe, period_short, field='volume') / sma(dataframe, period_long, field='volume')
 
     vpci = vpc * vpr * vm
 
