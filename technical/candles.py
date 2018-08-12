@@ -31,6 +31,11 @@ def heikinashi(bars):
     result['small_body'] = np.vectorize(_small_body)(result['close'], result['low'], result['open'], result['high'])
     result['candle'] = np.vectorize(_candle_type)(result['open'], result['close'])
     result['reversal'] = np.vectorize(_reversal)(result['candle'], shift(result['candle'], 1, cval=np.NAN))
+
+    result['lower_wick'] = np.vectorize(_wick_length)(result['close'], result['low'], result['open'], result['high'],
+                                                      False)
+    result['upper_wick'] = np.vectorize(_wick_length)(result['close'], result['low'], result['open'], result['high'],
+                                                      True)
     return result
 
 
@@ -63,6 +68,30 @@ def _candle_type(open, close):
         return 1
     else:
         return -1
+
+
+def _wick_length(close, low, open, high, upper):
+    """
+    :param close:
+    :param low:
+    :param open:
+    :param high:
+    :return:
+
+    """
+
+    if close > open:
+        top_wick = high - close
+        bottom_wick = open - low
+
+    else:
+        top_wick = high - open
+        bottom_wick = close - low
+
+    if upper:
+        return top_wick
+    else:
+        return bottom_wick
 
 
 def _small_body(close, low, open, high):
@@ -138,3 +167,18 @@ def _flat_bottom(close, low, open, high):
 
 def _body_size(open, close):
     return abs(open - close)
+
+
+def doji(dataframe, exact=False):
+    """
+    computes the dojis (near by default) or absolute
+    :param dataframe:
+    :param exact:
+    :return:
+    """
+    if exact:
+        result = dataframe['open'] == dataframe['close']
+    else:
+        result = (dataframe['open'] - dataframe['close']).abs() <= ((dataframe['high'] - dataframe['close']) * 0.1)
+
+    return result.apply(lambda x: 1 if x else 0)

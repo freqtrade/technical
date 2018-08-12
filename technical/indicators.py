@@ -716,6 +716,23 @@ def ema(dataframe, period, field='close'):
     return ta.EMA(dataframe, timeperiod=period, price=field)
 
 
+def zema(dataframe, period, field='close'):
+    """
+    zero lag ema
+    :param dataframe:
+    :param period:
+    :param field:
+    :return:
+    """
+    dataframe = dataframe.copy()
+    dataframe['ema1'] = ema(dataframe,period,field)
+    dataframe['ema2'] = ema(dataframe,period,'ema1')
+    dataframe['d'] = dataframe['ema1'] - dataframe['ema2']
+    dataframe['zema'] = dataframe['ema1'] + dataframe['d']
+    return dataframe['zema']
+
+
+
 def tema(dataframe, period, field='close'):
     import talib.abstract as ta
     return ta.TEMA(dataframe, timeperiod=period, price=field)
