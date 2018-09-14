@@ -55,7 +55,8 @@ def resample_to_interval(dataframe, interval):
         'close': 'last',
         'volume': 'sum'
     }
-    df = df.resample(str(interval) + 'min').agg(ohlc_dict).dropna()
+    df = df.resample(str(interval) + 'min',
+                     label="right").agg(ohlc_dict).dropna()
     df['date'] = df.index
 
     return df
