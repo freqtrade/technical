@@ -85,10 +85,10 @@ def resampled_merge(original, resampled):
     # drop columns which should not be joined
     resampled = resampled.drop(columns=['open', 'high', 'low', 'close'])
 
-    resampled = resampled.resample(str(interval) + 'min').interpolate(method='nearest')
-    resampled['date'] = resampled.index
+    resampled['date'] = resampled.index - DateOffset(minutes=interval)
     resampled.index = range(len(resampled))
     dataframe = merge(original, resampled, on='date', how='left')
+    dataframe = dataframe.fillna(method='ffill')
     return dataframe
 
 
