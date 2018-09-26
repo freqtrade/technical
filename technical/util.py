@@ -61,7 +61,7 @@ def resample_to_interval(dataframe, interval):
     return df
 
 
-def resampled_merge(original, resampled):
+def resampled_merge(original, resampled, fill_na = False):
     """
     this method merges a resampled dataset back into the orignal data set
 
@@ -88,6 +88,9 @@ def resampled_merge(original, resampled):
     resampled['date'] = resampled.index
     resampled.index = range(len(resampled))
     dataframe = merge(original, resampled, on='date', how='left')
+
+    if fill_na:
+        dataframe.fillna(method='ffill', inplace=True)
     return dataframe
 
 
