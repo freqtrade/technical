@@ -688,8 +688,6 @@ def ichimoku(dataframe, conversion_line_period=20, base_line_periods=60, laggin_
     # the 'df' here is numerical indexed df
     last_index = df.iloc[-1:].index[0]
     last_date = df['date'].iloc[-1].date()
-    for i in range(displacement):
-        df.loc[last_index + 1 + i, 'date'] = last_date + timedelta(days=i)
 
     df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
 
