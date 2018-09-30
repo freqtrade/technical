@@ -817,4 +817,4 @@ def fibonacci_retracements(df, field='close') -> DataFrame:
     
     # Otherwise, we return a step indicator showing the fibonacci level
     # which each candle exceeds
-    data.apply(lambda x: max(t for t in thresholds if x >= t))
+    return data.apply(lambda x: max(t for t in thresholds if x >= t))
