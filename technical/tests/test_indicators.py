@@ -66,3 +66,26 @@ def test_fibonacci_retracements(testdata_1m_btc):
 
     assert result.min() < 1.0e-8
     assert result.max() > 1.0 - 1.0e-8
+    
+    
+def test_return_on_investment():
+    from pandas import DataFrame
+    from technical.indicators import return_on_investment
+    
+    close = numpy.array([100, 200, 300, 400, 500, 600])
+    buys = numpy.array([[0, 0, 0, 0, 0, 0],
+                        [0, 1, 0, 1, 0, 1],
+                        [1, 0, 1, 0, 1, 0]])
+    rois = numpy.array([[0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+                        [0.0, 0.0, 50.0, 0.0, 25.0, 0.0],
+                        [0.0, 100.0, 0.0, 33.33, 0.0, 20.0]])
+    
+    for buy, roi in zip(buys, rois):
+        dataframe = DataFrame()
+        dataframe['close'] = close
+        dataframe['buy'] = buy
+        
+        dataframe = return_on_investment(dataframe, decimals=2)
+        assert (dataframe['roi'] >= 0).all()
+        assert ((dataframe.loc[dataframe['buy'] == 1, 'roi'] == 0).all())
+        assert numpy.allclose(numpy.array(dataframe['roi']), roi)

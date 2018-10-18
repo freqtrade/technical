@@ -2,6 +2,7 @@
 This file contains a collection of common indicators, which are based on third party or custom libraries
 
 """
+import numpy as np
 from numpy.core.records import ndarray
 from pandas import Series, DataFrame
 from math import log
@@ -802,7 +803,6 @@ def ultimate_oscilator(dataframe):
     from pyti.ultimate_oscillator import ultimate_oscillator as uo
     uo(dataframe['close'], dataframe['low'])
 
-
 def fibonacci_retracements(df, field='close') -> DataFrame:
     # Common Fibonacci replacement thresholds:
     # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
@@ -818,3 +818,30 @@ def fibonacci_retracements(df, field='close') -> DataFrame:
     # Otherwise, we return a step indicator showing the fibonacci level
     # which each candle exceeds
     return data.apply(lambda x: max(t for t in thresholds if x >= t))
+    
+    
+def return_on_investment(dataframe, decimals=2) -> DataFrame:
+    """
+    Simple ROI indicator.
+    
+    :param dataframe:
+    :param decimals:
+    :return:
+    """
+    
+    close = np.array(dataframe['close'])
+    buy = np.array(dataframe['buy'])
+    buy_idx = np.where(buy == 1)[0]
+    roi = np.zeros(len(close))
+    if len(buy_idx) > 0:
+        # get chunks starting with a buy signal
+        # everything before the first buy signal is discarded
+        buy_chunks = np.split(close, buy_idx)[1:]
+        for idx, chunk in zip(buy_idx, buy_chunks):
+            # round ROI to avoid float accuracy problems
+            chunk_roi = np.round(100.0 * (chunk / chunk[0] - 1.0), decimals)
+            roi[idx:idx + len(chunk)] = chunk_roi
+         
+    dataframe['roi'] = roi
+    
+    return dataframe
