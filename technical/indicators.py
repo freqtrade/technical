@@ -2,6 +2,7 @@
 This file contains a collection of common indicators, which are based on third party or custom libraries
 
 """
+import numpy as np
 from numpy.core.records import ndarray
 from pandas import Series, DataFrame
 from math import log
