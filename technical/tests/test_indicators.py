@@ -58,6 +58,14 @@ def test_cmf(testdata_1m_btc):
 
     assert result.min() >= -1
     assert result.max() <= 1
+
+def test_fibonacci_retracements(testdata_1m_btc):
+    from technical.indicators import fibonacci_retracements
+
+    result = fibonacci_retracements(testdata_1m_btc)
+
+    assert result.min() < 1.0e-8
+    assert result.max() > 1.0 - 1.0e-8
     
     
 def test_return_on_investment():

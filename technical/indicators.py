@@ -802,6 +802,22 @@ def vwma(df, window):
 def ultimate_oscilator(dataframe):
     from pyti.ultimate_oscillator import ultimate_oscillator as uo
     uo(dataframe['close'], dataframe['low'])
+
+def fibonacci_retracements(df, field='close') -> DataFrame:
+    # Common Fibonacci replacement thresholds:
+    # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
+    thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
+
+    window_min, window_max = df[field].min(), df[field].max()
+    fib_levels = [window_min + t * (window_max - window_min) for t in thresholds]
+
+    # Scale data to match to thresholds
+    # Can be returned instead if one is looking at the movement between levels
+    data = (df[field] - window_min) / (window_max - window_min)
+    
+    # Otherwise, we return a step indicator showing the fibonacci level
+    # which each candle exceeds
+    return data.apply(lambda x: max(t for t in thresholds if x >= t))
     
     
 def return_on_investment(dataframe, decimals=2) -> DataFrame:
