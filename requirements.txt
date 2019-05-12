@@ -1,7 +1,7 @@
 TA-Lib==0.4.17
 pyti
 pandas==0.24.2
-simplejson
+simplejson==3.16.0
 ccxt==1.18.522
 arrow==0.13.1
 SQLAlchemy==1.3.3
