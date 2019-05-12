@@ -1,5 +1,5 @@
 TA-Lib==0.4.17
-pyti
+pyti==0.2.2
 pandas
 simplejson
 ccxt==1.14.24
