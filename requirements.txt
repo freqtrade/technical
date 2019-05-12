@@ -3,7 +3,7 @@ pyti
 pandas
 simplejson
 ccxt==1.14.24
-arrow
+arrow==0.13.1
 SQLAlchemy==1.2.7
 # keras
 # matplotlib
