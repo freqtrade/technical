@@ -2,7 +2,7 @@ TA-Lib==0.4.17
 pyti
 pandas
 simplejson
-ccxt==1.14.24
+ccxt==1.18.522
 arrow
 SQLAlchemy==1.2.7
 # keras
