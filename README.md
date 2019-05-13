@@ -31,7 +31,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 
 ### Wrapped Indicators
 
-This following indicators are available and have been 'wrapped' to just utilize a dataframe with the standard open/close/high/low/volume columns:
+The following indicators are available and have been 'wrapped' to be used on a dataframe with the standard open/close/high/low/volume columns:
 
 1. [cmf](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - chaikow money flow, requires dataframe and period
 2. [accumulation_distribtuion](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
