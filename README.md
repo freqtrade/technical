@@ -1,7 +1,6 @@
-# technical
+# Technical
 
-Welcome to Technical, where things are, well technical. This is a simple collection of indicators and utils to make the day to day operation
-of working with the freqtrade trading bot easier and more powerful!
+This is a collection of technical indicators collected or developed for freqtrade as well as utilities such as timeframe resampling.
 
 ## What does it do for you
 
@@ -10,14 +9,10 @@ around TA-Lib, PyTi and others, as we find them. So you have one place, to find 
 
 ### Custom indicators
 
-We will happily add your custom indicators to this repo!
-
 1. Consensus - an indicator which is based on a consensus model, across several indicators
-you can easily customize these. It is based on the [tradinvg view](https://www.tradingview.com/symbols/BTCUSD/technicals/) 
-buy/sell graph.
-  1.1 MovingAverage Consensus
-  1.2 Oscillator Consensus
-  1.3 SUmmary Consensus
+you can easily customize these. It is based on the [tradinvg view](https://www.tradingview.com/symbols/BTCUSD/technicals/)
+buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Consensus
+
 2. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
 3. [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
 4. [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
@@ -36,8 +31,7 @@ buy/sell graph.
 
 ### Wrapped Indicators
 
-This following indicators are available and have been 'wrapped' to just utilize a dataframe with the standard
-open/close/high/low/volume columns
+This following indicators are available and have been 'wrapped' to just utilize a dataframe with the standard open/close/high/low/volume columns:
 
 1. [cmf](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - chaikow money flow, requires dataframe and period
 2. [accumulation_distribtuion](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
@@ -50,23 +44,21 @@ open/close/high/low/volume columns
 9. [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
 10. williams percent
 11. momentum oscilator
-12. hull moving average 
+12. hull moving average
 13. ultimate oscillator
 14. sma
 15. ema
 16. tema
 
 
-We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but
-also super boring work.
-
+We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but also super boring work.
 
 ### Usage
 
 to use the library, please install it with pip
 
 ```bash
-pip install git+https://github.com/berlinguyinca/technical
+pip install git+https://github.com/freqtrade/technical
 ```
 
 and than import the required packages
@@ -76,5 +68,11 @@ from technical.indicators import accumulation_distribution, ...
 from technical.util import resample_to_interval, resampled_merge
 ```
 
-have fun!
 
+### Contributions
+
+We will happily add your custom indicators to this repo!
+Just clone this repository and implement your favorite indicator to use with freqtrade.
+
+
+have fun!
