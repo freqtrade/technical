@@ -845,3 +845,42 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
     dataframe['roi'] = roi
     
     return dataframe
+
+def td_sequential(dataframe):
+    """
+    TD Sequential
+    Author(Freqtrade): MichealReed
+    Original Author: Tom Demark
+
+
+    :param dataframe: dataframe
+    :return: TD Sequential:values - to +
+    """
+    """
+    TD Sequential
+    How to Buy/Sell Cryptocurrency with TD Sequential indicator
+    https://hackernoon.com/how-to-buy-sell-cryptocurrency-with-number-indicator-td-sequential-5af46f0ebce1
+    """
+    import pandas as pd
+    import numpy as np
+
+    # Copy DF
+    df = dataframe.copy()
+
+    # Setting up conditions for TD and TS
+    condv = (df['volume'] > 0)
+    cond1 = (df['close'] > df['close'].shift(4))
+    cond2 = (df['close'] < df['close'].shift(4))
+
+    # Conditional group for cumulative values
+    df['TD'] = df.groupby((cond1)[condv].cumsum()).cumcount()
+    df['TS'] = df.groupby((cond2)[condv].cumsum()).cumcount()
+
+    # Consolidate into a count with positive and negative integers
+    df['TD_count'] = df['TS'] - df['TD']
+
+    return pd.DataFrame(index=df.index, data={
+        'TD' : df['TD'],
+        'TS' : df['TS'],
+        'TD_count' : df['TD_count']
+    })
