@@ -854,33 +854,50 @@ def td_sequential(dataframe):
 
 
     :param dataframe: dataframe
-    :return: TD Sequential:values - to +
+    :return: TD Sequential:values -9 to +9
     """
     """
     TD Sequential
-    How to Buy/Sell Cryptocurrency with TD Sequential indicator
-    https://hackernoon.com/how-to-buy-sell-cryptocurrency-with-number-indicator-td-sequential-5af46f0ebce1
     """
-    import pandas as pd
-    import numpy as np
 
     # Copy DF
     df = dataframe.copy()
 
-    # Setting up conditions for TD and TS
     condv = (df['volume'] > 0)
     cond1 = (df['close'] > df['close'].shift(4))
     cond2 = (df['close'] < df['close'].shift(4))
+    
+    df['cond_tdb_a'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
+    df['cond_tds_a'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
+    df['cond_tdb_b'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
+    df['cond_tds_b'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
+    
+    df['tdb_a'] = df.groupby(
+        
+                                df['cond_tdb_a']
+    
+    ).cumcount()
+    df['tds_a'] = df.groupby(
+        
+                                df['cond_tds_a']
+    
+    ).cumcount()
+    
+    df['tdb_b'] = df.groupby(
+        
+                                df['cond_tdb_b']
+    
+    ).cumcount()
+    df['tds_b'] = df.groupby(
+        
+                                df['cond_tds_b']
+    
+    ).cumcount()
+    
+    df['tdc'] = df['tds_a'] - df['tdb_a']
+    df['tdc'] = df.apply((lambda x: x['tdb_b'] % 9 if x['tdb_b'] > 9 else x['tdc']), axis=1)
+    df['tdc'] = df.apply((lambda x: (x['tds_b'] % 9)*-1 if x['tds_b'] > 9 else x['tdc']), axis=1)
 
-    # Conditional group for cumulative values
-    df['TD'] = df.groupby((cond1)[condv].cumsum()).cumcount()
-    df['TS'] = df.groupby((cond2)[condv].cumsum()).cumcount()
-
-    # Consolidate into a count with positive and negative integers
-    df['TD_count'] = df['TS'] - df['TD']
-
-    return pd.DataFrame(index=df.index, data={
-        'TD' : df['TD'],
-        'TS' : df['TS'],
-        'TD_count' : df['TD_count']
+    return DataFrame(index=df.index, data={
+        'TD_count' : df['tdc']
     })
