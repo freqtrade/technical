@@ -4,7 +4,7 @@ pandas==0.25.0
 simplejson==3.16.0
 ccxt>=1.18.500
 arrow==0.14.2
-SQLAlchemy==1.3.5
+SQLAlchemy==1.3.6
 # keras
 # matplotlib
 # tensorflow - install if no gpu
