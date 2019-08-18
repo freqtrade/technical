@@ -7,4 +7,3 @@ update_configs:
     allowed_updates:
     - match:
         update_type: "all"
-    target_branch: "develop"
