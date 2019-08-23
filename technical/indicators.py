@@ -324,7 +324,7 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
     df["ma70"] = ma(df[src], 70)
     df['ma70l'] = df['ma70'].shift(+1)
     df["ma80"] = ma(df[src], 80)
-    df['ma80ll'] = df['ma80'].shift(+1)
+    df['ma80l'] = df['ma80'].shift(+1)
     df["ma90"] = ma(df[src], 90)
     df['ma90l'] = df['ma90'].shift(+1)
     df["ma100"] = ma(df[src], 100)
