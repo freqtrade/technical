@@ -1,6 +1,6 @@
 TA-Lib==0.4.17
 pyti==0.2.2
-pandas==0.25.0
+pandas==0.25.1
 simplejson==3.16.0
 ccxt>=1.18.500
 arrow==0.14.5
