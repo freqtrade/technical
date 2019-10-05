@@ -117,7 +117,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     """
 
     """"
-    Original Pinescript 
+    Original Pinescript
     From: https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/
 
     length = input(130, title="VFI length")
@@ -126,7 +126,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     signalLength=input(5)
     smoothVFI=input(false, type=bool)
 
-    #### Conversion summary to python 
+    #### Conversion summary to python
       - ma(x,y) => smoothVFI ? sma(x,y) : x // Added as smoothVFI test on vfi
 
       - typical = hlc3  // Added to DF as HLC
@@ -213,7 +213,7 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
     Author(Freqtrade): Creslinux
     Original Author(TrdingView): "Madrid"
 
-    Pinescript from TV Source Code and Description 
+    Pinescript from TV Source Code and Description
     //
     // Madrid : 17/OCT/2014 22:51M: Moving Average Ribbon : 2.0 : MMAR
     // http://madridjourneyonws.blogspot.com/
@@ -362,7 +362,7 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
 
     df['leadMA'] = df.apply(leadMAc, axis=1)
 
-    """   Logic for MAs 
+    """   Logic for MAs
     : change(ma)>=0 and ma05>ma100 ? lime
     : change(ma)<0  and ma05>ma100 ? maroon
     : change(ma)<=0 and ma05<ma100 ? red
@@ -473,7 +473,7 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     Yellow : The trend has come to a pause and it is either a reversal warning or a continuation. These are the entry, re-entry or closing position points.
     """
 
-    """ 
+    """
     Original Pinescript source code
 
     ma = ema(src, len)
@@ -513,7 +513,7 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     plotcandle(0, sqzma, 0, sqzma, color=sqzma >= 0?lime: red)
 
     plotcandle(0, refma, 0, refma, color=
-    (refma >= 0 and closema < refma) or (refma < 0 and closema > refma) ? yellow: 
+    (refma >= 0 and closema < refma) or (refma < 0 and closema > refma) ? yellow:
     refma >= 0 ? green: maroon)
     """
 
@@ -595,7 +595,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     :return: Laguerre RSI:values 0 to +1
     """
     """
-    Laguerra RSI 
+    Laguerra RSI
     How to trade lrsi:  (TL, DR) buy on the flat 0, sell on the drop from top,
     not when touch the top
     http://systemtradersuccess.com/testing-laguerre-rsi/
@@ -618,7 +618,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     """
     Vectorised pandas or numpy calculations are not used
     in Laguerre as L0 is self referencing.
-    Therefore we use an intertuples loop as next best option. 
+    Therefore we use an intertuples loop as next best option.
     """
     lrsi_l = []
     L0, L1, L2, L3 = 0.0, 0.0, 0.0, 0.0
@@ -628,7 +628,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
         L0 = ((1 - g)*p)+(g*nz(L0[1]))
         L1 = (-g*L0)+nz(L0[1])+(g*nz(L1[1]))
         L2 = (-g*L1)+nz(L1[1])+(g*nz(L2[1]))
-        L3 = (-g*L2)+nz(L2[1])+(g*nz(L3[1])) 
+        L3 = (-g*L2)+nz(L2[1])+(g*nz(L3[1]))
         """
         # Feed back loop
         L0_1, L1_1, L2_1, L3_1 = L0, L1, L2, L3
@@ -638,7 +638,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
         L2 = -g * L1 + L1_1 + g * L2_1
         L3 = -g * L2 + L2_1 + g * L3_1
 
-        """ Original Pinescript Block 2 
+        """ Original Pinescript Block 2
         cu=(L0 > L1? L0 - L1: 0) + (L1 > L2? L1 - L2: 0) + (L2 > L3? L2 - L3: 0)
         cd=(L0 < L1? L1 - L0: 0) + (L1 < L2? L2 - L1: 0) + (L2 < L3? L3 - L2: 0)
         """
@@ -659,7 +659,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
         else:
             cd = cd + L3 - L2
 
-        """Original Pinescript  Block 3 
+        """Original Pinescript  Block 3
         lrsi=ema((cu+cd==0? -1: cu+cd)==-1? 0: (cu/(cu+cd==0? -1: cu+cd)), smooth)
         """
         if (cu + cd) != 0:
@@ -814,21 +814,21 @@ def fibonacci_retracements(df, field='close') -> DataFrame:
     # Scale data to match to thresholds
     # Can be returned instead if one is looking at the movement between levels
     data = (df[field] - window_min) / (window_max - window_min)
-    
+
     # Otherwise, we return a step indicator showing the fibonacci level
     # which each candle exceeds
     return data.apply(lambda x: max(t for t in thresholds if x >= t))
-    
-    
+
+
 def return_on_investment(dataframe, decimals=2) -> DataFrame:
     """
     Simple ROI indicator.
-    
+
     :param dataframe:
     :param decimals:
     :return:
     """
-    
+
     close = np.array(dataframe['close'])
     buy = np.array(dataframe['buy'])
     buy_idx = np.where(buy == 1)[0]
@@ -841,9 +841,9 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
             # round ROI to avoid float accuracy problems
             chunk_roi = np.round(100.0 * (chunk / chunk[0] - 1.0), decimals)
             roi[idx:idx + len(chunk)] = chunk_roi
-         
+
     dataframe['roi'] = roi
-    
+
     return dataframe
 
 def td_sequential(dataframe):
@@ -866,34 +866,34 @@ def td_sequential(dataframe):
     condv = (df['volume'] > 0)
     cond1 = (df['close'] > df['close'].shift(4))
     cond2 = (df['close'] < df['close'].shift(4))
-    
+
     df['cond_tdb_a'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
     df['cond_tds_a'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
     df['cond_tdb_b'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
     df['cond_tds_b'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
-    
+
     df['tdb_a'] = df.groupby(
-        
+
                                 df['cond_tdb_a']
-    
+
     ).cumcount()
     df['tds_a'] = df.groupby(
-        
+
                                 df['cond_tds_a']
-    
+
     ).cumcount()
-    
+
     df['tdb_b'] = df.groupby(
-        
+
                                 df['cond_tdb_b']
-    
+
     ).cumcount()
     df['tds_b'] = df.groupby(
-        
+
                                 df['cond_tds_b']
-    
+
     ).cumcount()
-    
+
     df['tdc'] = df['tds_a'] - df['tdb_a']
     df['tdc'] = df.apply((lambda x: x['tdb_b'] % 9 if x['tdb_b'] > 9 else x['tdc']), axis=1)
     df['tdc'] = df.apply((lambda x: (x['tds_b'] % 9)*-1 if x['tds_b'] > 9 else x['tdc']), axis=1)

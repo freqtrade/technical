@@ -38,7 +38,8 @@ def resample_to_interval(dataframe, interval):
         interval = TICKER_INTERVAL_MINUTES[interval]
 
     """
-        resamples the given dataframe to the desired interval. Please be aware you need to upscale this to join the results
+        resamples the given dataframe to the desired interval.
+        Please be aware you need to upscale this to join the results
         with the other dataframe
 
     :param dataframe: dataframe containing close/high/low/open/volume
@@ -62,7 +63,7 @@ def resample_to_interval(dataframe, interval):
     return df
 
 
-def resampled_merge(original, resampled, fill_na = False):
+def resampled_merge(original, resampled, fill_na=False):
     """
     this method merges a resampled dataset back into the orignal data set
 
@@ -112,6 +113,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
             return converted
         else:
             raise Exception(
-                "sorry, your interval of {} is not supported in {}".format(resampled_interval, TICKER_INTERVAL_MINUTES))
+                f"sorry, your interval of {resampled_interval} is not "
+                f"supported in {TICKER_INTERVAL_MINUTES}")
 
     return resampled_interval

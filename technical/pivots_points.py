@@ -7,6 +7,7 @@ Indicators for Freqtrade
 author@: Gerald Lonlas
 """
 
+
 def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFrame:
     """
     Pivots Points
@@ -66,7 +67,7 @@ def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFr
         prev_resistance = data['r' + str(i - 1)]
 
         # Resitance
-        data['r'+ str(i)] = (data['pivot'] - prev_support) + prev_resistance
+        data['r' + str(i)] = (data['pivot'] - prev_support) + prev_resistance
 
         # Support
         data['s' + str(i)] = data['pivot'] - (prev_resistance - prev_support)
@@ -75,4 +76,3 @@ def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFr
         index=dataframe.index,
         data=data
     )
-
