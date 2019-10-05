@@ -15,12 +15,11 @@ setup(name='technical',
       license='GPLv3',
       packages=find_packages(),
       setup_requires=['pytest-runner'],
-      tests_require=['pytest', 'pytest-mock', 'pytest-cov'],
+      tests_require=['pytest', 'pytest-cov', 'pytest-mock'],
       install_requires=[
           'TA-Lib',
           'pyti',
           'pandas',
-          'simplejson',
           'arrow',
           'SQLAlchemy'
       ],

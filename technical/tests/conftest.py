@@ -3,7 +3,7 @@ import logging
 
 import pytest
 from pandas import DataFrame
-import simplejson as json
+import json
 
 from technical.util import ticker_history_to_dataframe
 

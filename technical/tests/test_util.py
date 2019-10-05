@@ -1,8 +1,8 @@
-from pytest import fail
+import json
 
-from technical.util import ticker_history_to_dataframe, resample_to_interval, resampled_merge
 from technical.indicators import cmf
-import simplejson as json
+from technical.util import (resample_to_interval, resampled_merge,
+                            ticker_history_to_dataframe)
 
 
 def test_ticker_to_dataframe():
