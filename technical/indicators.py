@@ -560,7 +560,7 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
 
 
 def stc(dataframe, fast=23, slow=50, length=10):
-    import pandas as pd
+
     # First, the 23-period and the 50-period EMA and the MACD values are calculated:
     # EMA1 = EMA (Close, Short Length);
     # EMA2 = EMA (Close, Long Length);
@@ -602,9 +602,6 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
 
     http://www.davenewberg.com/Trading/TS_Code/Ehlers_Indicators/Laguerre_RSI.html
     """
-    import talib as ta
-    import pandas as pd
-    ema = ta.EMA
 
     df = dataframe
     g = gamma
@@ -670,10 +667,9 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     return lrsi_l
 
 
-def ichimoku(dataframe, conversion_line_period=20, base_line_periods=60, laggin_span=120, displacement=30):
+def ichimoku(dataframe, conversion_line_period=20, base_line_periods=60,
+             laggin_span=120, displacement=30):
     "Ichimoku cloud indicator"
-
-    from datetime import timedelta
 
     df = dataframe.copy()
 
@@ -724,12 +720,11 @@ def zema(dataframe, period, field='close'):
     :return:
     """
     dataframe = dataframe.copy()
-    dataframe['ema1'] = ema(dataframe,period,field)
-    dataframe['ema2'] = ema(dataframe,period,'ema1')
+    dataframe['ema1'] = ema(dataframe, period, field)
+    dataframe['ema2'] = ema(dataframe, period, 'ema1')
     dataframe['d'] = dataframe['ema1'] - dataframe['ema2']
     dataframe['zema'] = dataframe['ema1'] + dataframe['d']
     return dataframe['zema']
-
 
 
 def tema(dataframe, period, field='close'):
@@ -803,6 +798,7 @@ def ultimate_oscilator(dataframe):
     from pyti.ultimate_oscillator import ultimate_oscillator as uo
     uo(dataframe['close'], dataframe['low'])
 
+
 def fibonacci_retracements(df, field='close') -> DataFrame:
     # Common Fibonacci replacement thresholds:
     # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
@@ -845,6 +841,7 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
     dataframe['roi'] = roi
 
     return dataframe
+
 
 def td_sequential(dataframe):
     """
@@ -899,5 +896,5 @@ def td_sequential(dataframe):
     df['tdc'] = df.apply((lambda x: (x['tds_b'] % 9)*-1 if x['tds_b'] > 9 else x['tdc']), axis=1)
 
     return DataFrame(index=df.index, data={
-        'TD_count' : df['tdc']
+        'TD_count': df['tdc']
     })
