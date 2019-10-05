@@ -11,13 +11,13 @@ if version_info.major == 3 and version_info.minor < 6 or \
     exit(1)
 
 readme_file = Path(__file__).parent / "README.md"
-readme_long = "Technical Indicators for financial analysis"
+readme_long = "Technical Indicators for Financial Analysis"
 if readme_file.is_file():
     readme_long = (Path(__file__).parent / "README.md").read_text()
 
 setup(name='technical',
       version=__version__,
-      description='Technical Indicators for financial analysis',
+      description="Technical Indicators for Financial Analysis",
       long_description=readme_long,
       long_description_content_type="text/markdown",
       url='https://github.com/freqtrade/technical',
