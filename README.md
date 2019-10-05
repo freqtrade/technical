@@ -59,6 +59,12 @@ We will try to add more and more wrappers as we get to it, but please be patient
 to use the library, please install it with pip
 
 ```bash
+pip install technical
+```
+
+To get the latest version, install directly from github:
+
+```bash
 pip install git+https://github.com/freqtrade/technical
 ```
 
@@ -69,11 +75,9 @@ from technical.indicators import accumulation_distribution, ...
 from technical.util import resample_to_interval, resampled_merge
 ```
 
-
 ### Contributions
 
 We will happily add your custom indicators to this repo!
 Just clone this repository and implement your favorite indicator to use with freqtrade.
-
 
 have fun!
