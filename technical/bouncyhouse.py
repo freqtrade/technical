@@ -40,7 +40,7 @@ def _bounce(open, close, level, previous_touch):
         return 0
 
 
-def bounce(dataframe, level):
+def bounce(dataframe: DataFrame, level):
     """
 
     :param dataframe:
@@ -59,7 +59,7 @@ def bounce(dataframe, level):
     return np.vectorize(_bounce)(open, close, level, touch)
 
 
-def touches(dataframe, level):
+def touches(dataframe: DataFrame, level):
     """
         :param dataframe: our incomming dataframe
         :param level: where do we want to calculate the touches
