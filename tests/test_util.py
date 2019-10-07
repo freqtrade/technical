@@ -1,12 +1,12 @@
-from pytest import fail
+import json
 
-from technical.util import ticker_history_to_dataframe, resample_to_interval, resampled_merge
 from technical.indicators import cmf
-import simplejson as json
+from technical.util import (resample_to_interval, resampled_merge,
+                            ticker_history_to_dataframe)
 
 
 def test_ticker_to_dataframe():
-    with open('technical/tests/testdata/UNITTEST_BTC-1m.json') as data_file:
+    with open('tests/testdata/UNITTEST_BTC-1m.json') as data_file:
         data = ticker_history_to_dataframe(json.load(data_file))
         assert len(data) > 0
 

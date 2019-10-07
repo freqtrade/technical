@@ -62,14 +62,14 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
                           columns=['Data', 'Max Line', 'Min Line'])
 
     if charts:
-        from matplotlib.pyplot import plot, grid, show,savefig,close
+        from matplotlib.pyplot import plot, grid, savefig, close
         plot(trends)
         grid()
 
-        if isinstance(charts,str):
+        if isinstance(charts, str):
             savefig("{}.png".format(charts))
         else:
-            savefig("{}_{}.png".format(x[0],x[len(x)-1]))
+            savefig("{}_{}.png".format(x[0], x[len(x)-1]))
         close()
 
     return trends
@@ -140,5 +140,3 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
     trends = pd.DataFrame(trends, index=np.arange(0, len(x)),
                           columns=['Data', 'Max Line', 'Min Line'])
     return trends
-
-
