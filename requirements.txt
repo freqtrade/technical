@@ -3,7 +3,7 @@ pyti==0.2.2
 pandas==0.25.3
 ccxt>=1.18.500
 arrow==0.15.4
-SQLAlchemy==1.3.11
+SQLAlchemy==1.3.12
 # keras
 # matplotlib
 # tensorflow - install if no gpu
