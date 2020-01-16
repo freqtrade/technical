@@ -75,7 +75,7 @@ from technical.indicators import accumulation_distribution, ...
 from technical.util import resample_to_interval, resampled_merge
 
 # Assuming 1h dataframe -resampling to 4h:
-dataframe_long = resample_to_interval(dataframe, 4 * 60)
+dataframe_long = resample_to_interval(dataframe, 240)  # 240 = 4 * 60 = 4h
 
 dataframe_long['rsi'] = ta.RSI(dataframe_long)
 # Combine the 2 dataframes
