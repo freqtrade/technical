@@ -72,7 +72,7 @@ def resampled_merge(original, resampled, fill_na=False):
     :return: the merged dataset
     """
 
-    interval = int((original['date'] - original['date'].shift()).min().seconds / 60)
+    interval = int((original['date'] - original['date'].shift()).min().total_seconds() // 60)
     resampled_interval = compute_interval(resampled)
 
     # no point in interpolating these colums
@@ -102,7 +102,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
     :param exchange_interval: should we convert the result to an exchange interval or just a number
     :return:
     """
-    resampled_interval = int((dataframe['date'] - dataframe['date'].shift()).min().seconds / 60)
+    res_interval = int((dataframe['date'] - dataframe['date'].shift()).min().total_seconds() // 60)
 
     if exchange_interval:
         # convert to our allowed ticker values
@@ -113,7 +113,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
             return converted
         else:
             raise Exception(
-                f"sorry, your interval of {resampled_interval} is not "
+                f"sorry, your interval of {res_interval} is not "
                 f"supported in {TICKER_INTERVAL_MINUTES}")
 
-    return resampled_interval
+    return res_interval
