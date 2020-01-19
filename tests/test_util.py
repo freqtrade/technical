@@ -32,6 +32,11 @@ def test_resampled_merge(testdata_1m_btc):
 
     assert "resample_5_date" not in merged
     assert "resample_5_volume" not in merged
+    # Verify the assignment goes to the correct candle
+    # If resampling to 5m, then the resampled value needs to be on the 5m candle.
+    assert sum(merged.loc[merged['date'] == '2017-11-14 22:54:00', 'resample_5_close'].isna()) == 1
+    assert sum(merged.loc[merged['date'] == '2017-11-14 22:55:00', 'resample_5_close'].isna()) == 0
+    assert sum(merged.loc[merged['date'] == '2017-11-14 22:56:00', 'resample_5_close'].isna()) == 1
 
 
 def test_resampled_merge_contains_indicator(testdata_1m_btc):
