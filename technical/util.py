@@ -1,7 +1,7 @@
 """
     defines utility functions to be used
 """
-from pandas import DatetimeIndex, merge, DataFrame, to_datetime, DateOffset
+from pandas import DatetimeIndex, merge, DataFrame, to_datetime
 
 from technical.exchange import TICKER_INTERVAL_MINUTES
 
@@ -72,7 +72,6 @@ def resampled_merge(original, resampled, fill_na=False):
     :return: the merged dataset
     """
 
-    interval = int((original['date'] - original['date'].shift()).min().total_seconds() // 60)
     resampled_interval = compute_interval(resampled)
 
     # no point in interpolating these colums
@@ -86,7 +85,7 @@ def resampled_merge(original, resampled, fill_na=False):
     # drop columns which should not be joined
     resampled = resampled.drop(columns=['open', 'high', 'low', 'close'])
 
-    resampled['date'] = resampled.index - DateOffset(minutes=interval)
+    resampled['date'] = resampled.index
     resampled.index = range(len(resampled))
     dataframe = merge(original, resampled, on='date', how='left')
 
