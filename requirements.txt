@@ -1,6 +1,6 @@
 TA-Lib==0.4.17
 pyti==0.2.2
-pandas==1.0.0
+pandas==1.0.1
 ccxt>=1.18.500
 arrow==0.15.5
 SQLAlchemy==1.3.13
