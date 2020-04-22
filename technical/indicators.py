@@ -785,9 +785,18 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def williams_percent(dataframe):
+def williams_percent_deprecated(dataframe):
     from pyti.williams_percent_r import williams_percent_r
     return williams_percent_r(dataframe['close'])
+    
+def williams_percent(dataframe, period=14):
+    close_data=dataframe['close']
+    wr=[]
+    for idx in range(0, len(close_data)):
+        highest_high = np.max(close_data[idx+1-period:idx+1])
+        lowest_low = np.min(close_data[idx+1-period:idx+1])
+        wr = np.append(wr,[((highest_high - close_data[idx]) / (highest_high - lowest_low)) * -100 ])
+    return wr
 
 
 def momentum(dataframe, field='close', period=9):
