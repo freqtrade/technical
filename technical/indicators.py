@@ -667,42 +667,47 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     return lrsi_l
 
 
-def ichimoku(dataframe, conversion_line_period=20, base_line_periods=60,
-             laggin_span=120, displacement=30):
-    "Ichimoku cloud indicator"
+def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
+             laggin_span=52, displacement=26):
+    """
+    Ichimoku cloud indicator
+    Note: Do not use chikou_span for backtesting.
+        It looks into the future, is not printed by most charting platforms.
+        It is only useful for visual analysis
+    :param dataframe: Dataframe containing OHLCV data
+    :param conversion_line_period: Conversion line Period (defaults to 9)
+    :param base_line_periods: Base line Periods (defaults to 26)
+    :param laggin_span: Lagging span period
+    :param displacement: Displacement (shift) - defaults to 26
+    :return: Dict containing the following keys:
+        tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, cloud_green, cloud_red
+    """
 
-    df = dataframe.copy()
+    tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
+        + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
 
-    high_9 = df['high'].rolling(window=conversion_line_period).max()
-    low_9 = df['low'].rolling(window=conversion_line_period).min()
-    df['tenkan_sen'] = (high_9 + low_9) / 2
+    kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
+        + dataframe['low'].rolling(window=base_line_periods).min()) / 2
 
-    high_26 = df['high'].rolling(window=base_line_periods).max()
-    low_26 = df['low'].rolling(window=base_line_periods).min()
-    df['kijun_sen'] = (high_26 + low_26) / 2
+    senkou_span_a = ((tenkan_sen + kijun_sen) / 2).shift(displacement)
 
-    # this is to extend the 'df' in future for 26 days
-    # the 'df' here is numerical indexed df
-    last_index = df.iloc[-1:].index[0]
-    last_date = df['date'].iloc[-1].date()
 
-    df['senkou_span_a'] = ((df['tenkan_sen'] + df['kijun_sen']) / 2).shift(26)
+    senkou_span_b = ((dataframe['high'].rolling(window=laggin_span).max()
+         + dataframe['low'].rolling(window=laggin_span).min()) / 2).shift(displacement)
 
-    high_52 = df['high'].rolling(window=laggin_span).max()
-    low_52 = df['low'].rolling(window=laggin_span).min()
-    df['senkou_span_b'] = ((high_52 + low_52) / 2).shift(displacement)
+    chikou_span = dataframe['close'].shift(-displacement)
 
-    # most charting softwares dont plot this line
-    df['chikou_span'] = df['close'].shift(-displacement)  # sometimes -26
+    cloud_green = (senkou_span_a > senkou_span_b)
+    cloud_red = (senkou_span_b > senkou_span_a)
 
     return {
-        'tenkan_sen': df['tenkan_sen'],
-        'kijun_sen': df['kijun_sen'],
-        'senkou_span_a': df['senkou_span_a'],
-        'senkou_span_b': df['senkou_span_b'],
-        'chikou_span': df['chikou_span'],
-        'cloud_green': df['senkou_span_a'] > df['senkou_span_b'],
-        'cloud_red': df['senkou_span_b'] > df['senkou_span_a']
+        'tenkan_sen': tenkan_sen,
+        'kijun_sen': kijun_sen,
+        'senkou_span_a': senkou_span_a,
+        'senkou_span_b': senkou_span_b,
+        'chikou_span': chikou_span,
+        'cloud_green': (senkou_span_a > senkou_span_b),
+        'cloud_red': (senkou_span_b > senkou_span_a),
     }
 
 
