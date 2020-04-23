@@ -789,13 +789,10 @@ def williams_percent_deprecated(dataframe):
     from pyti.williams_percent_r import williams_percent_r
     return williams_percent_r(dataframe['close'])
     
-def williams_percent(dataframe, period=14):
-    close_data=dataframe['close']
-    wr=[]
-    for idx in range(0, len(close_data)):
-        highest_high = np.max(close_data[idx+1-period:idx+1])
-        lowest_low = np.min(close_data[idx+1-period:idx+1])
-        wr = np.append(wr,[((highest_high - close_data[idx]) / (highest_high - lowest_low)) * -100 ])
+def williams_percent(dataframe, period=14, colname='close'):
+    highest_high = dataframe[colname].rolling(period).max()
+    lowest_low = dataframe[colname].rolling(period).min()
+    wr = (highest_high - dataframe[colname]) / (highest_high - lowest_low) * -100
     return wr
 
 
