@@ -785,10 +785,6 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def williams_percent_deprecated(dataframe):
-    from pyti.williams_percent_r import williams_percent_r
-    return williams_percent_r(dataframe['close'])
-    
 def williams_percent(dataframe, period=14, colname='close'):
     highest_high = dataframe[colname].rolling(period).max()
     lowest_low = dataframe[colname].rolling(period).min()
