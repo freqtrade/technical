@@ -785,10 +785,10 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def williams_percent(dataframe, period=14, colname='close'):
-    highest_high = dataframe[colname].rolling(period).max()
-    lowest_low = dataframe[colname].rolling(period).min()
-    wr = (highest_high - dataframe[colname]) / (highest_high - lowest_low) * -100
+def williams_percent(dataframe, period=14, field='close'):
+    highest_high = dataframe[field].rolling(period).max()
+    lowest_low = dataframe[field].rolling(period).min()
+    wr = (highest_high - dataframe[field]) / (highest_high - lowest_low) * -100
     return wr
 
 
