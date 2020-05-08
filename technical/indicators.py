@@ -8,6 +8,92 @@ from pandas import Series, DataFrame
 from math import log
 
 
+########################################
+#
+# Overlap Studies Functions
+#
+
+# BBANDS               Bollinger Bands
+def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="bb") -> DataFrame:
+    from pyti.bollinger_bands import lower_bollinger_band, middle_bollinger_band, upper_bollinger_band
+    dataframe["{}_lower".format(colum_prefix)] = lower_bollinger_band(dataframe[field], period, stdv)
+    dataframe["{}_middle".format(colum_prefix)] = middle_bollinger_band(dataframe[field], period, stdv)
+    dataframe["{}_upper".format(colum_prefix)] = upper_bollinger_band(dataframe[field], period, stdv)
+
+    return dataframe
+
+
+# DEMA                 Double Exponential Moving Average
+
+# EMA                  Exponential Moving Average
+def ema(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.EMA(dataframe, timeperiod=period, price=field)
+
+
+# HT_TRENDLINE         Hilbert Transform - Instantaneous Trendline
+# KAMA                 Kaufman Adaptive Moving Average
+# MA                   Moving average
+# MAMA                 MESA Adaptive Moving Average
+# MAVP                 Moving average with variable period
+# MIDPOINT             MidPoint over period
+# MIDPRICE             Midpoint Price over period
+# SAR                  Parabolic SAR
+# SAREXT               Parabolic SAR - Extended
+
+# SMA                  Simple Moving Average
+def sma(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.SMA(dataframe, timeperiod=period, price=field)
+
+
+# T3                   Triple Exponential Moving Average (T3)
+
+# TEMA                 Triple Exponential Moving Average
+def tema(dataframe, period, field='close'):
+    import talib.abstract as ta
+    return ta.TEMA(dataframe, timeperiod=period, price=field)
+
+
+# TRIMA                Triangular Moving Average
+# WMA                  Weighted Moving Average
+
+# Other Overlap Studies Functions
+def hull_moving_average(dataframe, period, field='close') -> ndarray:
+    from pyti.hull_moving_average import hull_moving_average as hma
+    return hma(dataframe[field], period)
+
+
+def vwma(df, window):
+    return df.apply(lambda x: x.close * x.volume, axis=1).rolling(window).sum() / df.volume.rolling(window).sum()
+
+
+def zema(dataframe, period, field='close'):
+    """
+    zero lag ema
+    :param dataframe:
+    :param period:
+    :param field:
+    :return:
+    """
+    dataframe = dataframe.copy()
+    dataframe['ema1'] = ema(dataframe, period, field)
+    dataframe['ema2'] = ema(dataframe, period, 'ema1')
+    dataframe['d'] = dataframe['ema1'] - dataframe['ema2']
+    dataframe['zema'] = dataframe['ema1'] + dataframe['d']
+    return dataframe['zema']
+
+
+########################################
+#
+# Momentum Indicator Functions
+#
+
+# ADX                  Average Directional Movement Index
+# ADXR                 Average Directional Movement Index Rating
+# APO                  Absolute Price Oscillator
+
+# AROON                Aroon
 def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
     from pyti.aroon import aroon_up as up
     from pyti.aroon import aroon_down as down
@@ -16,6 +102,114 @@ def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFram
     return dataframe
 
 
+# AROONOSC             Aroon Oscillator
+# BOP                  Balance Of Power
+
+# CCI                  Commodity Channel Index
+def cci(dataframe, period) -> ndarray:
+    from pyti.commodity_channel_index import commodity_channel_index
+
+    return commodity_channel_index(dataframe['close'], dataframe['high'], dataframe['low'], period)
+
+
+# CMO                  Chande Momentum Oscillator
+def cmo(dataframe, period, field='close') -> ndarray:
+    from pyti.chande_momentum_oscillator import chande_momentum_oscillator
+    return chande_momentum_oscillator(dataframe[field], period)
+
+
+# DX                   Directional Movement Index
+# MACD                 Moving Average Convergence/Divergence
+# MACDEXT              MACD with controllable MA type
+# MACDFIX              Moving Average Convergence/Divergence Fix 12/26
+# MFI                  Money Flow Index
+# MINUS_DI             Minus Directional Indicator
+# MINUS_DM             Minus Directional Movement
+
+# MOM                  Momentum
+def momentum(dataframe, field='close', period=9):
+    from pyti.momentum import momentum as m
+    return m(dataframe[field], period)
+
+
+# PLUS_DI              Plus Directional Indicator
+# PLUS_DM              Plus Directional Movement
+# PPO                  Percentage Price Oscillator
+# ROC                  Rate of change : ((price/prevPrice)-1)*100
+# ROCP                 Rate of change Percentage: (price-prevPrice)/prevPrice
+# ROCR                 Rate of change ratio: (price/prevPrice)
+# ROCR100              Rate of change ratio 100 scale: (price/prevPrice)*100
+# RSI                  Relative Strength Index
+# STOCH                Stochastic
+# STOCHF               Stochastic Fast
+# STOCHRSI             Stochastic Relative Strength Index
+# TRIX                 1-day Rate-Of-Change (ROC) of a Triple Smooth EMA
+
+# ULTOSC               Ultimate Oscillator
+def ultimate_oscilator(dataframe):
+    from pyti.ultimate_oscillator import ultimate_oscillator as uo
+    uo(dataframe['close'], dataframe['low'])
+
+
+# WILLR                Williams' %R
+def williams_percent(dataframe, period=14, field='close'):
+    highest_high = dataframe[field].rolling(period).max()
+    lowest_low = dataframe[field].rolling(period).min()
+    wr = (highest_high - dataframe[field]) / (highest_high - lowest_low) * -100
+    return wr
+
+
+########################################
+#
+# Volume Indicator Functions
+#
+
+# AD                   Chaikin A/D Line
+def accumulation_distribution(dataframe) -> ndarray:
+    from pyti.accumulation_distribution import accumulation_distribution as acd
+
+    return acd(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'])
+
+
+# ADOSC                Chaikin A/D Oscillator
+# OBV                  On Balance Volume
+
+# Other Volume Indicator Functions
+def cmf(dataframe, period=14) -> ndarray:
+    from pyti.chaikin_money_flow import chaikin_money_flow
+
+    return chaikin_money_flow(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'], period)
+
+
+########################################
+#
+# Cycle Indicator Functions
+#
+
+# HT_DCPERIOD          Hilbert Transform - Dominant Cycle Period
+# HT_DCPHASE           Hilbert Transform - Dominant Cycle Phase
+# HT_PHASOR            Hilbert Transform - Phasor Components
+# HT_SINE              Hilbert Transform - SineWave
+# HT_TRENDMODE         Hilbert Transform - Trend vs Cycle Mode
+
+
+########################################
+#
+# Price Transform Functions
+#
+
+# AVGPRICE             Average Price
+# MEDPRICE             Median Price
+# TYPPRICE             Typical Price
+# WCLPRICE             Weighted Close Price
+
+
+########################################
+#
+# Volatility Indicator Functions
+#
+
+# ATR                  Average True Range
 def atr(dataframe, period, field='close') -> ndarray:
     from pyti.average_true_range import average_true_range
     return average_true_range(dataframe[field], period)
@@ -26,183 +220,159 @@ def atr_percent(dataframe, period, field='close') -> ndarray:
     return average_true_range_percent(dataframe[field], period)
 
 
-def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="bb") -> DataFrame:
-    from pyti.bollinger_bands import lower_bollinger_band, middle_bollinger_band, upper_bollinger_band
-    dataframe["{}_lower".format(colum_prefix)] = lower_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_middle".format(colum_prefix)] = middle_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_upper".format(colum_prefix)] = upper_bollinger_band(dataframe[field], period, stdv)
-
-    return dataframe
+# NATR                 Normalized Average True Range
+# TRANGE               True Range
 
 
-def cmf(dataframe, period=14) -> ndarray:
-    from pyti.chaikin_money_flow import chaikin_money_flow
-
-    return chaikin_money_flow(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'], period)
-
-
-def accumulation_distribution(dataframe) -> ndarray:
-    from pyti.accumulation_distribution import accumulation_distribution as acd
-
-    return acd(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'])
+########################################
+#
+# Pattern Recognition Functions
+# Statistic Functions
+# Math Transform Functions
+# Math Operator Functions
+#
 
 
-def osc(dataframe, periods=14) -> ndarray:
+########################################
+#
+# Ichimoku Cloud
+#
+def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
+             laggin_span=52, displacement=26):
     """
-    1. Calculating DM (i).
-        If HIGH (i) > HIGH (i - 1), DM (i) = HIGH (i) - HIGH (i - 1), otherwise DM (i) = 0.
-    2. Calculating DMn (i).
-        If LOW (i) < LOW (i - 1), DMn (i) = LOW (i - 1) - LOW (i), otherwise DMn (i) = 0.
-    3. Calculating value of OSC:
-        OSC (i) = SMA (DM, N) / (SMA (DM, N) + SMA (DMn, N)).
-
-    :param dataframe:
-    :param periods:
-    :return:
+    Ichimoku cloud indicator
+    Note: Do not use chikou_span for backtesting.
+        It looks into the future, is not printed by most charting platforms.
+        It is only useful for visual analysis
+    :param dataframe: Dataframe containing OHLCV data
+    :param conversion_line_period: Conversion line Period (defaults to 9)
+    :param base_line_periods: Base line Periods (defaults to 26)
+    :param laggin_span: Lagging span period
+    :param displacement: Displacement (shift) - defaults to 26
+    :return: Dict containing the following keys:
+        tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, cloud_green, cloud_red
     """
+
+    tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
+        + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
+
+    kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
+        + dataframe['low'].rolling(window=base_line_periods).min()) / 2
+
+    senkou_span_a = ((tenkan_sen + kijun_sen) / 2).shift(displacement)
+
+    senkou_span_b = ((dataframe['high'].rolling(window=laggin_span).max()
+         + dataframe['low'].rolling(window=laggin_span).min()) / 2).shift(displacement)
+
+    chikou_span = dataframe['close'].shift(-displacement)
+
+    cloud_green = (senkou_span_a > senkou_span_b)
+    cloud_red = (senkou_span_b > senkou_span_a)
+
+    return {
+        'tenkan_sen': tenkan_sen,
+        'kijun_sen': kijun_sen,
+        'senkou_span_a': senkou_span_a,
+        'senkou_span_b': senkou_span_b,
+        'chikou_span': chikou_span,
+        'cloud_green': (senkou_span_a > senkou_span_b),
+        'cloud_red': (senkou_span_b > senkou_span_a),
+    }
+
+
+########################################
+#
+# Laguerre RSI
+#
+def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
+    """
+    laguerre RSI
+    Author Creslin
+    Original Author: John Ehlers 1979
+
+    :param dataframe: df
+    :param gamma: Between 0 and 1, default 0.75
+    :param smooth: 1 is off. Valid values over 1 are alook back smooth for an ema
+    :param debug: Bool, prints to console
+    :return: Laguerre RSI:values 0 to +1
+    """
+    """
+    Laguerra RSI
+    How to trade lrsi:  (TL, DR) buy on the flat 0, sell on the drop from top,
+    not when touch the top
+    http://systemtradersuccess.com/testing-laguerre-rsi/
+
+    http://www.davenewberg.com/Trading/TS_Code/Ehlers_Indicators/Laguerre_RSI.html
+    """
+
     df = dataframe
-    df['DM'] = (df['high'] - df['high'].shift()).apply(lambda x: max(x, 0))
-    df['DMn'] = (df['low'].shift() - df['low']).apply(lambda x: max(x, 0))
-    return Series.rolling_mean(df.DM, periods) / (
-            Series.rolling_mean(df.DM, periods) + Series.rolling_mean(df.DMn, periods))
+    g = gamma
+    smooth = smooth
+    debug = debug
+    if debug:
+        from pandas import set_option
+        set_option('display.max_rows', 2000)
+        set_option('display.max_columns', 8)
 
-
-def cmo(dataframe, period, field='close') -> ndarray:
-    from pyti.chande_momentum_oscillator import chande_momentum_oscillator
-    return chande_momentum_oscillator(dataframe[field], period)
-
-
-def hull_moving_average(dataframe, period, field='close') -> ndarray:
-    from pyti.hull_moving_average import hull_moving_average as hma
-    return hma(dataframe[field], period)
-
-
-def cci(dataframe, period) -> ndarray:
-    from pyti.commodity_channel_index import commodity_channel_index
-
-    return commodity_channel_index(dataframe['close'], dataframe['high'], dataframe['low'], period)
-
-
-def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False):
     """
-    Volume Flow Indicator conversion
-
-    Author: creslinux, June 2018 - Python
-    Original Author: Chris Moody, TradingView - Pinescript
-    To return vfi, vfima and histogram
-
-    A simplified interpretation of the VFI is:
-    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger or buy signal.
-    * The strongest signal with all money flow indicators is of course divergence.
-    * A crossover of vfi > vfima is uptrend
-    * A crossunder of vfima > vfi is downtrend
-    * smoothVFI can be set to smooth for a cleaner plot to ease false signals
-    * histogram can be used against self -1 to check if upward or downward momentum
-
-
-    Call from strategy to populate vfi, vfima, vfi_hist into dataframe
-
-    Example how to call:
-    # Volume Flow Index: Add VFI, VFIMA, Histogram to DF
-    dataframe['vfi'], dataframe['vfima'], dataframe['vfi_hist'] =  \
-        vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False)
-
-    :param dataframe:
-    :param length: - VFI Length - 130 default
-    :param coef:  - price coef  - 0.2 default
-    :param vcoef: - volume coef  - 2.5 default
-    :param signalLength: - 5 default
-    :param smoothVFI:  bool - False detault
-    :return: vfi, vfima, vfi_hist
+    Vectorised pandas or numpy calculations are not used
+    in Laguerre as L0 is self referencing.
+    Therefore we use an intertuples loop as next best option.
     """
+    lrsi_l = []
+    L0, L1, L2, L3 = 0.0, 0.0, 0.0, 0.0
+    for row in df.itertuples(index=True, name='lrsi'):
+        """ Original Pine Logic  Block1
+        p = close
+        L0 = ((1 - g)*p)+(g*nz(L0[1]))
+        L1 = (-g*L0)+nz(L0[1])+(g*nz(L1[1]))
+        L2 = (-g*L1)+nz(L1[1])+(g*nz(L2[1]))
+        L3 = (-g*L2)+nz(L2[1])+(g*nz(L3[1]))
+        """
+        # Feed back loop
+        L0_1, L1_1, L2_1, L3_1 = L0, L1, L2, L3
 
-    """"
-    Original Pinescript
-    From: https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/
+        L0 = (1 - g) * row.close + g * L0_1
+        L1 = -g * L0 + L0_1 + g * L1_1
+        L2 = -g * L1 + L1_1 + g * L2_1
+        L3 = -g * L2 + L2_1 + g * L3_1
 
-    length = input(130, title="VFI length")
-    coef = input(0.2)
-    vcoef = input(2.5, title="Max. vol. cutoff")
-    signalLength=input(5)
-    smoothVFI=input(false, type=bool)
-
-    #### Conversion summary to python
-      - ma(x,y) => smoothVFI ? sma(x,y) : x // Added as smoothVFI test on vfi
-
-      - typical = hlc3  // Added to DF as HLC
-      - inter = log(typical) - log(typical[1]) // Added to DF as inter
-      - vinter = stdev(inter, 30) // Added to DF as vinter
-      - cutoff = coef * vinter * close // Added to DF as cutoff
-      - vave = sma(volume, length)[1] // Added to DF as vave
-      - vmax = vave * vcoef // Added to Df as vmax
-      - vc = iff(volume < vmax, volume, vmax) // Added np.where test, result in DF as vc
-      - mf = typical - typical[1] // Added into DF as mf - typical is hlc3
-      - vcp = iff(mf > cutoff, vc, iff(mf < -cutoff, -vc, 0)) // added in def vcp, in DF as vcp
-
-      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi. Will sma vfi 3 if smoothVFI flag set
-      - vfima = ema(vfi, signalLength) // added to DF as vfima
-      - d = vfi-vfima // Added to df as histogram
-
-    ### Pinscript plotout - nothing to do here for freqtrade.
-    plot(0, color=gray, style=3)
-    showHisto=input(false, type=bool)
-    plot(showHisto ? d : na, style=histogram, color=gray, linewidth=3, transp=50)
-    plot( vfima , title="EMA of vfi", color=orange)
-    plot( vfi, title="vfi", color=green,linewidth=2)
-    """
-    import talib as ta
-    from math import log
-    from pyti.simple_moving_average import simple_moving_average as sma
-    from numpy import where
-
-    length = length
-    coef = coef
-    vcoef = vcoef
-    signalLength = signalLength
-    smoothVFI = smoothVFI
-    df = dataframe
-    # Add hlc3 and populate inter to the dataframe
-    df['hlc'] = ((df['high'] + df['low'] + df['close']) / 3).astype(float)
-    df['inter'] = df['hlc'].map(log) - df['hlc'].shift(+1).map(log)
-    df['vinter'] = df['inter'].rolling(30).std(ddof=0)
-    df['cutoff'] = (coef * df['vinter'] * df['close'])
-    # Vave is to be calculated on volume of the past bar
-    df['vave'] = sma(df['volume'].shift(+1), length)
-    df['vmax'] = df['vave'] * vcoef
-    df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
-    df['mf'] = df['hlc'] - df['hlc'].shift(+1)
-
-    # more logic for vcp, so create a def and df.apply it
-    def vcp(x):
-        if x['mf'] > x['cutoff']:
-            return x['vc']
-        elif x['mf'] < -(x['cutoff']):
-            return -(x['vc'])
+        """ Original Pinescript Block 2
+        cu=(L0 > L1? L0 - L1: 0) + (L1 > L2? L1 - L2: 0) + (L2 > L3? L2 - L3: 0)
+        cd=(L0 < L1? L1 - L0: 0) + (L1 < L2? L2 - L1: 0) + (L2 < L3? L3 - L2: 0)
+        """
+        cu = 0.0
+        cd = 0.0
+        if (L0 >= L1):
+            cu = L0 - L1
         else:
-            return 0
+            cd = L1 - L0
 
-    df['vcp'] = df.apply(vcp, axis=1)
-    # vfi has a smooth option passed over def call, sma if set
-    df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
-    if smoothVFI == True:
-        df['vfi'] = sma(df['vfi'], 3)
-    df['vfima'] = ta.EMA(df['vfi'], signalLength)
-    df['vfi_hist'] = df['vfi'] - df['vfima']
+        if (L1 >= L2):
+            cu = cu + L1 - L2
+        else:
+            cd = cd + L2 - L1
 
-    # clean up columns used vfi calculation but not needed for strat
-    df.drop('hlc', axis=1, inplace=True)
-    df.drop('inter', axis=1, inplace=True)
-    df.drop('vinter', axis=1, inplace=True)
-    df.drop('cutoff', axis=1, inplace=True)
-    df.drop('vave', axis=1, inplace=True)
-    df.drop('vmax', axis=1, inplace=True)
-    df.drop('vc', axis=1, inplace=True)
-    df.drop('mf', axis=1, inplace=True)
-    df.drop('vcp', axis=1, inplace=True)
+        if (L2 >= L3):
+            cu = cu + L2 - L3
+        else:
+            cd = cd + L3 - L2
 
-    return df['vfi'], df['vfima'], df['vfi_hist']
+        """Original Pinescript  Block 3
+        lrsi=ema((cu+cd==0? -1: cu+cd)==-1? 0: (cu/(cu+cd==0? -1: cu+cd)), smooth)
+        """
+        if (cu + cd) != 0:
+            lrsi_l.append(cu / (cu + cd))
+        else:
+            lrsi_l.append(0)
+
+    return lrsi_l
 
 
+########################################
+#
+# Madrid Functions
+#
 def mmar(dataframe, matype="EMA", src="close", debug=False):
     """
     Madrid Moving Average Ribbon
@@ -559,6 +729,150 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     return df['sqz_cma_c'], df['sqz_rma_c'], df['sqz_sma_c']
 
 
+########################################
+#
+# Other Indicator Functions / Unsorted
+#
+def osc(dataframe, periods=14) -> ndarray:
+    """
+    1. Calculating DM (i).
+        If HIGH (i) > HIGH (i - 1), DM (i) = HIGH (i) - HIGH (i - 1), otherwise DM (i) = 0.
+    2. Calculating DMn (i).
+        If LOW (i) < LOW (i - 1), DMn (i) = LOW (i - 1) - LOW (i), otherwise DMn (i) = 0.
+    3. Calculating value of OSC:
+        OSC (i) = SMA (DM, N) / (SMA (DM, N) + SMA (DMn, N)).
+
+    :param dataframe:
+    :param periods:
+    :return:
+    """
+    df = dataframe
+    df['DM'] = (df['high'] - df['high'].shift()).apply(lambda x: max(x, 0))
+    df['DMn'] = (df['low'].shift() - df['low']).apply(lambda x: max(x, 0))
+    return Series.rolling_mean(df.DM, periods) / (
+            Series.rolling_mean(df.DM, periods) + Series.rolling_mean(df.DMn, periods))
+
+
+def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False):
+    """
+    Volume Flow Indicator conversion
+
+    Author: creslinux, June 2018 - Python
+    Original Author: Chris Moody, TradingView - Pinescript
+    To return vfi, vfima and histogram
+
+    A simplified interpretation of the VFI is:
+    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger or buy signal.
+    * The strongest signal with all money flow indicators is of course divergence.
+    * A crossover of vfi > vfima is uptrend
+    * A crossunder of vfima > vfi is downtrend
+    * smoothVFI can be set to smooth for a cleaner plot to ease false signals
+    * histogram can be used against self -1 to check if upward or downward momentum
+
+
+    Call from strategy to populate vfi, vfima, vfi_hist into dataframe
+
+    Example how to call:
+    # Volume Flow Index: Add VFI, VFIMA, Histogram to DF
+    dataframe['vfi'], dataframe['vfima'], dataframe['vfi_hist'] =  \
+        vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False)
+
+    :param dataframe:
+    :param length: - VFI Length - 130 default
+    :param coef:  - price coef  - 0.2 default
+    :param vcoef: - volume coef  - 2.5 default
+    :param signalLength: - 5 default
+    :param smoothVFI:  bool - False detault
+    :return: vfi, vfima, vfi_hist
+    """
+
+    """"
+    Original Pinescript
+    From: https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/
+
+    length = input(130, title="VFI length")
+    coef = input(0.2)
+    vcoef = input(2.5, title="Max. vol. cutoff")
+    signalLength=input(5)
+    smoothVFI=input(false, type=bool)
+
+    #### Conversion summary to python
+      - ma(x,y) => smoothVFI ? sma(x,y) : x // Added as smoothVFI test on vfi
+
+      - typical = hlc3  // Added to DF as HLC
+      - inter = log(typical) - log(typical[1]) // Added to DF as inter
+      - vinter = stdev(inter, 30) // Added to DF as vinter
+      - cutoff = coef * vinter * close // Added to DF as cutoff
+      - vave = sma(volume, length)[1] // Added to DF as vave
+      - vmax = vave * vcoef // Added to Df as vmax
+      - vc = iff(volume < vmax, volume, vmax) // Added np.where test, result in DF as vc
+      - mf = typical - typical[1] // Added into DF as mf - typical is hlc3
+      - vcp = iff(mf > cutoff, vc, iff(mf < -cutoff, -vc, 0)) // added in def vcp, in DF as vcp
+
+      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi. Will sma vfi 3 if smoothVFI flag set
+      - vfima = ema(vfi, signalLength) // added to DF as vfima
+      - d = vfi-vfima // Added to df as histogram
+
+    ### Pinscript plotout - nothing to do here for freqtrade.
+    plot(0, color=gray, style=3)
+    showHisto=input(false, type=bool)
+    plot(showHisto ? d : na, style=histogram, color=gray, linewidth=3, transp=50)
+    plot( vfima , title="EMA of vfi", color=orange)
+    plot( vfi, title="vfi", color=green,linewidth=2)
+    """
+    import talib as ta
+    from math import log
+    from pyti.simple_moving_average import simple_moving_average as sma
+    from numpy import where
+
+    length = length
+    coef = coef
+    vcoef = vcoef
+    signalLength = signalLength
+    smoothVFI = smoothVFI
+    df = dataframe
+    # Add hlc3 and populate inter to the dataframe
+    df['hlc'] = ((df['high'] + df['low'] + df['close']) / 3).astype(float)
+    df['inter'] = df['hlc'].map(log) - df['hlc'].shift(+1).map(log)
+    df['vinter'] = df['inter'].rolling(30).std(ddof=0)
+    df['cutoff'] = (coef * df['vinter'] * df['close'])
+    # Vave is to be calculated on volume of the past bar
+    df['vave'] = sma(df['volume'].shift(+1), length)
+    df['vmax'] = df['vave'] * vcoef
+    df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
+    df['mf'] = df['hlc'] - df['hlc'].shift(+1)
+
+    # more logic for vcp, so create a def and df.apply it
+    def vcp(x):
+        if x['mf'] > x['cutoff']:
+            return x['vc']
+        elif x['mf'] < -(x['cutoff']):
+            return -(x['vc'])
+        else:
+            return 0
+
+    df['vcp'] = df.apply(vcp, axis=1)
+    # vfi has a smooth option passed over def call, sma if set
+    df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
+    if smoothVFI == True:
+        df['vfi'] = sma(df['vfi'], 3)
+    df['vfima'] = ta.EMA(df['vfi'], signalLength)
+    df['vfi_hist'] = df['vfi'] - df['vfima']
+
+    # clean up columns used vfi calculation but not needed for strat
+    df.drop('hlc', axis=1, inplace=True)
+    df.drop('inter', axis=1, inplace=True)
+    df.drop('vinter', axis=1, inplace=True)
+    df.drop('cutoff', axis=1, inplace=True)
+    df.drop('vave', axis=1, inplace=True)
+    df.drop('vmax', axis=1, inplace=True)
+    df.drop('vc', axis=1, inplace=True)
+    df.drop('mf', axis=1, inplace=True)
+    df.drop('vcp', axis=1, inplace=True)
+
+    return df['vfi'], df['vfima'], df['vfi_hist']
+
+
 def stc(dataframe, fast=23, slow=50, length=10):
 
     # First, the 23-period and the 50-period EMA and the MACD values are calculated:
@@ -579,167 +893,6 @@ def stc(dataframe, fast=23, slow=50, length=10):
     dataframe['stc'] = 100 * (MACD - (STOK * MACD)) / ((STOD * MACD) - (STOK * MACD))
 
     return dataframe['stc']
-
-
-def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
-    """
-    laguerre RSI
-    Author Creslin
-    Original Author: John Ehlers 1979
-
-
-    :param dataframe: df
-    :param gamma: Between 0 and 1, default 0.75
-    :param smooth: 1 is off. Valid values over 1 are alook back smooth for an ema
-    :param debug: Bool, prints to console
-    :return: Laguerre RSI:values 0 to +1
-    """
-    """
-    Laguerra RSI
-    How to trade lrsi:  (TL, DR) buy on the flat 0, sell on the drop from top,
-    not when touch the top
-    http://systemtradersuccess.com/testing-laguerre-rsi/
-
-    http://www.davenewberg.com/Trading/TS_Code/Ehlers_Indicators/Laguerre_RSI.html
-    """
-
-    df = dataframe
-    g = gamma
-    smooth = smooth
-    debug = debug
-    if debug:
-        from pandas import set_option
-        set_option('display.max_rows', 2000)
-        set_option('display.max_columns', 8)
-
-    """
-    Vectorised pandas or numpy calculations are not used
-    in Laguerre as L0 is self referencing.
-    Therefore we use an intertuples loop as next best option.
-    """
-    lrsi_l = []
-    L0, L1, L2, L3 = 0.0, 0.0, 0.0, 0.0
-    for row in df.itertuples(index=True, name='lrsi'):
-        """ Original Pine Logic  Block1
-        p = close
-        L0 = ((1 - g)*p)+(g*nz(L0[1]))
-        L1 = (-g*L0)+nz(L0[1])+(g*nz(L1[1]))
-        L2 = (-g*L1)+nz(L1[1])+(g*nz(L2[1]))
-        L3 = (-g*L2)+nz(L2[1])+(g*nz(L3[1]))
-        """
-        # Feed back loop
-        L0_1, L1_1, L2_1, L3_1 = L0, L1, L2, L3
-
-        L0 = (1 - g) * row.close + g * L0_1
-        L1 = -g * L0 + L0_1 + g * L1_1
-        L2 = -g * L1 + L1_1 + g * L2_1
-        L3 = -g * L2 + L2_1 + g * L3_1
-
-        """ Original Pinescript Block 2
-        cu=(L0 > L1? L0 - L1: 0) + (L1 > L2? L1 - L2: 0) + (L2 > L3? L2 - L3: 0)
-        cd=(L0 < L1? L1 - L0: 0) + (L1 < L2? L2 - L1: 0) + (L2 < L3? L3 - L2: 0)
-        """
-        cu = 0.0
-        cd = 0.0
-        if (L0 >= L1):
-            cu = L0 - L1
-        else:
-            cd = L1 - L0
-
-        if (L1 >= L2):
-            cu = cu + L1 - L2
-        else:
-            cd = cd + L2 - L1
-
-        if (L2 >= L3):
-            cu = cu + L2 - L3
-        else:
-            cd = cd + L3 - L2
-
-        """Original Pinescript  Block 3
-        lrsi=ema((cu+cd==0? -1: cu+cd)==-1? 0: (cu/(cu+cd==0? -1: cu+cd)), smooth)
-        """
-        if (cu + cd) != 0:
-            lrsi_l.append(cu / (cu + cd))
-        else:
-            lrsi_l.append(0)
-
-    return lrsi_l
-
-
-def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
-             laggin_span=52, displacement=26):
-    """
-    Ichimoku cloud indicator
-    Note: Do not use chikou_span for backtesting.
-        It looks into the future, is not printed by most charting platforms.
-        It is only useful for visual analysis
-    :param dataframe: Dataframe containing OHLCV data
-    :param conversion_line_period: Conversion line Period (defaults to 9)
-    :param base_line_periods: Base line Periods (defaults to 26)
-    :param laggin_span: Lagging span period
-    :param displacement: Displacement (shift) - defaults to 26
-    :return: Dict containing the following keys:
-        tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, cloud_green, cloud_red
-    """
-
-    tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
-        + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
-
-    kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
-        + dataframe['low'].rolling(window=base_line_periods).min()) / 2
-
-    senkou_span_a = ((tenkan_sen + kijun_sen) / 2).shift(displacement)
-
-
-    senkou_span_b = ((dataframe['high'].rolling(window=laggin_span).max()
-         + dataframe['low'].rolling(window=laggin_span).min()) / 2).shift(displacement)
-
-    chikou_span = dataframe['close'].shift(-displacement)
-
-    cloud_green = (senkou_span_a > senkou_span_b)
-    cloud_red = (senkou_span_b > senkou_span_a)
-
-    return {
-        'tenkan_sen': tenkan_sen,
-        'kijun_sen': kijun_sen,
-        'senkou_span_a': senkou_span_a,
-        'senkou_span_b': senkou_span_b,
-        'chikou_span': chikou_span,
-        'cloud_green': (senkou_span_a > senkou_span_b),
-        'cloud_red': (senkou_span_b > senkou_span_a),
-    }
-
-
-def ema(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.EMA(dataframe, timeperiod=period, price=field)
-
-
-def zema(dataframe, period, field='close'):
-    """
-    zero lag ema
-    :param dataframe:
-    :param period:
-    :param field:
-    :return:
-    """
-    dataframe = dataframe.copy()
-    dataframe['ema1'] = ema(dataframe, period, field)
-    dataframe['ema2'] = ema(dataframe, period, 'ema1')
-    dataframe['d'] = dataframe['ema1'] - dataframe['ema2']
-    dataframe['zema'] = dataframe['ema1'] + dataframe['d']
-    return dataframe['zema']
-
-
-def tema(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.TEMA(dataframe, timeperiod=period, price=field)
-
-
-def sma(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.SMA(dataframe, timeperiod=period, price=field)
 
 
 def vpcii(dataframe, period_short=5, period_long=20, hist=8, hist_long=30):
@@ -783,27 +936,6 @@ def vpci(dataframe, period_short=5, period_long=20):
     vpci = vpc * vpr * vm
 
     return vpci
-
-
-def williams_percent(dataframe, period=14, field='close'):
-    highest_high = dataframe[field].rolling(period).max()
-    lowest_low = dataframe[field].rolling(period).min()
-    wr = (highest_high - dataframe[field]) / (highest_high - lowest_low) * -100
-    return wr
-
-
-def momentum(dataframe, field='close', period=9):
-    from pyti.momentum import momentum as m
-    return m(dataframe[field], period)
-
-
-def vwma(df, window):
-    return df.apply(lambda x: x.close * x.volume, axis=1).rolling(window).sum() / df.volume.rolling(window).sum()
-
-
-def ultimate_oscilator(dataframe):
-    from pyti.ultimate_oscillator import ultimate_oscillator as uo
-    uo(dataframe['close'], dataframe['low'])
 
 
 def fibonacci_retracements(df, field='close') -> DataFrame:
