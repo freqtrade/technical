@@ -275,8 +275,8 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
         'senkou_span_a': senkou_span_a,
         'senkou_span_b': senkou_span_b,
         'chikou_span': chikou_span,
-        'cloud_green': (senkou_span_a > senkou_span_b),
-        'cloud_red': (senkou_span_b > senkou_span_a),
+        'cloud_green': cloud_green,
+        'cloud_red': cloud_red,
     }
 
 
