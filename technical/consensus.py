@@ -167,7 +167,7 @@ class Consensus:
         name = '{}'.format(prefix)
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
-        stoch_fast = ta.STOCHF(dataframe, 5.0, 3.0, 0.0, 3.0, 0.0)
+        stoch_fast = ta.STOCHF(dataframe, 5, 3, 0, 3, 0)
 
         dataframe['{}_fastd'.format(name)] = stoch_fast['fastd']
         dataframe['{}_fastk'.format(name)] = stoch_fast['fastk']
