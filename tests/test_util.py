@@ -1,6 +1,6 @@
 import json
 
-from technical.indicators import cmf
+from technical.indicators import chaikin_money_flow
 from technical.util import (resample_to_interval, resampled_merge,
                             ticker_history_to_dataframe)
 
@@ -41,7 +41,7 @@ def test_resampled_merge(testdata_1m_btc):
 
 def test_resampled_merge_contains_indicator(testdata_1m_btc):
     resampled = resample_to_interval(testdata_1m_btc, 5)
-    resampled['cmf'] = cmf(resampled, 5)
+    resampled['cmf'] = chaikin_money_flow(resampled, 5)
     merged = resampled_merge(testdata_1m_btc, resampled)
 
     print(merged)
