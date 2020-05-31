@@ -34,7 +34,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 
 The following indicators are available and have been 'wrapped' to be used on a dataframe with the standard open/close/high/low/volume columns:
 
-1. [cmf](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - chaikow money flow, requires dataframe and period
+1. [chaikin_money_flow](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - chaikow money flow, requires dataframe and period
 2. [accumulation_distribtuion](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
 3. osc - requires a dataframe and the periods
 4. [aroon](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field

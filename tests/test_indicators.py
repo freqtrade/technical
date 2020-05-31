@@ -48,10 +48,12 @@ def test_bollinger_bands(testdata_1m_btc):
     assert result['bb_upper'].all() > 0
 
 
-def test_cmf(testdata_1m_btc):
-    from technical.indicators import cmf
+def test_chaikin_money_flow(testdata_1m_btc):
+    from technical.indicators import cmf, chaikin_money_flow
 
-    result = cmf(testdata_1m_btc, 14)
+    assert cmf is chaikin_money_flow
+
+    result = chaikin_money_flow(testdata_1m_btc, 14)
 
     # drop nan, they are exspected, based on the period
     result = result[~numpy.isnan(result)]
