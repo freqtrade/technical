@@ -255,7 +255,8 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
     :param laggin_span: Lagging span period
     :param displacement: Displacement (shift) - defaults to 26
     :return: Dict containing the following keys:
-        tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, cloud_green, cloud_red
+        tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, leading_senkou_span_a,
+        leading_senkou_span_b, chikou_span, cloud_green, cloud_red
     """
 
     tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
@@ -264,10 +265,14 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
     kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
         + dataframe['low'].rolling(window=base_line_periods).min()) / 2
 
-    senkou_span_a = ((tenkan_sen + kijun_sen) / 2).shift(displacement)
+    leading_senkou_span_a = (tenkan_sen + kijun_sen) / 2
 
-    senkou_span_b = ((dataframe['high'].rolling(window=laggin_span).max()
-         + dataframe['low'].rolling(window=laggin_span).min()) / 2).shift(displacement)
+    leading_senkou_span_b = (dataframe['high'].rolling(window=laggin_span).max()
+                            + dataframe['low'].rolling(window=laggin_span).min()) / 2
+
+    senkou_span_a = leading_senkou_span_a.shift(displacement)
+
+    senkou_span_b = leading_senkou_span_b.shift(displacement)
 
     chikou_span = dataframe['close'].shift(-displacement)
 
@@ -279,6 +284,8 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
         'kijun_sen': kijun_sen,
         'senkou_span_a': senkou_span_a,
         'senkou_span_b': senkou_span_b,
+        'leading_senkou_span_a': leading_senkou_span_a,
+        'leading_senkou_span_b': leading_senkou_span_b,
         'chikou_span': chikou_span,
         'cloud_green': cloud_green,
         'cloud_red': cloud_red,
