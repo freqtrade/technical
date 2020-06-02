@@ -1,16 +1,15 @@
 # Technical
 
-This is a collection of technical indicators collected or developed for freqtrade as well as utilities such as timeframe resampling.
+This is a collection of technical indicators collected or developed for Freqtrade as well as utilities such as timeframe resampling.
 
 ## What does it do for you
 
-We basically provide you with easy to use indicators, collected from all over github and custom methods. Over time we plan to provide a simple API wrapper
-around TA-Lib, PyTi and others, as we find them. So you have one place, to find 100s of indicators.
+We basically provide you with easy to use indicators, collected from all over github and custom methods. Over time we plan to provide a simple API wrapper around TA-Lib, PyTi and others, as we find them. So you have one place, to find 100s of indicators.
 
 ### Custom indicators
 
 1. Consensus - an indicator which is based on a consensus model, across several indicators
-you can easily customize these. It is based on the [tradinvg view](https://www.tradingview.com/symbols/BTCUSD/technicals/)
+you can easily customize these. It is based on the [TradingView](https://www.tradingview.com/symbols/BTCUSD/technicals/)
 buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Consensus
 
 2. [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
@@ -35,7 +34,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 The following indicators are available and have been 'wrapped' to be used on a dataframe with the standard open/close/high/low/volume columns:
 
 1. [chaikin_money_flow](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - Chaikin Money Flow, requires dataframe and period
-2. [accumulation_distributuion](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
+2. [accumulation_distribution](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
 3. osc - requires a dataframe and the periods
 4. [aroon](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field
 5. [atr](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
@@ -93,6 +92,6 @@ So in the above example:
 ### Contributions
 
 We will happily add your custom indicators to this repo!
-Just clone this repository and implement your favorite indicator to use with freqtrade.
+Just clone this repository and implement your favorite indicator to use with Freqtrade.
 
-have fun!
+Have fun!
