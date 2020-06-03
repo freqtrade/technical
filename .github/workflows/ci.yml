@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - run_ci
     tags:
   pull_request:
   schedule:
