@@ -141,7 +141,7 @@ jobs:
 
   # Notify on slack only once - when CI completes (and after deploy) in case it's successfull
   notify-complete:
-    needs: [ build, build_windows, docs_check ]
+    needs: [ build, build_windows ]
     runs-on: ubuntu-latest
     steps:
     - name: Slack Notification
@@ -154,7 +154,7 @@ jobs:
         url: ${{ secrets.SLACK_WEBHOOK }}
 
 #   deploy:
-#     needs: [ build, build_windows, docs_check ]
+#     needs: [ build, build_windows ]
 #     runs-on: ubuntu-18.04
 #     if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && github.repository == 'freqtrade/freqtrade'
 #     steps:
