@@ -1,5 +1,8 @@
-from technical.exchange import load_ticker, historical_data
 import datetime
+
+import pytest
+
+from technical.exchange import historical_data, load_ticker
 
 
 def test_load_ticker():
@@ -29,6 +32,7 @@ def test_historical_data_ploniex():
     assert len(data) == 90
 
 
+@pytest.mark.skip(reason="Downloading 90 days (above) should suffice.")
 def test_historical_data_ploniex_long():
     """ this one is awesome since you can download years worth of data"""
     days = datetime.datetime.today() - datetime.timedelta(days=365)
