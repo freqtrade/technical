@@ -907,11 +907,15 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
     return df[['vwmacd', 'signal', 'hist']]
 
 
-def RMI(dataframe, length=20, mom=5):
+def RMI(dataframe, *, length=20, mom=5):
     """
     Source: https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp
     length: Length of EMA
     mom: Momentum
+
+    Usage:
+        dataframe['RMI'] = RMI(dataframe)
+
     """
     import talib.abstract as ta
     df = dataframe.copy()
