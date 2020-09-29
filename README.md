@@ -14,7 +14,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
 * [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
 * [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
-* [stc](https://www.investoorpedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
+* [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
 * [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
 * volume weighted moving average
 * laguerre
@@ -24,6 +24,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * pivots points
 * [TKE Indicator](https://www.tradingview.com/script/Pcbvo0zG/) - Arithmetical mean of 7 oscilators
 * [Volume Weighted MACD](https://www.tradingview.com/script/wVe6AfGA) - Volume Weighted MACD indicator
+* [RMI](https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp) - Relative Momentum indicator
 
 ### Utilities
 

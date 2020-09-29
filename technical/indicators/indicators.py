@@ -905,3 +905,23 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
     df["hist"] = df["vwmacd"] - df["signal"]
 
     return df[['vwmacd', 'signal', 'hist']]
+
+
+def RMI(dataframe, length=20, mom=5):
+    """
+    Source: https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp
+    length: Length of EMA
+    mom: Momentum
+    """
+    import talib.abstract as ta
+    df = dataframe.copy()
+    df['maxup'] = (df['close'] - df['close'].shift(mom)).clip(lower=0)
+    df['maxdown'] = (df['close'].shift(mom) - df['close']).clip(lower=0)
+
+    df.fillna(0, inplace=True)
+
+    df["emaInc"] = ta.EMA(df, price='maxup', timeperiod=length)
+    df["emaDec"] = ta.EMA(df, price='maxdown', timeperiod=length)
+
+    df['RMI'] = np.where(df['emaDec'] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
+    return df["RMI"]
