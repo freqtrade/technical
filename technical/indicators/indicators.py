@@ -5,7 +5,7 @@ This file contains a collection of common indicators, which are based on third p
 import numpy as np
 from numpy.core.records import ndarray
 from pandas import Series, DataFrame
-from math import log
+from .overlap_studies import sma, vwma
 
 ########################################
 #
@@ -38,15 +38,15 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
     """
 
     tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
-        + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
+                  + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
 
     kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
-        + dataframe['low'].rolling(window=base_line_periods).min()) / 2
+                 + dataframe['low'].rolling(window=base_line_periods).min()) / 2
 
     leading_senkou_span_a = (tenkan_sen + kijun_sen) / 2
 
     leading_senkou_span_b = (dataframe['high'].rolling(window=laggin_span).max()
-                            + dataframe['low'].rolling(window=laggin_span).min()) / 2
+                             + dataframe['low'].rolling(window=laggin_span).min()) / 2
 
     senkou_span_a = leading_senkou_span_a.shift(displacement)
 
@@ -397,9 +397,9 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
                   "ma90_c"
                   ]].tail(684))
 
-    return df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'], \
-           df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'], \
-           df['ma80_c'], df['ma90_c']
+    return (df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'],
+            df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'],
+            df['ma80_c'], df['ma90_c'])
 
 
 def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
@@ -430,7 +430,8 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     Fuchsia: The maximum profitability of the leg in a short trade
     The Squeeze happens when Maroon+Red+Fuchsia are aligned (the larger the values the better)
 
-    Yellow : The trend has come to a pause and it is either a reversal warning or a continuation. These are the entry, re-entry or closing position points.
+    Yellow : The trend has come to a pause and it is either a reversal warning or a continuation.
+    These are the entry, re-entry or closing position points.
     """
 
     """
@@ -448,7 +449,6 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
                 refma < 0 and closema > refma) ? yellow: refma >= 0 ? green: maroon)
     """
     import talib as ta
-    from numpy import where
 
     len = length
     src = src
@@ -552,7 +552,8 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     To return vfi, vfima and histogram
 
     A simplified interpretation of the VFI is:
-    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger or buy signal.
+    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger
+        or buy signal.
     * The strongest signal with all money flow indicators is of course divergence.
     * A crossover of vfi > vfima is uptrend
     * A crossunder of vfima > vfi is downtrend
@@ -599,7 +600,8 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
       - mf = typical - typical[1] // Added into DF as mf - typical is hlc3
       - vcp = iff(mf > cutoff, vc, iff(mf < -cutoff, -vc, 0)) // added in def vcp, in DF as vcp
 
-      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi. Will sma vfi 3 if smoothVFI flag set
+      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi.
+            Will sma vfi 3 if smoothVFI flag set
       - vfima = ema(vfi, signalLength) // added to DF as vfima
       - d = vfi-vfima // Added to df as histogram
 
@@ -644,7 +646,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df['vcp'] = df.apply(vcp, axis=1)
     # vfi has a smooth option passed over def call, sma if set
     df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
-    if smoothVFI == True:
+    if smoothVFI is True:
         df['vfi'] = sma(df['vfi'], 3)
     df['vfima'] = ta.EMA(df['vfi'], signalLength)
     df['vfi_hist'] = df['vfi'] - df['vfima']
@@ -853,7 +855,8 @@ def TKE(dataframe, *, length=14, emaperiod=5):
     # TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
     df["rsi"] = ta.RSI(df, timeperiod=length)
     df['stoch'] = (100 * (df['close'] - df['low'].rolling(window=length).min()) /
-                   (df['high'].rolling(window=length).max() - df['low'].rolling(window=length).min()))
+                   (df['high'].rolling(window=length).max()
+                    - df['low'].rolling(window=length).min()))
 
     df["ultosc"] = ta.ULTOSC(df, timeperiod1=7, timeperiod2=14, timeperiod3=28)
     df["mfi"] = ta.MFI(df, timeperiod=length)
