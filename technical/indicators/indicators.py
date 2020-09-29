@@ -863,3 +863,42 @@ def TKE(dataframe, *, length=14, emaperiod=5):
     df['TKE'] = df[['rsi', 'stoch', 'ultosc', 'mfi', 'willr', 'mom', 'cci']].mean(axis='columns')
     df["TKEema"] = ta.EMA(df["TKE"], timeperiod=emaperiod)
     return df["TKE"], df["TKEema"]
+
+
+def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
+    """
+    Volume Weighted MACD
+    Author: KIVANC @fr3762 on twitter
+    Developer: Buff Dormeier @BuffDormeierWFA on twitter
+    Source: https://www.tradingview.com/script/wVe6AfGA
+
+    study("VOLUME WEIGHTED MACD V2", shorttitle="VWMACDV2")
+    fastperiod = input(12,title="fastperiod",type=integer,minval=1,maxval=500)
+    slowperiod = input(26,title="slowperiod",type=integer,minval=1,maxval=500)
+    signalperiod = input(9,title="signalperiod",type=integer,minval=1,maxval=500)
+    fastMA = ema(volume*close, fastperiod)/ema(volume, fastperiod)
+    slowMA = ema(volume*close, slowperiod)/ema(volume, slowperiod)
+    vwmacd = fastMA - slowMA
+    signal = ema(vwmacd, signalperiod)
+    hist= vwmacd - signal
+    plot(vwmacd, color=blue, linewidth=2)
+    plot(signal, color=red, linewidth=2)
+    plot(hist, color=green, linewidth=4, style=histogram)
+    plot(0, color=black)
+
+    Usage:
+        vwmacd = vwmacd(dataframe)
+        dataframe['vwmacd'] = vwmacd['vwmacd']
+        dataframe['vwmacdsignal'] = vwmacd['signal']
+        dataframe['vwmacdhist'] = vwmacd['hist']
+    """
+
+    import talib.abstract as ta
+    df = dataframe.copy()
+    df["fastMA"] = ta.EMA(df["volume"] * df["close"], fastperiod) / ta.EMA(df["volume"], fastperiod)
+    df["slowMA"] = ta.EMA(df["volume"] * df["close"], slowperiod) / ta.EMA(df["volume"], slowperiod)
+    df["vwmacd"] = df["fastMA"] - df["slowMA"]
+    df["signal"] = ta.EMA(df["vwmacd"], signalperiod)
+    df["hist"] = df["vwmacd"] - df["signal"]
+
+    return df[['vwmacd', 'signal', 'hist']]
