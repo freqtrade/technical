@@ -827,3 +827,39 @@ def td_sequential(dataframe):
     return DataFrame(index=df.index, data={
         'TD_count': df['tdc']
     })
+
+
+def TKE(dataframe, *, length=14, emaperiod=5):
+    """
+    Source: https://www.tradingview.com/script/Pcbvo0zG/
+    Author: Dr Yasar ERDINC
+
+    The calculation is simple:
+    TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
+    Buy signal: when TKE crosses above 20 value
+    Oversold region: under 20 value
+    Overbought region: over 80 value
+
+    Another usage of TKE is with its EMA ,
+    the default value is defined as 5 bars of EMA of the TKE line,
+    Go long: when TKE crosses above EMALine
+    Go short: when TKE crosses below EMALine
+
+    Usage:
+        `dataframe['TKE'], dataframe['TKEema'] = TKE1(dataframe)`
+    """
+    import talib.abstract as ta
+    df = dataframe.copy()
+    # TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
+    df["rsi"] = ta.RSI(df, timeperiod=length)
+    df['stoch'] = (100 * (df['close'] - df['low'].rolling(window=length).min()) /
+                   (df['high'].rolling(window=length).max() - df['low'].rolling(window=length).min()))
+
+    df["ultosc"] = ta.ULTOSC(df, timeperiod1=7, timeperiod2=14, timeperiod3=28)
+    df["mfi"] = ta.MFI(df, timeperiod=length)
+    df["willr"] = ta.WILLR(df, timeperiod=length)
+    df["mom"] = ta.MOM(df, timeperiod=length)
+    df["cci"] = ta.CCI(df, timeperiod=length)
+    df['TKE'] = df[['rsi', 'stoch', 'ultosc', 'mfi', 'willr', 'mom', 'cci']].mean(axis='columns')
+    df["TKEema"] = ta.EMA(df["TKE"], timeperiod=emaperiod)
+    return df["TKE"], df["TKEema"]
