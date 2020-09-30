@@ -5,229 +5,7 @@ This file contains a collection of common indicators, which are based on third p
 import numpy as np
 from numpy.core.records import ndarray
 from pandas import Series, DataFrame
-from math import log
-
-
-########################################
-#
-# Overlap Studies Functions
-#
-
-# BBANDS               Bollinger Bands
-def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="bb") -> DataFrame:
-    from pyti.bollinger_bands import lower_bollinger_band, middle_bollinger_band, upper_bollinger_band
-    dataframe["{}_lower".format(colum_prefix)] = lower_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_middle".format(colum_prefix)] = middle_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_upper".format(colum_prefix)] = upper_bollinger_band(dataframe[field], period, stdv)
-
-    return dataframe
-
-
-# DEMA                 Double Exponential Moving Average
-
-# EMA                  Exponential Moving Average
-def ema(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.EMA(dataframe, timeperiod=period, price=field)
-
-
-# HT_TRENDLINE         Hilbert Transform - Instantaneous Trendline
-# KAMA                 Kaufman Adaptive Moving Average
-# MA                   Moving average
-# MAMA                 MESA Adaptive Moving Average
-# MAVP                 Moving average with variable period
-# MIDPOINT             MidPoint over period
-# MIDPRICE             Midpoint Price over period
-# SAR                  Parabolic SAR
-# SAREXT               Parabolic SAR - Extended
-
-# SMA                  Simple Moving Average
-def sma(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.SMA(dataframe, timeperiod=period, price=field)
-
-
-# T3                   Triple Exponential Moving Average (T3)
-
-# TEMA                 Triple Exponential Moving Average
-def tema(dataframe, period, field='close'):
-    import talib.abstract as ta
-    return ta.TEMA(dataframe, timeperiod=period, price=field)
-
-
-# TRIMA                Triangular Moving Average
-# WMA                  Weighted Moving Average
-
-# Other Overlap Studies Functions
-def hull_moving_average(dataframe, period, field='close') -> ndarray:
-    from pyti.hull_moving_average import hull_moving_average as hma
-    return hma(dataframe[field], period)
-
-
-def vwma(df, window):
-    return df.apply(lambda x: x.close * x.volume, axis=1).rolling(window).sum() / df.volume.rolling(window).sum()
-
-
-def zema(dataframe, period, field='close'):
-    """
-    zero lag ema
-    :param dataframe:
-    :param period:
-    :param field:
-    :return:
-    """
-    dataframe = dataframe.copy()
-    dataframe['ema1'] = ema(dataframe, period, field)
-    dataframe['ema2'] = ema(dataframe, period, 'ema1')
-    dataframe['d'] = dataframe['ema1'] - dataframe['ema2']
-    dataframe['zema'] = dataframe['ema1'] + dataframe['d']
-    return dataframe['zema']
-
-
-########################################
-#
-# Momentum Indicator Functions
-#
-
-# ADX                  Average Directional Movement Index
-# ADXR                 Average Directional Movement Index Rating
-# APO                  Absolute Price Oscillator
-
-# AROON                Aroon
-def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
-    from pyti.aroon import aroon_up as up
-    from pyti.aroon import aroon_down as down
-    dataframe["{}_up".format(colum_prefix)] = up(dataframe[field], period)
-    dataframe["{}_down".format(colum_prefix)] = down(dataframe[field], period)
-    return dataframe
-
-
-# AROONOSC             Aroon Oscillator
-# BOP                  Balance Of Power
-
-# CCI                  Commodity Channel Index
-def cci(dataframe, period) -> ndarray:
-    from pyti.commodity_channel_index import commodity_channel_index
-
-    return commodity_channel_index(dataframe['close'], dataframe['high'], dataframe['low'], period)
-
-
-# CMO                  Chande Momentum Oscillator
-def cmo(dataframe, period, field='close') -> ndarray:
-    from pyti.chande_momentum_oscillator import chande_momentum_oscillator
-    return chande_momentum_oscillator(dataframe[field], period)
-
-
-# DX                   Directional Movement Index
-# MACD                 Moving Average Convergence/Divergence
-# MACDEXT              MACD with controllable MA type
-# MACDFIX              Moving Average Convergence/Divergence Fix 12/26
-# MFI                  Money Flow Index
-# MINUS_DI             Minus Directional Indicator
-# MINUS_DM             Minus Directional Movement
-
-# MOM                  Momentum
-def momentum(dataframe, field='close', period=9):
-    from pyti.momentum import momentum as m
-    return m(dataframe[field], period)
-
-
-# PLUS_DI              Plus Directional Indicator
-# PLUS_DM              Plus Directional Movement
-# PPO                  Percentage Price Oscillator
-# ROC                  Rate of change : ((price/prevPrice)-1)*100
-# ROCP                 Rate of change Percentage: (price-prevPrice)/prevPrice
-# ROCR                 Rate of change ratio: (price/prevPrice)
-# ROCR100              Rate of change ratio 100 scale: (price/prevPrice)*100
-# RSI                  Relative Strength Index
-# STOCH                Stochastic
-# STOCHF               Stochastic Fast
-# STOCHRSI             Stochastic Relative Strength Index
-# TRIX                 1-day Rate-Of-Change (ROC) of a Triple Smooth EMA
-
-# ULTOSC               Ultimate Oscillator
-def ultimate_oscilator(dataframe):
-    from pyti.ultimate_oscillator import ultimate_oscillator as uo
-    uo(dataframe['close'], dataframe['low'])
-
-
-# WILLR                Williams' %R
-def williams_percent(dataframe, period=14, field='close'):
-    highest_high = dataframe[field].rolling(period).max()
-    lowest_low = dataframe[field].rolling(period).min()
-    wr = (highest_high - dataframe[field]) / (highest_high - lowest_low) * -100
-    return wr
-
-
-########################################
-#
-# Volume Indicator Functions
-#
-
-# AD                   Chaikin A/D Line
-def accumulation_distribution(dataframe) -> ndarray:
-    from pyti.accumulation_distribution import accumulation_distribution as acd
-
-    return acd(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'])
-
-
-# ADOSC                Chaikin A/D Oscillator
-# OBV                  On Balance Volume
-
-# Other Volume Indicator Functions
-def chaikin_money_flow(dataframe, period=21):
-    mfm = (
-        (dataframe['close'] - dataframe['low']) - (dataframe['high'] - dataframe['close'])
-        / (dataframe['high'] - dataframe['low'])
-    )
-    mfv = mfm * dataframe['volume']
-    cmf = mfv.rolling(period).sum() / dataframe['volume'].rolling(period).sum()
-    return cmf
-
-cmf = chaikin_money_flow
-
-########################################
-#
-# Cycle Indicator Functions
-#
-
-# HT_DCPERIOD          Hilbert Transform - Dominant Cycle Period
-# HT_DCPHASE           Hilbert Transform - Dominant Cycle Phase
-# HT_PHASOR            Hilbert Transform - Phasor Components
-# HT_SINE              Hilbert Transform - SineWave
-# HT_TRENDMODE         Hilbert Transform - Trend vs Cycle Mode
-
-
-########################################
-#
-# Price Transform Functions
-#
-
-# AVGPRICE             Average Price
-# MEDPRICE             Median Price
-# TYPPRICE             Typical Price
-# WCLPRICE             Weighted Close Price
-
-
-########################################
-#
-# Volatility Indicator Functions
-#
-
-# ATR                  Average True Range
-def atr(dataframe, period, field='close') -> ndarray:
-    from pyti.average_true_range import average_true_range
-    return average_true_range(dataframe[field], period)
-
-
-def atr_percent(dataframe, period, field='close') -> ndarray:
-    from pyti.average_true_range_percent import average_true_range_percent
-    return average_true_range_percent(dataframe[field], period)
-
-
-# NATR                 Normalized Average True Range
-# TRANGE               True Range
-
+from .overlap_studies import sma, vwma
 
 ########################################
 #
@@ -260,15 +38,15 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
     """
 
     tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
-        + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
+                  + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
 
     kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
-        + dataframe['low'].rolling(window=base_line_periods).min()) / 2
+                 + dataframe['low'].rolling(window=base_line_periods).min()) / 2
 
     leading_senkou_span_a = (tenkan_sen + kijun_sen) / 2
 
     leading_senkou_span_b = (dataframe['high'].rolling(window=laggin_span).max()
-                            + dataframe['low'].rolling(window=laggin_span).min()) / 2
+                             + dataframe['low'].rolling(window=laggin_span).min()) / 2
 
     senkou_span_a = leading_senkou_span_a.shift(displacement)
 
@@ -619,9 +397,9 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
                   "ma90_c"
                   ]].tail(684))
 
-    return df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'], \
-           df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'], \
-           df['ma80_c'], df['ma90_c']
+    return (df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'],
+            df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'],
+            df['ma80_c'], df['ma90_c'])
 
 
 def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
@@ -652,7 +430,8 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     Fuchsia: The maximum profitability of the leg in a short trade
     The Squeeze happens when Maroon+Red+Fuchsia are aligned (the larger the values the better)
 
-    Yellow : The trend has come to a pause and it is either a reversal warning or a continuation. These are the entry, re-entry or closing position points.
+    Yellow : The trend has come to a pause and it is either a reversal warning or a continuation.
+    These are the entry, re-entry or closing position points.
     """
 
     """
@@ -670,7 +449,6 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
                 refma < 0 and closema > refma) ? yellow: refma >= 0 ? green: maroon)
     """
     import talib as ta
-    from numpy import where
 
     len = length
     src = src
@@ -774,7 +552,8 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     To return vfi, vfima and histogram
 
     A simplified interpretation of the VFI is:
-    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger or buy signal.
+    * Values above zero indicate a bullish state and the crossing of the zero line is the trigger
+        or buy signal.
     * The strongest signal with all money flow indicators is of course divergence.
     * A crossover of vfi > vfima is uptrend
     * A crossunder of vfima > vfi is downtrend
@@ -821,7 +600,8 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
       - mf = typical - typical[1] // Added into DF as mf - typical is hlc3
       - vcp = iff(mf > cutoff, vc, iff(mf < -cutoff, -vc, 0)) // added in def vcp, in DF as vcp
 
-      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi. Will sma vfi 3 if smoothVFI flag set
+      - vfi = ma(sum(vcp, length) / vave, 3) // Added as DF vfi.
+            Will sma vfi 3 if smoothVFI flag set
       - vfima = ema(vfi, signalLength) // added to DF as vfima
       - d = vfi-vfima // Added to df as histogram
 
@@ -866,7 +646,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df['vcp'] = df.apply(vcp, axis=1)
     # vfi has a smooth option passed over def call, sma if set
     df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
-    if smoothVFI == True:
+    if smoothVFI is True:
         df['vfi'] = sma(df['vfi'], 3)
     df['vfima'] = ta.EMA(df['vfi'], signalLength)
     df['vfi_hist'] = df['vfi'] - df['vfima']
@@ -1049,3 +829,147 @@ def td_sequential(dataframe):
     return DataFrame(index=df.index, data={
         'TD_count': df['tdc']
     })
+
+
+def TKE(dataframe, *, length=14, emaperiod=5):
+    """
+    Source: https://www.tradingview.com/script/Pcbvo0zG/
+    Author: Dr Yasar ERDINC
+
+    The calculation is simple:
+    TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
+    Buy signal: when TKE crosses above 20 value
+    Oversold region: under 20 value
+    Overbought region: over 80 value
+
+    Another usage of TKE is with its EMA ,
+    the default value is defined as 5 bars of EMA of the TKE line,
+    Go long: when TKE crosses above EMALine
+    Go short: when TKE crosses below EMALine
+
+    Usage:
+        `dataframe['TKE'], dataframe['TKEema'] = TKE1(dataframe)`
+    """
+    import talib.abstract as ta
+    df = dataframe.copy()
+    # TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
+    df["rsi"] = ta.RSI(df, timeperiod=length)
+    df['stoch'] = (100 * (df['close'] - df['low'].rolling(window=length).min()) /
+                   (df['high'].rolling(window=length).max()
+                    - df['low'].rolling(window=length).min()))
+
+    df["ultosc"] = ta.ULTOSC(df, timeperiod1=7, timeperiod2=14, timeperiod3=28)
+    df["mfi"] = ta.MFI(df, timeperiod=length)
+    df["willr"] = ta.WILLR(df, timeperiod=length)
+    df["mom"] = ta.MOM(df, timeperiod=length)
+    df["cci"] = ta.CCI(df, timeperiod=length)
+    df['TKE'] = df[['rsi', 'stoch', 'ultosc', 'mfi', 'willr', 'mom', 'cci']].mean(axis='columns')
+    df["TKEema"] = ta.EMA(df["TKE"], timeperiod=emaperiod)
+    return df["TKE"], df["TKEema"]
+
+
+def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
+    """
+    Volume Weighted MACD
+    Author: KIVANC @fr3762 on twitter
+    Developer: Buff Dormeier @BuffDormeierWFA on twitter
+    Source: https://www.tradingview.com/script/wVe6AfGA
+
+    study("VOLUME WEIGHTED MACD V2", shorttitle="VWMACDV2")
+    fastperiod = input(12,title="fastperiod",type=integer,minval=1,maxval=500)
+    slowperiod = input(26,title="slowperiod",type=integer,minval=1,maxval=500)
+    signalperiod = input(9,title="signalperiod",type=integer,minval=1,maxval=500)
+    fastMA = ema(volume*close, fastperiod)/ema(volume, fastperiod)
+    slowMA = ema(volume*close, slowperiod)/ema(volume, slowperiod)
+    vwmacd = fastMA - slowMA
+    signal = ema(vwmacd, signalperiod)
+    hist= vwmacd - signal
+    plot(vwmacd, color=blue, linewidth=2)
+    plot(signal, color=red, linewidth=2)
+    plot(hist, color=green, linewidth=4, style=histogram)
+    plot(0, color=black)
+
+    Usage:
+        vwmacd = vwmacd(dataframe)
+        dataframe['vwmacd'] = vwmacd['vwmacd']
+        dataframe['vwmacdsignal'] = vwmacd['signal']
+        dataframe['vwmacdhist'] = vwmacd['hist']
+    """
+
+    import talib.abstract as ta
+    df = dataframe.copy()
+    df["fastMA"] = ta.EMA(df["volume"] * df["close"], fastperiod) / ta.EMA(df["volume"], fastperiod)
+    df["slowMA"] = ta.EMA(df["volume"] * df["close"], slowperiod) / ta.EMA(df["volume"], slowperiod)
+    df["vwmacd"] = df["fastMA"] - df["slowMA"]
+    df["signal"] = ta.EMA(df["vwmacd"], signalperiod)
+    df["hist"] = df["vwmacd"] - df["signal"]
+
+    return df[['vwmacd', 'signal', 'hist']]
+
+
+def RMI(dataframe, *, length=20, mom=5):
+    """
+    Source: https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp
+    length: Length of EMA
+    mom: Momentum
+
+    Usage:
+        dataframe['RMI'] = RMI(dataframe)
+
+    """
+    import talib.abstract as ta
+    df = dataframe.copy()
+    df['maxup'] = (df['close'] - df['close'].shift(mom)).clip(lower=0)
+    df['maxdown'] = (df['close'].shift(mom) - df['close']).clip(lower=0)
+
+    df.fillna(0, inplace=True)
+
+    df["emaInc"] = ta.EMA(df, price='maxup', timeperiod=length)
+    df["emaDec"] = ta.EMA(df, price='maxdown', timeperiod=length)
+
+    df['RMI'] = np.where(df['emaDec'] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
+    return df["RMI"]
+
+
+def VIDYA(dataframe, length=9, select=True):
+    """
+    Source: https://www.tradingview.com/script/64ynXU2e/
+    Author: Tushar Chande
+    Pinescript Author: KivancOzbilgic
+
+    Variable Index Dynamic Average VIDYA
+
+    To achieve the goals, the indicator filters out the market fluctuations (noises)
+    by averaging the price values of the periods, over which it is calculated.
+    In the process, some extra value (weight) is added to the average prices,
+    as it is done during calculations of all weighted indicators, such as EMA , LWMA, and SMMA.
+    But during the VIDIYA indicator's calculation, every period's price
+    receives a weight increment adapted to the current market's volatility .
+
+    select: True = CMO, False= StDev as volatility index
+    usage:
+      dataframe['VIDYA'] = VIDYA(dataframe)
+    """
+    df = dataframe.copy()
+    alpha = 2 / (length + 1)
+    df['momm'] = df['close'].diff()
+    df['m1'] = np.where(df['momm'] >= 0, df['momm'], 0.0)
+    df['m2'] = np.where(df['momm'] >= 0, 0.0, -df['momm'])
+
+    df['sm1'] = df['m1'].rolling(length).sum()
+    df['sm2'] = df['m2'].rolling(length).sum()
+
+    df['chandeMO'] = 100 * (df['sm1'] - df['sm2']) / (df['sm1'] + df['sm2'])
+    if select:
+        df['k'] = abs(df['chandeMO']) / 100
+    else:
+        df['k'] = df['close'].rolling(length).std()
+    df.fillna(0.0, inplace=True)
+
+    df['VIDYA'] = 0.0
+    for i in range(length, len(df)):
+
+        df['VIDYA'].iat[i] = alpha * df['k'].iat[i] * df['close'].iat[i] + \
+            (1 - alpha * df['k'].iat[i]) * df['VIDYA'].iat[i-1]
+
+    return df['VIDYA']
