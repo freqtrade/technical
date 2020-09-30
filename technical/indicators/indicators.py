@@ -929,3 +929,47 @@ def RMI(dataframe, *, length=20, mom=5):
 
     df['RMI'] = np.where(df['emaDec'] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
     return df["RMI"]
+
+
+def VIDYA(dataframe, length=9, select=True):
+    """
+    Source: https://www.tradingview.com/script/64ynXU2e/
+    Author: Tushar Chande
+    Pinescript Author: KivancOzbilgic
+
+    Variable Index Dynamic Average VIDYA
+
+    To achieve the goals, the indicator filters out the market fluctuations (noises)
+    by averaging the price values of the periods, over which it is calculated.
+    In the process, some extra value (weight) is added to the average prices,
+    as it is done during calculations of all weighted indicators, such as EMA , LWMA, and SMMA.
+    But during the VIDIYA indicator's calculation, every period's price
+    receives a weight increment adapted to the current market's volatility .
+
+    select: True = CMO, False= StDev as volatility index
+    usage:
+      dataframe['VIDYA'] = VIDYA(dataframe)
+    """
+    df = dataframe.copy()
+    alpha = 2 / (length + 1)
+    df['momm'] = df['close'].diff()
+    df['m1'] = np.where(df['momm'] >= 0, df['momm'], 0.0)
+    df['m2'] = np.where(df['momm'] >= 0, 0.0, -df['momm'])
+
+    df['sm1'] = df['m1'].rolling(length).sum()
+    df['sm2'] = df['m2'].rolling(length).sum()
+
+    df['chandeMO'] = 100 * (df['sm1'] - df['sm2']) / (df['sm1'] + df['sm2'])
+    if select:
+        df['k'] = abs(df['chandeMO']) / 100
+    else:
+        df['k'] = df['close'].rolling(length).std()
+    df.fillna(0.0, inplace=True)
+
+    df['VIDYA'] = 0.0
+    for i in range(length, len(df)):
+
+        df['VIDYA'].iat[i] = alpha * df['k'].iat[i] * df['close'].iat[i] + \
+            (1 - alpha * df['k'].iat[i]) * df['VIDYA'].iat[i-1]
+
+    return df['VIDYA']

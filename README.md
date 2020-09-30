@@ -25,6 +25,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [TKE Indicator](https://www.tradingview.com/script/Pcbvo0zG/) - Arithmetical mean of 7 oscilators
 * [Volume Weighted MACD](https://www.tradingview.com/script/wVe6AfGA) - Volume Weighted MACD indicator
 * [RMI](https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp) - Relative Momentum indicator
+* [VIDYA](https://www.tradingview.com/script/64ynXU2e/) - Variable Index Dynamic Average
 
 ### Utilities
 
