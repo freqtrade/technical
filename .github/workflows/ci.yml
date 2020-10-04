@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - release_ci
     tags:
   release:
     types: [published]
@@ -179,18 +178,18 @@ jobs:
 
     - name: Publish to PyPI (Test)
       uses: pypa/gh-action-pypi-publish@master
-      if: (steps.extract_branch.outputs.branch == 'master' || steps.extract_branch.outputs.branch == 'release_ci' || github.event_name == 'release')
+      if: (github.event_name == 'release')
       with:
         user: __token__
         password: ${{ secrets.pypi_test_password }}
         repository_url: https://test.pypi.org/legacy/
 
-#     - name: Publish to PyPI
-#       uses: pypa/gh-action-pypi-publish@master
-#       if: (steps.extract_branch.outputs.branch == 'master' || github.event_name == 'release')
-#       with:
-#         user: __token__
-#         password: ${{ secrets.pypi_password }}
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      if: (github.event_name == 'release')
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
 
 #     - name: Dockerhub login
 #       env:
