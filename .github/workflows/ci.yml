@@ -5,6 +5,8 @@ on:
     branches:
       - master
     tags:
+  release:
+    types: [published]
   pull_request:
   schedule:
     - cron:  '0 5 * * 4'
@@ -152,42 +154,42 @@ jobs:
         channel: '#notifications'
         url: ${{ secrets.SLACK_WEBHOOK }}
 
-#   deploy:
-#     needs: [ build, build_windows ]
-#     runs-on: ubuntu-18.04
-#     if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && github.repository == 'freqtrade/freqtrade'
-#     steps:
-#     - uses: actions/checkout@v2
+  deploy:
+    needs: [ build, build_windows ]
+    runs-on: ubuntu-18.04
+    if: (github.event_name == 'push' || github.event_name == 'release') && github.repository == 'freqtrade/technical'
+    steps:
+    - uses: actions/checkout@v2
 
-#     - name: Set up Python
-#       uses: actions/setup-python@v1
-#       with:
-#         python-version: 3.8
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
 
-#     - name: Extract branch name
-#       shell: bash
-#       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-#       id: extract_branch
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
 
-#     - name: Build distribution
-#       run: |
-#         pip install -U setuptools wheel
-#         python setup.py sdist bdist_wheel
+    - name: Build distribution
+      run: |
+        pip install -U setuptools wheel
+        python setup.py sdist bdist_wheel
 
-#     - name: Publish to PyPI (Test)
-#       uses: pypa/gh-action-pypi-publish@master
-#       if: (steps.extract_branch.outputs.branch == 'master' || github.event_name == 'release')
-#       with:
-#         user: __token__
-#         password: ${{ secrets.pypi_test_password }}
-#         repository_url: https://test.pypi.org/legacy/
+    - name: Publish to PyPI (Test)
+      uses: pypa/gh-action-pypi-publish@master
+      if: (github.event_name == 'release')
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_test_password }}
+        repository_url: https://test.pypi.org/legacy/
 
-#     - name: Publish to PyPI
-#       uses: pypa/gh-action-pypi-publish@master
-#       if: (steps.extract_branch.outputs.branch == 'master' || github.event_name == 'release')
-#       with:
-#         user: __token__
-#         password: ${{ secrets.pypi_password }}
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      if: (github.event_name == 'release')
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
 
 #     - name: Dockerhub login
 #       env:
@@ -229,14 +231,14 @@ jobs:
 #         build_helpers/publish_docker_pi.sh
 
 
-#     - name: Slack Notification
-#       uses: homoluctus/slatify@v1.8.0
-#       if: always() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
-#       with:
-#         type: ${{ job.status }}
-#         job_name: '*Freqtrade CI Deploy*'
-#         mention: 'here'
-#         mention_if: 'failure'
-#         channel: '#notifications'
-#         url: ${{ secrets.SLACK_WEBHOOK }}
+    - name: Slack Notification
+      uses: homoluctus/slatify@v1.8.0
+      if: always() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+      with:
+        type: ${{ job.status }}
+        job_name: '*Technical CI Deploy*'
+        mention: 'here'
+        mention_if: 'failure'
+        channel: '#notifications'
+        url: ${{ secrets.SLACK_WEBHOOK }}
 
