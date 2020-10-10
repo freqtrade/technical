@@ -12,6 +12,8 @@ def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFr
     """
     Pivots Points
 
+    https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/
+
     Formula:
     Pivot = (Previous High + Previous Low + Previous Close)/3
 
