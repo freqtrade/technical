@@ -973,3 +973,82 @@ def VIDYA(dataframe, length=9, select=True):
             (1 - alpha * df['k'].iat[i]) * df['VIDYA'].iat[i-1]
 
     return df['VIDYA']
+
+
+def MADR(dataframe, length=21, stds=2):
+    """
+    Moving Averae Deviation RAte just like bollinger bands ...
+    Source: https://tradingview.com/script/25KCgL9H/
+    Author: tarantula3535
+
+    Moving average deviation rate
+
+    Simple moving average deviation rate and standard deviation.
+
+    The bollinger band is momentum value standard devition.
+    Bat the bollinger band is not normal distribution to close price.
+    Moving average deviation rate is normal distribution.
+
+    This indicator is draw Moving average deviation rate and fill area 2σ standard devition.
+    If it exceeds 2σ, it is a trading opportunity.
+
+    """
+
+    import talib.abstract as ta
+    df = dataframe.copy()
+    """ tradingview's code
+    _maPeriod = input(21, title="Moving average period")
+
+    //deviation rate
+    _sma = sma(close, _maPeriod)
+    _rate = close / _sma * 100 - 100
+
+    //deviation rate std
+    _stdCenter = sma(_rate, _maPeriod * 2)
+    _std = stdev(_rate, _maPeriod * 2)
+    _plusDev = _stdCenter + _std * 2
+    _minusDev = _stdCenter - _std * 2
+    """
+    df["sma"] = ta.SMA(df, timeperiod=length)
+    df["rate"] = (df["close"] / df["sma"]) * 100 - 100
+    df["stdcenter"] = ta.SMA(df.rate, timeperiod=length * stds)
+    df["std"] = ta.STDDEV(df.rate, timeperiod=length * stds)
+    df["plusdev"] = df["stdcenter"] + df["std"] * stds
+    df["minusdev"] = df["stdcenter"] - df["std"] * stds
+    df = df.drop(columns=['sma', 'std'])
+    # return stdcenter , plusdev , minusdev, rate
+    return df
+
+
+def SSLChannels(dataframe, length=10, mode='sma'):
+    """
+    Source: https://www.tradingview.com/script/xzIoaIJC-SSL-channel/
+    Author: xmatthias
+    Pinescript Author: ErwinBeckers
+
+    SSL Channels.
+    Average over highs and lows form a channel - lines "flip" when close crosses either of the 2 lines.
+    Trading ideas:
+        * Channel cross
+        * as confirmation based on up > down for long
+
+    Usage:
+        dataframe['sslDown'], dataframe['sslUp'] = SSLChannels(dataframe, 10)
+    """
+    if mode not in ('sma'):
+        raise ValueError(f"Mode {mode} not supported yet")
+
+    df = dataframe.copy()
+
+    if mode == 'sma':
+        df['smaHigh'] = df['high'].rolling(length).mean()
+        df['smaLow'] = df['low'].rolling(length).mean()
+
+    df['hlv'] = np.where(df['close'] > df['smaHigh'], 1,
+                         np.where(df['close'] < df['smaLow'], -1, np.NAN))
+    df['hlv'] = df['hlv'].ffill()
+
+    df['sslDown'] = np.where(df['hlv'] < 0, df['smaHigh'], df['smaLow'])
+    df['sslUp'] = np.where(df['hlv'] < 0, df['smaLow'], df['smaHigh'])
+
+    return df['sslDown'], df['sslUp']
