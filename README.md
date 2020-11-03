@@ -26,6 +26,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [Volume Weighted MACD](https://www.tradingview.com/script/wVe6AfGA) - Volume Weighted MACD indicator
 * [RMI](https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp) - Relative Momentum indicator
 * [VIDYA](https://www.tradingview.com/script/64ynXU2e/) - Variable Index Dynamic Average
+* [MADR](https://www.tradingview.com/script/25KCgL9H/) - Moving Average Deviation Rate
 * [SSL](https://www.tradingview.com/script/xzIoaIJC-SSL-channel/) - SSL Channel
 
 ### Utilities

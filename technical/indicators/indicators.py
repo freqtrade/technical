@@ -975,6 +975,51 @@ def VIDYA(dataframe, length=9, select=True):
     return df['VIDYA']
 
 
+def MADR(dataframe, length=21, stds=2):
+    """
+    Moving Averae Deviation RAte just like bollinger bands ...
+    Source: https://tradingview.com/script/25KCgL9H/
+    Author: tarantula3535
+
+    Moving average deviation rate
+
+    Simple moving average deviation rate and standard deviation.
+
+    The bollinger band is momentum value standard devition.
+    Bat the bollinger band is not normal distribution to close price.
+    Moving average deviation rate is normal distribution.
+
+    This indicator is draw Moving average deviation rate and fill area 2σ standard devition.
+    If it exceeds 2σ, it is a trading opportunity.
+
+    """
+
+    import talib.abstract as ta
+    df = dataframe.copy()
+    """ tradingview's code
+    _maPeriod = input(21, title="Moving average period")
+
+    //deviation rate
+    _sma = sma(close, _maPeriod)
+    _rate = close / _sma * 100 - 100
+
+    //deviation rate std
+    _stdCenter = sma(_rate, _maPeriod * 2)
+    _std = stdev(_rate, _maPeriod * 2)
+    _plusDev = _stdCenter + _std * 2
+    _minusDev = _stdCenter - _std * 2
+    """
+    df["sma"] = ta.SMA(df, timeperiod=length)
+    df["rate"] = (df["close"] / df["sma"]) * 100 - 100
+    df["stdcenter"] = ta.SMA(df.rate, timeperiod=length * stds)
+    df["std"] = ta.STDDEV(df.rate, timeperiod=length * stds)
+    df["plusdev"] = df["stdcenter"] + df["std"] * stds
+    df["minusdev"] = df["stdcenter"] - df["std"] * stds
+    df = df.drop(columns=['sma', 'std'])
+    # return stdcenter , plusdev , minusdev, rate
+    return df
+
+
 def SSLChannels(dataframe, length=10, mode='sma'):
     """
     Source: https://www.tradingview.com/script/xzIoaIJC-SSL-channel/
