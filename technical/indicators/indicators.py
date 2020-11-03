@@ -992,6 +992,7 @@ def MADR(dataframe, length=21, stds=2):
     This indicator is draw Moving average deviation rate and fill area 2σ standard devition.
     If it exceeds 2σ, it is a trading opportunity.
 
+    adds: 'rate' 'stdcenter', 'plusdev', 'minusdev' to the dataframe
     """
 
     import talib.abstract as ta
@@ -1052,3 +1053,58 @@ def SSLChannels(dataframe, length=10, mode='sma'):
     df['sslUp'] = np.where(df['hlv'] < 0, df['smaLow'], df['smaHigh'])
 
     return df['sslDown'], df['sslUp']
+
+
+def MOST(dataframe, percent=2, length=8, MAtype=1):
+    """
+    Source: https://www.tradingview.com/script/64ynXU2e/
+    Author: Anıl ÖZEKŞİ for MATRİKS TRADER platform.
+    Pinescript Author: KivancOzbilgic
+
+    Potential trading ideas:
+    * Buy when exMov crosses above Most
+
+    Warning: Performance of this indicator is slow due to it's iterative nature.
+
+    Adds: MA_<length>_<percent> MOST_<length>_<percent>	Trend_<length>_<percent>
+    e.g. with Default parameters:
+        MA_8_2  MOST_8_2    Trend_8_2
+
+
+    """
+    import talib.abstract as ta
+    df = dataframe.copy()
+    mostvalue = 'MOST_' + str(length) + '_' + str(percent)
+    mavalue = 'MA_' + str(length) + '_' + str(percent)
+    trend = 'Trend_' + str(length) + '_' + str(percent)
+    # Compute basic upper and lower bands
+    if MAtype == 1:
+        df[mavalue] = ta.EMA(df, timeperiod=length)
+    elif MAtype == 2:
+        df[mavalue] = ta.DEMA(df, timeperiod=length)
+    elif MAtype == 3:
+        df[mavalue] = ta.T3(df, timeperiod=length)
+    df['basic_ub'] = df[mavalue] * (1+percent/100)
+    df['basic_lb'] = df[mavalue] * (1-percent/100)
+    # Compute final upper and lower bands
+    df['final_ub'] = 0.00
+    df['final_lb'] = 0.00
+    for i in range(length, len(df)):
+        df['final_ub'].iat[i] = df['basic_ub'].iat[i] if df['basic_ub'].iat[i] < df['final_ub'].iat[i -
+                                                                                                    1] or df[mavalue].iat[i - 1] > df['final_ub'].iat[i - 1] else df['final_ub'].iat[i - 1]
+        df['final_lb'].iat[i] = df['basic_lb'].iat[i] if df['basic_lb'].iat[i] > df['final_lb'].iat[i -
+                                                                                                    1] or df[mavalue].iat[i - 1] < df['final_lb'].iat[i - 1] else df['final_lb'].iat[i - 1]
+    # Set the MOST value
+    df[mostvalue] = 0.00
+    for i in range(length, len(df)):
+        df[mostvalue].iat[i] = df['final_ub'].iat[i] if df[mostvalue].iat[i - 1] == df['final_ub'].iat[i - 1] and df[mavalue].iat[i] <= df['final_ub'].iat[i] else \
+            df['final_lb'].iat[i] if df[mostvalue].iat[i - 1] == df['final_ub'].iat[i - 1] and df[mavalue].iat[i] > df['final_ub'].iat[i] else \
+            df['final_lb'].iat[i] if df[mostvalue].iat[i - 1] == df['final_lb'].iat[i - 1] and df[mavalue].iat[i] >= df['final_lb'].iat[i] else \
+            df['final_ub'].iat[i] if df[mostvalue].iat[i - 1] == df['final_lb'].iat[i -
+                                                                                    1] and df[mavalue].iat[i] < df['final_lb'].iat[i] else 0.00
+    # Mark the trend direction up/down
+    df[trend] = np.where((df[mostvalue] > 0.00), np.where((df[mavalue] < df[mostvalue]), 'down',  'up'), np.NaN)
+    # Remove basic and final bands from the columns
+    df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb'], inplace=True, axis=1)
+    df.fillna(0, inplace=True)
+    return df

@@ -27,6 +27,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [RMI](https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp) - Relative Momentum indicator
 * [VIDYA](https://www.tradingview.com/script/64ynXU2e/) - Variable Index Dynamic Average
 * [MADR](https://www.tradingview.com/script/25KCgL9H/) - Moving Average Deviation Rate
+* [MOST](https://tradingview.com/script/28ZcW4nv/) - MOST by Anıl ÖZEKŞİ
 * [SSL](https://www.tradingview.com/script/xzIoaIJC-SSL-channel/) - SSL Channel
 
 ### Utilities
