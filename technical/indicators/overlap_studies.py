@@ -3,7 +3,7 @@ Overlap studies
 """
 
 from numpy.core.records import ndarray
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 
 ########################################
@@ -12,11 +12,18 @@ from pandas import DataFrame
 #
 
 # BBANDS               Bollinger Bands
-def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="bb") -> DataFrame:
-    from pyti.bollinger_bands import lower_bollinger_band, middle_bollinger_band, upper_bollinger_band
-    dataframe["{}_lower".format(colum_prefix)] = lower_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_middle".format(colum_prefix)] = middle_bollinger_band(dataframe[field], period, stdv)
-    dataframe["{}_upper".format(colum_prefix)] = upper_bollinger_band(dataframe[field], period, stdv)
+def bollinger_bands(dataframe: DataFrame, period: int = 21, stdv: int = 2,
+                    field: str = 'close', colum_prefix: str = "bb") -> DataFrame:
+    """
+    Bollinger bands, using SMA.
+    Modifies original dataframe and returns dataframe with the following 3 columns
+        <column_prefix>_lower, <column_prefix>_middle, and <column_prefix>_upper,
+    """
+    rolling_mean = dataframe[field].rolling(window=period).mean()
+    rolling_std = dataframe[field].rolling(window=period).std()
+    dataframe[f"{colum_prefix}_lower"] = rolling_mean - (rolling_std * stdv)
+    dataframe[f"{colum_prefix}_middle"] = rolling_mean
+    dataframe[f"{colum_prefix}_upper"] = rolling_mean + (rolling_std * stdv)
 
     return dataframe
 
@@ -24,7 +31,10 @@ def bollinger_bands(dataframe, period=21, stdv=2, field='close', colum_prefix="b
 # DEMA                 Double Exponential Moving Average
 
 # EMA                  Exponential Moving Average
-def ema(dataframe, period, field='close'):
+def ema(dataframe: DataFrame, period: int, field='close') -> Series:
+    """
+    Wrapper around talib ema (using the abstract interface)
+    """
     import talib.abstract as ta
     return ta.EMA(dataframe, timeperiod=period, price=field)
 
