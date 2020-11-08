@@ -3,7 +3,20 @@
 """
 from pandas import DatetimeIndex, merge, DataFrame, to_datetime
 
-from technical.exchange import TICKER_INTERVAL_MINUTES
+TICKER_INTERVAL_MINUTES = {
+    '1m': 1,
+    '5m': 5,
+    '15m': 15,
+    '30m': 30,
+    '1h': 60,
+    '60m': 60,
+    '2h': 120,
+    '4h': 240,
+    '6h': 360,
+    '12h': 720,
+    '1d': 1440,
+    '1w': 10080,
+}
 
 
 def ticker_history_to_dataframe(ticker: list) -> DataFrame:
@@ -105,7 +118,6 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
 
     if exchange_interval:
         # convert to our allowed ticker values
-        from technical.exchange import TICKER_INTERVAL_MINUTES
         converted = list(TICKER_INTERVAL_MINUTES.keys())[
             list(TICKER_INTERVAL_MINUTES.values()).index(exchange_interval)]
         if len(converted) > 0:
