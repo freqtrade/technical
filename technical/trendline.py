@@ -82,9 +82,7 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
 
     :param dataframe: incomming data matrix
     :param field: for which column would you like to generate the trendline
-    :param x: One-dimensional data set
-    :param window: How long the trendlines should be. If window < 1, then it
-                   will be taken as a percentage of the size of the data
+    :param segments: Number of  Trend line segments to generate
     :param charts: Boolean value saying whether to print chart to screen
     """
 
