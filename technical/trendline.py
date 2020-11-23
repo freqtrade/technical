@@ -31,13 +31,13 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
     min1 = np.where(x == min(x))[0][0]  # find the index of the abs min
 
     # First the max
-    if max1 + window > len(x):
+    if max1 + window >= len(x):
         max2 = max(x[0:(max1 - window)])
     else:
         max2 = max(x[(max1 + window):])
 
     # Now the min
-    if min1 - window < 0:
+    if min1 - window <= 0:
         min2 = min(x[(min1 + window):])
     else:
         min2 = min(x[0:(min1 - window)])
