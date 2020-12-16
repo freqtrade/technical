@@ -861,7 +861,7 @@ def TKE(dataframe, *, length=14, emaperiod=5):
     df["ultosc"] = ta.ULTOSC(df, timeperiod1=7, timeperiod2=14, timeperiod3=28)
     df["mfi"] = ta.MFI(df, timeperiod=length)
     df["willr"] = ta.WILLR(df, timeperiod=length)
-    df["mom"] = ta.MOM(df, timeperiod=length)
+    df["mom"] = ta.ROCR100(df, timeperiod=length)
     df["cci"] = ta.CCI(df, timeperiod=length)
     df['TKE'] = df[['rsi', 'stoch', 'ultosc', 'mfi', 'willr', 'mom', 'cci']].mean(axis='columns')
     df["TKEema"] = ta.EMA(df["TKE"], timeperiod=emaperiod)
