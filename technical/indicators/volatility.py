@@ -2,7 +2,7 @@
 Volatility indicator functoins
 """
 from numpy.core.records import ndarray
-
+from technical.vendor.qtpylib.indicators import atr  # noqa: F401
 
 ########################################
 #
@@ -10,14 +10,17 @@ from numpy.core.records import ndarray
 #
 
 # ATR                  Average True Range
-def atr(dataframe, period, field='close') -> ndarray:
-    from pyti.average_true_range import average_true_range
-    return average_true_range(dataframe[field], period)
+# Imported from qtpylib, which is a fast implementation.
 
 
-def atr_percent(dataframe, period, field='close') -> ndarray:
-    from pyti.average_true_range_percent import average_true_range_percent
-    return average_true_range_percent(dataframe[field], period)
+def atr_percent(dataframe, period: int = 14) -> ndarray:
+    """
+
+    :param dataframe: Dataframe containing candle data
+    :param period: Period to use for ATR calculation (defaults to 14)
+    :return: Series containing ATR_percent calculation
+    """
+    return (atr(dataframe, period) / dataframe['close']) * 100
 
 
 # NATR                 Normalized Average True Range
