@@ -2,18 +2,6 @@ import numpy
 import pytest
 
 
-@pytest.mark.skip(reason="this fails right now")
-def test_arron(testdata_1m_btc):
-    from technical.indicators import aroon
-
-    print()
-    print(testdata_1m_btc)
-
-    result = aroon(testdata_1m_btc)
-
-    print(result)
-
-
 def test_atr(testdata_1m_btc):
     from technical.indicators import atr
 

@@ -41,7 +41,6 @@ The following indicators are available and have been 'wrapped' to be used on a d
 * [chaikin_money_flow](https://www.tradingview.com/wiki/Chaikin_Money_Flow_(CMF)) - Chaikin Money Flow, requires dataframe and period
 * [accumulation_distribution](https://www.investopedia.com/terms/a/accumulationdistribution.asp) - requires a dataframe
 * osc - requires a dataframe and the periods
-* [aroon](https://www.investopedia.com/terms/a/aroon.asp) - dataframe, period, field
 * [atr](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
 * [atr_percent](https://www.investopedia.com/terms/a/atr.asp) - dataframe, period, field
 * [bollinger_bands](https://www.investopedia.com/terms/b/bollingerbands.asp) - dataframe, period, stdv, field, prefix
@@ -85,7 +84,7 @@ dataframe_long['rsi'] = ta.RSI(dataframe_long)
 dataframe = resampled_merge(dataframe, dataframe_long, fill_na=True)
 
 """
-The resulting dataframe will have 5 resampled columns in addition to the regular columns, 
+The resulting dataframe will have 5 resampled columns in addition to the regular columns,
 following the template resample_<interval_in_minutes>_<orig_column_name>.
 So in the above example:
 ['resample_240_open', 'resample_240_high', 'resample_240_low','resample_240_close', 'resample_240_rsi']
