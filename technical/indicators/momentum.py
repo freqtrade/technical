@@ -3,7 +3,6 @@ Momentum indicators
 """
 
 from numpy.core.records import ndarray
-from pandas import DataFrame
 
 
 ########################################
@@ -14,7 +13,8 @@ from pandas import DataFrame
 # ADX                  Average Directional Movement Index
 # ADXR                 Average Directional Movement Index Rating
 # APO                  Absolute Price Oscillator
-
+# AROON                Aroon
+# AROONOSC             Aroon Oscillator
 # BOP                  Balance Of Power
 
 # CCI                  Commodity Channel Index
