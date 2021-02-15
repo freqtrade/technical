@@ -15,16 +15,6 @@ from pandas import DataFrame
 # ADXR                 Average Directional Movement Index Rating
 # APO                  Absolute Price Oscillator
 
-# AROON                Aroon
-def aroon(dataframe, period=25, field='close', colum_prefix="aroon") -> DataFrame:
-    from pyti.aroon import aroon_up as up
-    from pyti.aroon import aroon_down as down
-    dataframe["{}_up".format(colum_prefix)] = up(dataframe[field], period)
-    dataframe["{}_down".format(colum_prefix)] = down(dataframe[field], period)
-    return dataframe
-
-
-# AROONOSC             Aroon Oscillator
 # BOP                  Balance Of Power
 
 # CCI                  Commodity Channel Index
