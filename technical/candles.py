@@ -8,11 +8,9 @@ def heikinashi(bars):
     bars['ha_close'] = (bars['open'] + bars['high'] +
                         bars['low'] + bars['close']) / 4
 
-    bars['ha_open'] = (bars['open'].shift(1) + bars['close'].shift(1)) / 2
-    bars.loc[:1, 'ha_open'] = bars['open'].values[0]
-    for x in range(2):
-        bars.loc[1:, 'ha_open'] = (
-                                          (bars['ha_open'].shift(1) + bars['ha_close'].shift(1)) / 2)[1:]
+    bars.at[0, 'ha_open'] = (bars.at[0, 'open'] + bars.at[0, 'close']) / 2
+    for x in range(1, len(bars)):
+        bars.at[x, 'ha_open'] = (bars.at[x - 1, 'ha_open'] + bars.at[x - 1, 'ha_close']) / 2
 
     bars['ha_high'] = bars.loc[:, ['high', 'ha_open', 'ha_close']].max(axis=1)
     bars['ha_low'] = bars.loc[:, ['low', 'ha_open', 'ha_close']].min(axis=1)
