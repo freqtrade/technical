@@ -4,16 +4,30 @@ from scipy.ndimage import shift
 
 
 def heikinashi(bars):
+    """
+    Heikin Ashi calculation: https://school.stockcharts.com/doku.php?id=chart_analysis:heikin_ashi
+
+    ha_open calculation based on: https://stackoverflow.com/a/55110393
+    ha_open = [ calculate first record ][ append remaining records with list comprehension method ]
+    list comprehension method is significantly faster as a for loop
+
+    result:
+    ha_open[0] =  (bars.open[0] + bars.close[0]) / 2
+    ha_open[1] = (ha_open[0] + ha_close[0]) / 2
+    ...
+    ha_open[last] = ha_open[len(bars)-1] + ha_close[len(bars)-1]) / 2
+    """
+
     bars = bars.copy()
-    bars['ha_close'] = (bars['open'] + bars['high'] +
-                        bars['low'] + bars['close']) / 4
 
-    bars.at[0, 'ha_open'] = (bars.at[0, 'open'] + bars.at[0, 'close']) / 2
-    for x in range(1, len(bars)):
-        bars.at[x, 'ha_open'] = (bars.at[x - 1, 'ha_open'] + bars.at[x - 1, 'ha_close']) / 2
+    bars.loc[:, 'ha_close'] = bars.loc[:, ['open', 'high', 'low', 'close']].mean(axis=1)
 
-    bars['ha_high'] = bars.loc[:, ['high', 'ha_open', 'ha_close']].max(axis=1)
-    bars['ha_low'] = bars.loc[:, ['low', 'ha_open', 'ha_close']].min(axis=1)
+    ha_open = [ (bars.open[0] + bars.close[0]) / 2 ]
+    [ ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(0, len(bars)-1) ]
+    bars['ha_open'] = ha_open
+
+    bars.loc[:, 'ha_high'] = bars.loc[:, ['high', 'ha_open', 'ha_close']].max(axis=1)
+    bars.loc[:, 'ha_low'] = bars.loc[:, ['low', 'ha_open', 'ha_close']].min(axis=1)
 
     result = pd.DataFrame(
         index=bars.index,
