@@ -26,8 +26,8 @@ def heikinashi(bars):
     [ ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(0, len(bars)-1) ]
     bars['ha_open'] = ha_open
 
-    bars.loc[:, 'ha_high'] = bars.loc[:, ['ha_open', 'ha_close', 'high']].max(axis=1)
-    bars.loc[:, 'ha_low'] = bars.loc[:, ['ha_open', 'ha_close', 'low']].min(axis=1)
+    bars.loc[:, 'ha_high'] = bars.loc[:, ['high', 'ha_open', 'ha_close']].max(axis=1)
+    bars.loc[:, 'ha_low'] = bars.loc[:, ['low', 'ha_open', 'ha_close']].min(axis=1)
 
     result = pd.DataFrame(
         index=bars.index,
