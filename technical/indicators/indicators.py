@@ -1054,7 +1054,7 @@ def SSLChannels(dataframe, length=10, mode='sma'):
     return df['sslDown'], df['sslUp']
   
   
-  def PMAX(dataframe, period = 10, multiplier = 3, length=12, MAtype=1, src=1):
+def PMAX(dataframe, period = 10, multiplier = 3, length=12, MAtype=1, src=1):
     """
     Function to compute PMAX
     
