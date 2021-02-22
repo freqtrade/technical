@@ -1057,9 +1057,11 @@ def SSLChannels(dataframe, length=10, mode='sma'):
 def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
     """
     Function to compute PMAX
+    Source: https://www.tradingview.com/script/sU9molfV/
+    Pinescript Author: KivancOzbilgic
 
     Args :
-        df : Pandas DataFrame which contains ['date', 'open', 'high', 'low', 'close', 'volume'] columns
+        df : Pandas DataFrame with the columns ['date', 'open', 'high', 'low', 'close', 'volume']
         period : Integer indicates the period of computation in terms of number of candles
         multiplier : Integer indicates value to multiply the ATR
         length: moving averages length
@@ -1118,19 +1120,27 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
     df['final_ub'] = 0.00
     df['final_lb'] = 0.00
     for i in range(period, len(df)):
-        df['final_ub'].iat[i] = df['basic_ub'].iat[i] if df['basic_ub'].iat[i] < df['final_ub'].iat[i -
-                                                                                                    1] or df[mavalue].iat[i - 1] > df['final_ub'].iat[i - 1] else df['final_ub'].iat[i - 1]
-        df['final_lb'].iat[i] = df['basic_lb'].iat[i] if df['basic_lb'].iat[i] > df['final_lb'].iat[i -
-                                                                                                    1] or df[mavalue].iat[i - 1] < df['final_lb'].iat[i - 1] else df['final_lb'].iat[i - 1]
+        df['final_ub'].iat[i] = df['basic_ub'].iat[i] if (
+            df['basic_ub'].iat[i] < df['final_ub'].iat[i - 1]
+            or df[mavalue].iat[i - 1] > df['final_ub'].iat[i - 1]) else df['final_ub'].iat[i - 1]
+        df['final_lb'].iat[i] = df['basic_lb'].iat[i] if (
+            df['basic_lb'].iat[i] > df['final_lb'].iat[i - 1]
+            or df[mavalue].iat[i - 1] < df['final_lb'].iat[i - 1]) else df['final_lb'].iat[i - 1]
 
     # Set the Pmax value
     df[pm] = 0.00
     for i in range(period, len(df)):
-        df[pm].iat[i] = df['final_ub'].iat[i] if df[pm].iat[i - 1] == df['final_ub'].iat[i - 1] and df[mavalue].iat[i] <= df['final_ub'].iat[i] else \
-            df['final_lb'].iat[i] if df[pm].iat[i - 1] == df['final_ub'].iat[i - 1] and df[mavalue].iat[i] > df['final_ub'].iat[i] else \
-            df['final_lb'].iat[i] if df[pm].iat[i - 1] == df['final_lb'].iat[i - 1] and df[mavalue].iat[i] >= df['final_lb'].iat[i] else \
-            df['final_ub'].iat[i] if df[pm].iat[i - 1] == df['final_lb'].iat[i -
-                                                                             1] and df[mavalue].iat[i] < df['final_lb'].iat[i] else 0.00
+        df[pm].iat[i] = (
+            df['final_ub'].iat[i] if (df[pm].iat[i - 1] == df['final_ub'].iat[i - 1]
+                                      and df[mavalue].iat[i] <= df['final_ub'].iat[i])
+            else df['final_lb'].iat[i] if (
+                df[pm].iat[i - 1] == df['final_ub'].iat[i - 1]
+                and df[mavalue].iat[i] > df['final_ub'].iat[i]) else df['final_lb'].iat[i]
+            if (df[pm].iat[i - 1] == df['final_lb'].iat[i - 1]
+                and df[mavalue].iat[i] >= df['final_lb'].iat[i]) else df['final_ub'].iat[i]
+            if (df[pm].iat[i - 1] == df['final_lb'].iat[i - 1]
+                and df[mavalue].iat[i] < df['final_lb'].iat[i]) else 0.00)
+
     # Mark the trend direction up/down
     df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), 'down',  'up'), np.NaN)
     # Remove basic and final bands from the columns
