@@ -28,6 +28,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [VIDYA](https://www.tradingview.com/script/64ynXU2e/) - Variable Index Dynamic Average
 * [MADR](https://www.tradingview.com/script/25KCgL9H/) - Moving Average Deviation Rate
 * [SSL](https://www.tradingview.com/script/xzIoaIJC-SSL-channel/) - SSL Channel
+* [PMAX](https://www.tradingview.com/script/sU9molfV/) - PMAX indicator
 
 ### Utilities
 
