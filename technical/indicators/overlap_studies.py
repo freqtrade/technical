@@ -20,7 +20,7 @@ def bollinger_bands(dataframe: DataFrame, period: int = 21, stdv: int = 2,
         <column_prefix>_lower, <column_prefix>_middle, and <column_prefix>_upper,
     """
     rolling_mean = dataframe[field].rolling(window=period).mean()
-    rolling_std = dataframe[field].rolling(window=period).std()
+    rolling_std = dataframe[field].rolling(window=period).std(ddof=0)
     dataframe[f"{colum_prefix}_lower"] = rolling_mean - (rolling_std * stdv)
     dataframe[f"{colum_prefix}_middle"] = rolling_mean
     dataframe[f"{colum_prefix}_upper"] = rolling_mean + (rolling_std * stdv)
