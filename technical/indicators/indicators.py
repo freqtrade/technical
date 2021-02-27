@@ -4,8 +4,9 @@ This file contains a collection of common indicators, which are based on third p
 """
 import numpy as np
 from numpy.core.records import ndarray
-from pandas import Series, DataFrame
-from .overlap_studies import sma, vwma
+from pandas import DataFrame, Series
+
+from .overlap_studies import sma, vwma, zema
 
 ########################################
 #
@@ -612,10 +613,11 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     plot( vfima , title="EMA of vfi", color=orange)
     plot( vfi, title="vfi", color=green,linewidth=2)
     """
-    import talib as ta
     from math import log
-    from pyti.simple_moving_average import simple_moving_average as sma
+
+    import talib as ta
     from numpy import where
+    from pyti.simple_moving_average import simple_moving_average as sma
 
     length = length
     coef = coef
