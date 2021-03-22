@@ -1,82 +1,52 @@
-import talib.abstract as ta
 import pandas as pd
-import numpy as np
-
-"""
-This file provides you with the consensus indicator and all associated helper methods.
-
-The idea is based on the concept that, if you have 1 indicators telling you to buy things are great
-if 100 indecators telling you to buy at the same time, things are better.
-
-If we can now have an easily understandalbe score, things should be perfect.
-
-Configuration:
-
-each of the utility methods, utilizes the default parameters as based in the literature. Assuming
-that these are the signals, most trades will use.
-
-Usage:
-
-1.
-
-from technical.consensus import Consensus
-
-c = Consensus(dataframe)
-
-2.
-
-call the indicators you would like to have evaluated in your consensus model
-with optional parameters. Like the impact
-
-c.evaluate_rsi()
-
-3. call the score method. This will basically compute 2 scores for you, which can be easily
-plotted
-
-c.score()
-
-if you like to apply some smoothing, you can call
-
-c.score(smooth=3)
-
-for example.
-
-
-"""
-
-
-def crossed(series1, series2, direction=None):
-    if isinstance(series1, np.ndarray):
-        series1 = pd.Series(series1)
-
-    if isinstance(series2, int) or isinstance(series2, float) or isinstance(series2, np.ndarray):
-        series2 = pd.Series(index=series1.index, data=series2)
-
-    if direction is None or direction == "above":
-        above = pd.Series((series1 > series2) & (
-                series1.shift(1) <= series2.shift(1)))
-
-    if direction is None or direction == "below":
-        below = pd.Series((series1 < series2) & (
-                series1.shift(1) >= series2.shift(1)))
-
-    if direction is None:
-        return above or below
-
-    return above if direction == "above" else below
-
-
-def crossed_above(series1, series2):
-    return crossed(series1, series2, "above")
-
-
-def crossed_below(series1, series2):
-    return crossed(series1, series2, "below")
+import talib.abstract as ta
+from technical.qtpylib import crossed_above
 
 
 class Consensus:
+    """
+    This file provides you with the consensus indicator and all associated helper methods.
 
-    def __init__(self, dataframe):
+    The idea is based on the concept that, if you have 1 indicators telling you to buy things are great
+    if 100 indecators telling you to buy at the same time, things are better.
+
+    If we can now have an easily understandalbe score, things should be perfect.
+
+    Configuration:
+
+    each of the utility methods, utilizes the default parameters as based in the literature. Assuming
+    that these are the signals, most trades will use.
+
+    Usage:
+
+    1.
+
+    from technical.consensus import Consensus
+
+    c = Consensus(dataframe)
+
+    2.
+
+    call the indicators you would like to have evaluated in your consensus model
+    with optional parameters. Like the impact
+
+    c.evaluate_rsi()
+
+    3. call the score method. This will basically compute 2 scores for you, which can be easily
+    plotted
+
+    c.score()
+
+    if you like to apply some smoothing, you can call
+
+    c.score(smooth=3)
+
+    for example.
+
+
+    """
+
+    def __init__(self, dataframe: pd.DataFrame):
         """
         initializes the conesensus object.
         :param dataframe: dataframe to evaluate
@@ -114,17 +84,14 @@ class Consensus:
             dataframe["{}_score_buy".format(prefix)] = dataframe["{}_score_buy".format(prefix)].rolling(smooth).mean()
             dataframe["{}_score_sell".format(prefix)] = dataframe["{}_score_sell".format(prefix)].rolling(smooth).mean()
 
-        return {'sell':
-                    dataframe["{}_score_sell".format(prefix)],
+        return {'sell': dataframe["{}_score_sell".format(prefix)],
                 'buy': dataframe["{}_score_buy".format(prefix)],
                 "buy_agreement": scores.filter(regex="^(buy)_.*").sum(axis=1),
                 "sell_agreement": scores.filter(regex="^(sell)_.*").sum(axis=1),
                 "buy_disagreement": scores.filter(regex="^(buy)_.*").count(axis=1) - scores.filter(
-                    regex="^(buy)_.*").sum(
-                    axis=1),
+                    regex="^(buy)_.*").sum(axis=1),
                 "sell_disagreement": scores.filter(regex="^(sell)_.*").count(axis=1) - scores.filter(
-                    regex="^(sell)_.*").sum(
-                    axis=1),
+                    regex="^(sell)_.*").sum(axis=1),
 
                 }
 
