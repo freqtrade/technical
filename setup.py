@@ -32,7 +32,6 @@ setup(name='technical',
           'pyti',
           'pandas',
           'arrow',
-          'SQLAlchemy'
       ],
       include_package_data=True,
       zip_safe=False,
