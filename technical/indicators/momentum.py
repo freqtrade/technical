@@ -65,7 +65,7 @@ def ultimate_oscilator(dataframe):
 
 # WILLR                Williams' %R
 def williams_percent(dataframe, period=14, field='close'):
-    highest_high = dataframe[field].rolling(period).max()
-    lowest_low = dataframe[field].rolling(period).min()
+    highest_high = dataframe['high'].rolling(period).max()
+    lowest_low = dataframe['low'].rolling(period).min()
     wr = (highest_high - dataframe[field]) / (highest_high - lowest_low) * -100
     return wr
