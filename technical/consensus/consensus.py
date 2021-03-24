@@ -450,12 +450,11 @@ class Consensus:
         :param prefix:
         :return:
         """
-        from technical.indicators import cci
 
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
-        dataframe[name] = cci(dataframe, period)
+        dataframe[name] = ta.CCI(dataframe, timeperiod=period)
 
         dataframe.loc[
             (
@@ -539,12 +538,10 @@ class Consensus:
         :param prefix:
         :return:
         """
-        from technical.indicators import cmo
-
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
-        dataframe[name] = cmo(dataframe, period)
+        dataframe[name] = ta.CMO(dataframe, timeperiod=period)
 
         dataframe.loc[
             (
@@ -608,12 +605,10 @@ class Consensus:
         :param prefix:
         :return:
         """
-        from technical.indicators import ultimate_oscilator
-
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}'.format(prefix)
-        dataframe[name] = ultimate_oscilator(dataframe)
+        dataframe[name] = ta.ULTOSC(dataframe)
 
         dataframe.loc[
             (
@@ -666,12 +661,11 @@ class Consensus:
         :param prefix:
         :return:
         """
-        from technical.indicators import momentum
 
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = '{}_{}'.format(prefix, period)
-        dataframe[name] = momentum(dataframe, 'close', period)
+        dataframe[name] = ta.MOM(dataframe, timeperiod=period)
 
         dataframe.loc[
             (
