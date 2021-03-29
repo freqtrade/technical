@@ -68,7 +68,8 @@ def tema(dataframe, period, field='close'):
 
 # Other Overlap Studies Functions
 def hull_moving_average(dataframe, period, field='close') -> ndarray:
-    from pyti.hull_moving_average import hull_moving_average as hma
+    # TODO: Remove this helper method, it's a 1:1 call to qtpylib's HMA.
+    from technical.qtpylib import hma
     return hma(dataframe[field], period)
 
 
