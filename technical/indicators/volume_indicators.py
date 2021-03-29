@@ -12,12 +12,6 @@ from numpy.core.records import ndarray
 
 # AD                   Chaikin A/D Line
 
-def accumulation_distribution(dataframe) -> ndarray:
-    from pyti.accumulation_distribution import accumulation_distribution as acd
-
-    return acd(dataframe['close'], dataframe['high'], dataframe['low'], dataframe['volume'])
-
-
 # ADOSC                Chaikin A/D Oscillator
 # OBV                  On Balance Volume
 

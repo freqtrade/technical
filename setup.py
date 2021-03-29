@@ -29,7 +29,6 @@ setup(name='technical',
       tests_require=['pytest', 'pytest-cov', 'pytest-mock'],
       install_requires=[
           'TA-Lib',
-          'pyti',
           'pandas',
           'arrow',
       ],

@@ -18,17 +18,8 @@ from numpy.core.records import ndarray
 # BOP                  Balance Of Power
 
 # CCI                  Commodity Channel Index
-def cci(dataframe, period) -> ndarray:
-    from pyti.commodity_channel_index import commodity_channel_index
-
-    return commodity_channel_index(dataframe['close'], dataframe['high'], dataframe['low'], period)
-
 
 # CMO                  Chande Momentum Oscillator
-def cmo(dataframe, period, field='close') -> ndarray:
-    from pyti.chande_momentum_oscillator import chande_momentum_oscillator
-    return chande_momentum_oscillator(dataframe[field], period)
-
 
 # DX                   Directional Movement Index
 # MACD                 Moving Average Convergence/Divergence
@@ -39,10 +30,6 @@ def cmo(dataframe, period, field='close') -> ndarray:
 # MINUS_DM             Minus Directional Movement
 
 # MOM                  Momentum
-def momentum(dataframe, field='close', period=9):
-    from pyti.momentum import momentum as m
-    return m(dataframe[field], period)
-
 
 # PLUS_DI              Plus Directional Indicator
 # PLUS_DM              Plus Directional Movement
@@ -58,9 +45,6 @@ def momentum(dataframe, field='close', period=9):
 # TRIX                 1-day Rate-Of-Change (ROC) of a Triple Smooth EMA
 
 # ULTOSC               Ultimate Oscillator
-def ultimate_oscilator(dataframe):
-    from pyti.ultimate_oscillator import ultimate_oscillator as uo
-    uo(dataframe['close'], dataframe['low'])
 
 
 # WILLR                Williams' %R

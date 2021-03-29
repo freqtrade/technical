@@ -617,7 +617,6 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
 
     import talib as ta
     from numpy import where
-    from pyti.simple_moving_average import simple_moving_average as sma
 
     length = length
     coef = coef
@@ -631,7 +630,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df['vinter'] = df['inter'].rolling(30).std(ddof=0)
     df['cutoff'] = (coef * df['vinter'] * df['close'])
     # Vave is to be calculated on volume of the past bar
-    df['vave'] = sma(df['volume'].shift(+1), length)
+    df['vave'] = ta.SMA(df['volume'].shift(+1), timeperiod=length)
     df['vmax'] = df['vave'] * vcoef
     df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
     df['mf'] = df['hlc'] - df['hlc'].shift(+1)
@@ -649,7 +648,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     # vfi has a smooth option passed over def call, sma if set
     df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
     if smoothVFI is True:
-        df['vfi'] = sma(df['vfi'], 3)
+        df['vfi'] = ta.SMA(df['vfi'], timeperiod=3)
     df['vfima'] = ta.EMA(df['vfi'], signalLength)
     df['vfi_hist'] = df['vfi'] - df['vfima']
 

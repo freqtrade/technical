@@ -1,9 +1,4 @@
 TA-Lib==0.4.19
-pyti==0.2.2
 pandas==1.2.3
-ccxt>=1.18.500
 arrow==1.0.3
-# keras
 # matplotlib
-# tensorflow - install if no gpu
-# tensorflow-gpu - install if gpu
