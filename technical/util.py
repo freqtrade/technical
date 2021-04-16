@@ -1,7 +1,7 @@
 """
     defines utility functions to be used
 """
-from pandas import DatetimeIndex, merge, DataFrame, to_datetime
+from pandas import DataFrame, DatetimeIndex, merge, to_datetime
 
 TICKER_INTERVAL_MINUTES = {
     "1m": 1,

@@ -2,9 +2,6 @@
 Momentum indicators
 """
 
-from numpy.core.records import ndarray
-
-
 ########################################
 #
 # Momentum Indicator Functions

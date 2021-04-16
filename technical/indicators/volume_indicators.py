@@ -4,7 +4,6 @@ Volume indicators
 
 from numpy.core.records import ndarray
 
-
 ########################################
 #
 # Volume Indicator Functions

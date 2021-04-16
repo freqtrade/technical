@@ -1,9 +1,9 @@
 # pragma pylint: disable=missing-docstring
+import json
 import logging
 
 import pytest
 from pandas import DataFrame
-import json
 
 from technical.util import ticker_history_to_dataframe
 

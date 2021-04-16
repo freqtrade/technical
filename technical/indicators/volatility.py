@@ -2,6 +2,7 @@
 Volatility indicator functoins
 """
 from numpy.core.records import ndarray
+
 from technical.vendor.qtpylib.indicators import atr  # noqa: F401
 
 ########################################

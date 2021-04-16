@@ -36,7 +36,7 @@ def test_bollinger_bands(testdata_1m_btc):
 
 
 def test_chaikin_money_flow(testdata_1m_btc):
-    from technical.indicators import cmf, chaikin_money_flow
+    from technical.indicators import chaikin_money_flow, cmf
 
     assert cmf is chaikin_money_flow
 
@@ -60,6 +60,7 @@ def test_fibonacci_retracements(testdata_1m_btc):
 
 def test_return_on_investment():
     from pandas import DataFrame
+
     from technical.indicators import return_on_investment
 
     close = numpy.array([100, 200, 300, 400, 500, 600])

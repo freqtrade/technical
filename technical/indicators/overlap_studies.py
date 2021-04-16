@@ -5,11 +5,11 @@ Overlap studies
 from numpy.core.records import ndarray
 from pandas import DataFrame, Series
 
-
 ########################################
 #
 # Overlap Studies Functions
 #
+
 
 # BBANDS               Bollinger Bands
 def bollinger_bands(
