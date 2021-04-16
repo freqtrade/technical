@@ -74,6 +74,18 @@ jobs:
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc
 
+    - name: Flake8
+      run: |
+        flake8
+
+    - name: Sort imports (isort)
+      run: |
+        isort --check .
+        
+    - uses: psf/black@stable
+      with:
+        args: ". --check"
+
     - name: Slack Notification
       uses: homoluctus/slatify@v1.8.0
       if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
