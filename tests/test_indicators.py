@@ -1,5 +1,4 @@
 import numpy
-import pytest
 
 
 def test_atr(testdata_1m_btc):

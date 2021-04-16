@@ -23,18 +23,23 @@ def ehlers_super_smoother(series: Series, smoothing: float = 6) -> Series:
     filtered = series.copy()
 
     for i in range(2, len(series)):
-        filtered.iloc[i] = coeff1 * (series.iloc[i] + series.iloc[i-1]) + \
-            coeff2 * filtered.iloc[i-1] + coeff3 * filtered.iloc[i-2]
+        filtered.iloc[i] = (
+            coeff1 * (series.iloc[i] + series.iloc[i - 1])
+            + coeff2 * filtered.iloc[i - 1]
+            + coeff3 * filtered.iloc[i - 2]
+        )
 
     return filtered
 
 
 def fishers_inverse(series: Series, smoothing: float = 0) -> np.ndarray:
-    """ Does a smoothed fishers inverse transformation.
-        Can be used with any oscillator that goes from 0 to 100 like RSI or MFI """
+    """
+    Does a smoothed fishers inverse transformation.
+    Can be used with any oscillator that goes from 0 to 100 like RSI or MFI
+    """
     v1 = 0.1 * (series - 50)
     if smoothing > 0:
         v2 = ta.WMA(v1.values, timeperiod=smoothing)
     else:
         v2 = v1
-    return (np.exp(2 * v2)-1) / (np.exp(2 * v2) + 1)
+    return (np.exp(2 * v2) - 1) / (np.exp(2 * v2) + 1)

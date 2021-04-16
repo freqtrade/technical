@@ -21,8 +21,9 @@ from .overlap_studies import sma, vwma, zema
 #
 # Ichimoku Cloud
 #
-def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
-             laggin_span=52, displacement=26):
+def ichimoku(
+    dataframe, conversion_line_period=9, base_line_periods=26, laggin_span=52, displacement=26
+):
     """
     Ichimoku cloud indicator
     Note: Do not use chikou_span for backtesting.
@@ -38,36 +39,42 @@ def ichimoku(dataframe, conversion_line_period=9, base_line_periods=26,
         leading_senkou_span_b, chikou_span, cloud_green, cloud_red
     """
 
-    tenkan_sen = (dataframe['high'].rolling(window=conversion_line_period).max()
-                  + dataframe['low'].rolling(window=conversion_line_period).min()) / 2
+    tenkan_sen = (
+        dataframe["high"].rolling(window=conversion_line_period).max()
+        + dataframe["low"].rolling(window=conversion_line_period).min()
+    ) / 2
 
-    kijun_sen = (dataframe['high'].rolling(window=base_line_periods).max()
-                 + dataframe['low'].rolling(window=base_line_periods).min()) / 2
+    kijun_sen = (
+        dataframe["high"].rolling(window=base_line_periods).max()
+        + dataframe["low"].rolling(window=base_line_periods).min()
+    ) / 2
 
     leading_senkou_span_a = (tenkan_sen + kijun_sen) / 2
 
-    leading_senkou_span_b = (dataframe['high'].rolling(window=laggin_span).max()
-                             + dataframe['low'].rolling(window=laggin_span).min()) / 2
+    leading_senkou_span_b = (
+        dataframe["high"].rolling(window=laggin_span).max()
+        + dataframe["low"].rolling(window=laggin_span).min()
+    ) / 2
 
     senkou_span_a = leading_senkou_span_a.shift(displacement)
 
     senkou_span_b = leading_senkou_span_b.shift(displacement)
 
-    chikou_span = dataframe['close'].shift(-displacement)
+    chikou_span = dataframe["close"].shift(-displacement)
 
-    cloud_green = (senkou_span_a > senkou_span_b)
-    cloud_red = (senkou_span_b > senkou_span_a)
+    cloud_green = senkou_span_a > senkou_span_b
+    cloud_red = senkou_span_b > senkou_span_a
 
     return {
-        'tenkan_sen': tenkan_sen,
-        'kijun_sen': kijun_sen,
-        'senkou_span_a': senkou_span_a,
-        'senkou_span_b': senkou_span_b,
-        'leading_senkou_span_a': leading_senkou_span_a,
-        'leading_senkou_span_b': leading_senkou_span_b,
-        'chikou_span': chikou_span,
-        'cloud_green': cloud_green,
-        'cloud_red': cloud_red,
+        "tenkan_sen": tenkan_sen,
+        "kijun_sen": kijun_sen,
+        "senkou_span_a": senkou_span_a,
+        "senkou_span_b": senkou_span_b,
+        "leading_senkou_span_a": leading_senkou_span_a,
+        "leading_senkou_span_b": leading_senkou_span_b,
+        "chikou_span": chikou_span,
+        "cloud_green": cloud_green,
+        "cloud_red": cloud_red,
     }
 
 
@@ -102,8 +109,9 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     debug = debug
     if debug:
         from pandas import set_option
-        set_option('display.max_rows', 2000)
-        set_option('display.max_columns', 8)
+
+        set_option("display.max_rows", 2000)
+        set_option("display.max_columns", 8)
 
     """
     Vectorised pandas or numpy calculations are not used
@@ -112,8 +120,9 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
     """
     lrsi_l = []
     L0, L1, L2, L3 = 0.0, 0.0, 0.0, 0.0
-    for row in df.itertuples(index=True, name='lrsi'):
-        """ Original Pine Logic  Block1
+    for row in df.itertuples(index=True, name="lrsi"):
+        """
+        Original Pine Logic  Block1
         p = close
         L0 = ((1 - g)*p)+(g*nz(L0[1]))
         L1 = (-g*L0)+nz(L0[1])+(g*nz(L1[1]))
@@ -134,17 +143,17 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
         """
         cu = 0.0
         cd = 0.0
-        if (L0 >= L1):
+        if L0 >= L1:
             cu = L0 - L1
         else:
             cd = L1 - L0
 
-        if (L1 >= L2):
+        if L1 >= L2:
             cu = cu + L1 - L2
         else:
             cd = cd + L2 - L1
 
-        if (L2 >= L3):
+        if L2 >= L3:
             cu = cu + L2 - L3
         else:
             cd = cd + L3 - L2
@@ -269,27 +278,27 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
 
     # Get MAs, also last MA in own column to pass to def later
     df["ma05"] = ma(df[src], 5)
-    df['ma05l'] = df['ma05'].shift(+1)
+    df["ma05l"] = df["ma05"].shift(+1)
     df["ma10"] = ma(df[src], 10)
-    df['ma10l'] = df['ma10'].shift(+1)
+    df["ma10l"] = df["ma10"].shift(+1)
     df["ma20"] = ma(df[src], 20)
-    df['ma20l'] = df['ma20'].shift(+1)
+    df["ma20l"] = df["ma20"].shift(+1)
     df["ma30"] = ma(df[src], 30)
-    df['ma30l'] = df['ma30'].shift(+1)
+    df["ma30l"] = df["ma30"].shift(+1)
     df["ma40"] = ma(df[src], 40)
-    df['ma40l'] = df['ma40'].shift(+1)
+    df["ma40l"] = df["ma40"].shift(+1)
     df["ma50"] = ma(df[src], 50)
-    df['ma50l'] = df['ma50'].shift(+1)
+    df["ma50l"] = df["ma50"].shift(+1)
     df["ma60"] = ma(df[src], 60)
-    df['ma60l'] = df['ma60'].shift(+1)
+    df["ma60l"] = df["ma60"].shift(+1)
     df["ma70"] = ma(df[src], 70)
-    df['ma70l'] = df['ma70'].shift(+1)
+    df["ma70l"] = df["ma70"].shift(+1)
     df["ma80"] = ma(df[src], 80)
-    df['ma80l'] = df['ma80'].shift(+1)
+    df["ma80l"] = df["ma80"].shift(+1)
     df["ma90"] = ma(df[src], 90)
-    df['ma90l'] = df['ma90'].shift(+1)
+    df["ma90l"] = df["ma90"].shift(+1)
     df["ma100"] = ma(df[src], 100)
-    df['ma100l'] = df['ma100'].shift(+1)
+    df["ma100l"] = df["ma100"].shift(+1)
 
     """ logic for LeadMA
     : change(ma05)>=0 and ma05>ma100 ? lime    +2
@@ -300,19 +309,19 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
     """
 
     def leadMAc(x):
-        if (x['ma05'] - x['ma05l']) >= 0 and (x['ma05'] > x['ma100']):
+        if (x["ma05"] - x["ma05l"]) >= 0 and (x["ma05"] > x["ma100"]):
             # Lime: Uptrend.Long trading
             x["leadMA"] = "lime"
             return x["leadMA"]
-        elif (x['ma05'] - x['ma05l']) < 0 and (x['ma05'] > x['ma100']):
+        elif (x["ma05"] - x["ma05l"]) < 0 and (x["ma05"] > x["ma100"]):
             # Maroon : Short Reentry (sell the peak) or uptrend reversal warning
             x["leadMA"] = "maroon"
             return x["leadMA"]
-        elif (x['ma05'] - x['ma05l']) <= 0 and (x['ma05'] < x['ma100']):
+        elif (x["ma05"] - x["ma05l"]) <= 0 and (x["ma05"] < x["ma100"]):
             # Red : Downtrend. Short trading
             x["leadMA"] = "red"
             return x["leadMA"]
-        elif (x['ma05'] - x['ma05l']) >= 0 and (x['ma05'] < x['ma100']):
+        elif (x["ma05"] - x["ma05l"]) >= 0 and (x["ma05"] < x["ma100"]):
             # Green: Reentry(buy the dip) or downtrend reversal warning
             x["leadMA"] = "green"
             return x["leadMA"]
@@ -321,7 +330,7 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
             x["leadMA"] = "grey"
             return x["leadMA"]
 
-    df['leadMA'] = df.apply(leadMAc, axis=1)
+    df["leadMA"] = df.apply(leadMAc, axis=1)
 
     """   Logic for MAs
     : change(ma)>=0 and ma05>ma100 ? lime
@@ -332,78 +341,108 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):
     """
 
     def maColor(x, ma):
-        col_label = '_'.join([ma, "c"])
-        col_lable_l = ''.join([ma, "l"])
+        col_label = "_".join([ma, "c"])
+        col_lable_l = "".join([ma, "l"])
 
-        if (x[ma] - x[col_lable_l]) >= 0 and (x[ma] > x['ma100']):
+        if (x[ma] - x[col_lable_l]) >= 0 and (x[ma] > x["ma100"]):
             # Lime: Uptrend.Long trading
             x[col_label] = "lime"
             return x[col_label]
-        elif (x[ma] - x[col_lable_l]) < 0 and (x[ma] > x['ma100']):
+        elif (x[ma] - x[col_lable_l]) < 0 and (x[ma] > x["ma100"]):
             # Maroon : Short Reentry (sell the peak) or uptrend reversal warning
             x[col_label] = "maroon"
             return x[col_label]
 
-        elif (x[ma] - x[col_lable_l]) <= 0 and (x[ma] < x['ma100']):
+        elif (x[ma] - x[col_lable_l]) <= 0 and (x[ma] < x["ma100"]):
             # Red : Downtrend. Short trading
             x[col_label] = "red"
             return x[col_label]
 
-        elif (x[ma] - x[col_lable_l]) >= 0 and (x[ma] < x['ma100']):
+        elif (x[ma] - x[col_lable_l]) >= 0 and (x[ma] < x["ma100"]):
             # Green: Reentry(buy the dip) or downtrend reversal warning
             x[col_label] = "green"
             return x[col_label]
         else:
             # If its great it means not enough ticker data for lookback
-            x[col_label] = 'grey'
+            x[col_label] = "grey"
             return x[col_label]
 
-    df['ma05_c'] = df.apply(maColor, ma="ma05", axis=1)
-    df['ma10_c'] = df.apply(maColor, ma="ma10", axis=1)
-    df['ma20_c'] = df.apply(maColor, ma="ma20", axis=1)
-    df['ma30_c'] = df.apply(maColor, ma="ma30", axis=1)
-    df['ma40_c'] = df.apply(maColor, ma="ma40", axis=1)
-    df['ma50_c'] = df.apply(maColor, ma="ma50", axis=1)
-    df['ma60_c'] = df.apply(maColor, ma="ma60", axis=1)
-    df['ma70_c'] = df.apply(maColor, ma="ma70", axis=1)
-    df['ma80_c'] = df.apply(maColor, ma="ma80", axis=1)
-    df['ma90_c'] = df.apply(maColor, ma="ma90", axis=1)
+    df["ma05_c"] = df.apply(maColor, ma="ma05", axis=1)
+    df["ma10_c"] = df.apply(maColor, ma="ma10", axis=1)
+    df["ma20_c"] = df.apply(maColor, ma="ma20", axis=1)
+    df["ma30_c"] = df.apply(maColor, ma="ma30", axis=1)
+    df["ma40_c"] = df.apply(maColor, ma="ma40", axis=1)
+    df["ma50_c"] = df.apply(maColor, ma="ma50", axis=1)
+    df["ma60_c"] = df.apply(maColor, ma="ma60", axis=1)
+    df["ma70_c"] = df.apply(maColor, ma="ma70", axis=1)
+    df["ma80_c"] = df.apply(maColor, ma="ma80", axis=1)
+    df["ma90_c"] = df.apply(maColor, ma="ma90", axis=1)
 
     if debug:
         from pandas import set_option
-        set_option('display.max_rows', 10)
-        print(df[["date", "leadMA",
-                  "ma05", "ma05l", "ma05_c",
-                  "ma10", "ma10l", "ma10_c",
-                  # "ma20", "ma20l", "ma20_c",
-                  # "ma30", "ma30l", "ma30_c",
-                  # "ma40", "ma40l", "ma40_c",
-                  # "ma50", "ma50l", "ma50_c",
-                  # "ma60", "ma60l", "ma60_c",
-                  # "ma70", "ma70l", "ma70_c",
-                  # "ma80", "ma80l", "ma80_c",
-                  "ma90", "ma90l", "ma90_c",
-                  "ma100", "leadMA"]].tail(200))
 
-        print(df[["date", 'close',
-                  "leadMA",
-                  "ma10_c",
-                  "ma20_c",
-                  "ma30_c",
-                  "ma40_c",
-                  "ma50_c",
-                  "ma60_c",
-                  "ma70_c",
-                  "ma80_c",
-                  "ma90_c"
-                  ]].tail(684))
+        set_option("display.max_rows", 10)
+        print(
+            df[
+                [
+                    "date",
+                    "leadMA",
+                    "ma05",
+                    "ma05l",
+                    "ma05_c",
+                    "ma10",
+                    "ma10l",
+                    "ma10_c",
+                    # "ma20", "ma20l", "ma20_c",
+                    # "ma30", "ma30l", "ma30_c",
+                    # "ma40", "ma40l", "ma40_c",
+                    # "ma50", "ma50l", "ma50_c",
+                    # "ma60", "ma60l", "ma60_c",
+                    # "ma70", "ma70l", "ma70_c",
+                    # "ma80", "ma80l", "ma80_c",
+                    "ma90",
+                    "ma90l",
+                    "ma90_c",
+                    "ma100",
+                    "leadMA",
+                ]
+            ].tail(200)
+        )
 
-    return (df['leadMA'], df['ma10_c'], df['ma20_c'], df['ma30_c'],
-            df['ma40_c'], df['ma50_c'], df['ma60_c'], df['ma70_c'],
-            df['ma80_c'], df['ma90_c'])
+        print(
+            df[
+                [
+                    "date",
+                    "close",
+                    "leadMA",
+                    "ma10_c",
+                    "ma20_c",
+                    "ma30_c",
+                    "ma40_c",
+                    "ma50_c",
+                    "ma60_c",
+                    "ma70_c",
+                    "ma80_c",
+                    "ma90_c",
+                ]
+            ].tail(684)
+        )
+
+    return (
+        df["leadMA"],
+        df["ma10_c"],
+        df["ma20_c"],
+        df["ma30_c"],
+        df["ma40_c"],
+        df["ma50_c"],
+        df["ma60_c"],
+        df["ma70_c"],
+        df["ma80_c"],
+        df["ma90_c"],
+    )
 
 
-def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
+def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
     """
     Squeeze Madrid Indicator
 
@@ -464,10 +503,10 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     refma = ema(src, ref) - ma
     sqzma = ema(src, sqzLen) - ma
     """
-    df['sqz_ma'] = ema(df[src], len)
-    df['sqz_cma'] = df['close'] - df['sqz_ma']
-    df['sqz_rma'] = ema(df[src], ref) - df['sqz_ma']
-    df['sqz_sma'] = ema(df[src], sqzLen) - df['sqz_ma']
+    df["sqz_ma"] = ema(df[src], len)
+    df["sqz_cma"] = df["close"] - df["sqz_ma"]
+    df["sqz_rma"] = ema(df[src], ref) - df["sqz_ma"]
+    df["sqz_sma"] = ema(df[src], sqzLen) - df["sqz_ma"]
 
     """ Original code logic
     plotcandle(0, closema, 0, closema, color=closema >= 0?aqua: fuchsia)
@@ -481,43 +520,43 @@ def madrid_sqz(datafame, length=34, src='close', ref=13, sqzLen=5):
     # print(df[['sqz_cma', 'sqz_rma', 'sqz_sma']])
 
     def sqz_cma_c(x):
-        if x['sqz_cma'] >= 0:
-            x['sqz_cma_c'] = "aqua"
-            return x['sqz_cma_c']
+        if x["sqz_cma"] >= 0:
+            x["sqz_cma_c"] = "aqua"
+            return x["sqz_cma_c"]
         else:
-            x['sqz_cma_c'] = "fuchsia"
-            return x['sqz_cma_c']
+            x["sqz_cma_c"] = "fuchsia"
+            return x["sqz_cma_c"]
 
-    df['sqz_cma_c'] = df.apply(sqz_cma_c, axis=1)
+    df["sqz_cma_c"] = df.apply(sqz_cma_c, axis=1)
 
     def sqz_sma_c(x):
-        if x['sqz_sma'] >= 0:
-            x['sqz_sma_c'] = "lime"
-            return x['sqz_sma_c']
+        if x["sqz_sma"] >= 0:
+            x["sqz_sma_c"] = "lime"
+            return x["sqz_sma_c"]
         else:
-            x['sqz_sma_c'] = "red"
-            return x['sqz_sma_c']
+            x["sqz_sma_c"] = "red"
+            return x["sqz_sma_c"]
 
-    df['sqz_sma_c'] = df.apply(sqz_sma_c, axis=1)
+    df["sqz_sma_c"] = df.apply(sqz_sma_c, axis=1)
 
     def sqz_rma_c(x):
-        if x['sqz_rma'] >= 0 and x['sqz_cma'] < x['sqz_rma']:
-            x['sqz_rma_c'] = "yellow"
-            return x['sqz_rma_c']
-        elif x['sqz_rma'] < 0 and x['sqz_cma'] > x['sqz_rma']:
-            x['sqz_rma_c'] = "yellow"
-            return x['sqz_rma_c']
-        elif x['sqz_rma'] >= 0:
-            x['sqz_rma_c'] = "green"
-            return x['sqz_rma_c']
+        if x["sqz_rma"] >= 0 and x["sqz_cma"] < x["sqz_rma"]:
+            x["sqz_rma_c"] = "yellow"
+            return x["sqz_rma_c"]
+        elif x["sqz_rma"] < 0 and x["sqz_cma"] > x["sqz_rma"]:
+            x["sqz_rma_c"] = "yellow"
+            return x["sqz_rma_c"]
+        elif x["sqz_rma"] >= 0:
+            x["sqz_rma_c"] = "green"
+            return x["sqz_rma_c"]
         else:
-            x['sqz_rma_c'] = "maroon"
-            return x['sqz_rma_c']
+            x["sqz_rma_c"] = "maroon"
+            return x["sqz_rma_c"]
 
-    df['sqz_rma_c'] = df.apply(sqz_rma_c, axis=1)
+    df["sqz_rma_c"] = df.apply(sqz_rma_c, axis=1)
 
     # print(df[['sqz_cma_c', 'sqz_rma_c', 'sqz_sma_c']])
-    return df['sqz_cma_c'], df['sqz_rma_c'], df['sqz_sma_c']
+    return df["sqz_cma_c"], df["sqz_rma_c"], df["sqz_sma_c"]
 
 
 ########################################
@@ -538,10 +577,11 @@ def osc(dataframe, periods=14) -> ndarray:
     :return:
     """
     df = dataframe
-    df['DM'] = (df['high'] - df['high'].shift()).apply(lambda x: max(x, 0))
-    df['DMn'] = (df['low'].shift() - df['low']).apply(lambda x: max(x, 0))
+    df["DM"] = (df["high"] - df["high"].shift()).apply(lambda x: max(x, 0))
+    df["DMn"] = (df["low"].shift() - df["low"]).apply(lambda x: max(x, 0))
     return Series.rolling_mean(df.DM, periods) / (
-        Series.rolling_mean(df.DM, periods) + Series.rolling_mean(df.DMn, periods))
+        Series.rolling_mean(df.DM, periods) + Series.rolling_mean(df.DMn, periods)
+    )
 
 
 def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=False):
@@ -625,45 +665,45 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     smoothVFI = smoothVFI
     df = dataframe
     # Add hlc3 and populate inter to the dataframe
-    df['hlc'] = ((df['high'] + df['low'] + df['close']) / 3).astype(float)
-    df['inter'] = df['hlc'].map(log) - df['hlc'].shift(+1).map(log)
-    df['vinter'] = df['inter'].rolling(30).std(ddof=0)
-    df['cutoff'] = (coef * df['vinter'] * df['close'])
+    df["hlc"] = ((df["high"] + df["low"] + df["close"]) / 3).astype(float)
+    df["inter"] = df["hlc"].map(log) - df["hlc"].shift(+1).map(log)
+    df["vinter"] = df["inter"].rolling(30).std(ddof=0)
+    df["cutoff"] = coef * df["vinter"] * df["close"]
     # Vave is to be calculated on volume of the past bar
-    df['vave'] = ta.SMA(df['volume'].shift(+1), timeperiod=length)
-    df['vmax'] = df['vave'] * vcoef
-    df['vc'] = where((df['volume'] < df['vmax']), df['volume'], df['vmax'])
-    df['mf'] = df['hlc'] - df['hlc'].shift(+1)
+    df["vave"] = ta.SMA(df["volume"].shift(+1), timeperiod=length)
+    df["vmax"] = df["vave"] * vcoef
+    df["vc"] = where((df["volume"] < df["vmax"]), df["volume"], df["vmax"])
+    df["mf"] = df["hlc"] - df["hlc"].shift(+1)
 
     # more logic for vcp, so create a def and df.apply it
     def vcp(x):
-        if x['mf'] > x['cutoff']:
-            return x['vc']
-        elif x['mf'] < -(x['cutoff']):
-            return -(x['vc'])
+        if x["mf"] > x["cutoff"]:
+            return x["vc"]
+        elif x["mf"] < -(x["cutoff"]):
+            return -(x["vc"])
         else:
             return 0
 
-    df['vcp'] = df.apply(vcp, axis=1)
+    df["vcp"] = df.apply(vcp, axis=1)
     # vfi has a smooth option passed over def call, sma if set
-    df['vfi'] = (df['vcp'].rolling(length).sum()) / df['vave']
+    df["vfi"] = (df["vcp"].rolling(length).sum()) / df["vave"]
     if smoothVFI is True:
-        df['vfi'] = ta.SMA(df['vfi'], timeperiod=3)
-    df['vfima'] = ta.EMA(df['vfi'], signalLength)
-    df['vfi_hist'] = df['vfi'] - df['vfima']
+        df["vfi"] = ta.SMA(df["vfi"], timeperiod=3)
+    df["vfima"] = ta.EMA(df["vfi"], signalLength)
+    df["vfi_hist"] = df["vfi"] - df["vfima"]
 
     # clean up columns used vfi calculation but not needed for strat
-    df.drop('hlc', axis=1, inplace=True)
-    df.drop('inter', axis=1, inplace=True)
-    df.drop('vinter', axis=1, inplace=True)
-    df.drop('cutoff', axis=1, inplace=True)
-    df.drop('vave', axis=1, inplace=True)
-    df.drop('vmax', axis=1, inplace=True)
-    df.drop('vc', axis=1, inplace=True)
-    df.drop('mf', axis=1, inplace=True)
-    df.drop('vcp', axis=1, inplace=True)
+    df.drop("hlc", axis=1, inplace=True)
+    df.drop("inter", axis=1, inplace=True)
+    df.drop("vinter", axis=1, inplace=True)
+    df.drop("cutoff", axis=1, inplace=True)
+    df.drop("vave", axis=1, inplace=True)
+    df.drop("vmax", axis=1, inplace=True)
+    df.drop("vc", axis=1, inplace=True)
+    df.drop("mf", axis=1, inplace=True)
+    df.drop("vcp", axis=1, inplace=True)
 
-    return df['vfi'], df['vfima'], df['vfi_hist']
+    return df["vfi"], df["vfima"], df["vfi_hist"]
 
 
 def stc(dataframe, fast=23, slow=50, length=10):
@@ -680,12 +720,14 @@ def stc(dataframe, fast=23, slow=50, length=10):
     import talib.abstract as ta
 
     MACD = ta.EMA(dataframe, timeperiod=fast) - ta.EMA(dataframe, timeperiod=slow)
-    STOK = ((MACD - MACD.rolling(window=length).min()) / (
-            MACD.rolling(window=length).max() - MACD.rolling(window=length).min())) * 100
+    STOK = (
+        (MACD - MACD.rolling(window=length).min())
+        / (MACD.rolling(window=length).max() - MACD.rolling(window=length).min())
+    ) * 100
     STOD = STOK.rolling(window=length).mean()
-    dataframe['stc'] = 100 * (MACD - (STOK * MACD)) / ((STOD * MACD) - (STOK * MACD))
+    dataframe["stc"] = 100 * (MACD - (STOK * MACD)) / ((STOD * MACD) - (STOK * MACD))
 
-    return dataframe['stc']
+    return dataframe["stc"]
 
 
 def vpcii(dataframe, period_short=5, period_long=20, hist=8, hist_long=30):
@@ -701,11 +743,11 @@ def vpcii(dataframe, period_short=5, period_long=20, hist=8, hist_long=30):
     """
 
     dataframe = dataframe.copy()
-    dataframe['vpci'] = vpci(dataframe, period_short, period_long)
-    dataframe['vpcis'] = dataframe['vpci'].rolling(hist).mean()
-    dataframe['vpci_hist'] = (dataframe['vpci'] - dataframe['vpcis']).pct_change()
+    dataframe["vpci"] = vpci(dataframe, period_short, period_long)
+    dataframe["vpcis"] = dataframe["vpci"].rolling(hist).mean()
+    dataframe["vpci_hist"] = (dataframe["vpci"] - dataframe["vpcis"]).pct_change()
 
-    return dataframe['vpci_hist'].abs()
+    return dataframe["vpci_hist"].abs()
 
 
 def vpci(dataframe, period_short=5, period_long=20):
@@ -724,14 +766,14 @@ def vpci(dataframe, period_short=5, period_long=20):
 
     vpc = vwma(dataframe, period_long) - sma(dataframe, period_long)
     vpr = vwma(dataframe, period_short) / sma(dataframe, period_short)
-    vm = sma(dataframe, period_short, field='volume') / sma(dataframe, period_long, field='volume')
+    vm = sma(dataframe, period_short, field="volume") / sma(dataframe, period_long, field="volume")
 
     vpci = vpc * vpr * vm
 
     return vpci
 
 
-def fibonacci_retracements(df, field='close') -> DataFrame:
+def fibonacci_retracements(df, field="close") -> DataFrame:
     # Common Fibonacci replacement thresholds:
     # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
     thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
@@ -757,8 +799,8 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
     :return:
     """
 
-    close = np.array(dataframe['close'])
-    buy = np.array(dataframe['buy'])
+    close = np.array(dataframe["close"])
+    buy = np.array(dataframe["buy"])
     buy_idx = np.where(buy == 1)[0]
     roi = np.zeros(len(close))
     if len(buy_idx) > 0:
@@ -770,7 +812,7 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
             chunk_roi = np.round(100.0 * (chunk / chunk[0] - 1.0), decimals)
             roi[idx:idx + len(chunk)] = chunk_roi
 
-    dataframe['roi'] = roi
+    dataframe["roi"] = roi
 
     return dataframe
 
@@ -792,44 +834,26 @@ def td_sequential(dataframe):
     # Copy DF
     df = dataframe.copy()
 
-    condv = (df['volume'] > 0)
-    cond1 = (df['close'] > df['close'].shift(4))
-    cond2 = (df['close'] < df['close'].shift(4))
+    condv = df["volume"] > 0
+    cond1 = df["close"] > df["close"].shift(4)
+    cond2 = df["close"] < df["close"].shift(4)
 
-    df['cond_tdb_a'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
-    df['cond_tds_a'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
-    df['cond_tdb_b'] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
-    df['cond_tds_b'] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
+    df["cond_tdb_a"] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
+    df["cond_tds_a"] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
+    df["cond_tdb_b"] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
+    df["cond_tds_b"] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
 
-    df['tdb_a'] = df.groupby(
+    df["tdb_a"] = df.groupby(df["cond_tdb_a"]).cumcount()
+    df["tds_a"] = df.groupby(df["cond_tds_a"]).cumcount()
 
-        df['cond_tdb_a']
+    df["tdb_b"] = df.groupby(df["cond_tdb_b"]).cumcount()
+    df["tds_b"] = df.groupby(df["cond_tds_b"]).cumcount()
 
-    ).cumcount()
-    df['tds_a'] = df.groupby(
+    df["tdc"] = df["tds_a"] - df["tdb_a"]
+    df["tdc"] = df.apply((lambda x: x["tdb_b"] % 9 if x["tdb_b"] > 9 else x["tdc"]), axis=1)
+    df["tdc"] = df.apply((lambda x: (x["tds_b"] % 9) * -1 if x["tds_b"] > 9 else x["tdc"]), axis=1)
 
-        df['cond_tds_a']
-
-    ).cumcount()
-
-    df['tdb_b'] = df.groupby(
-
-        df['cond_tdb_b']
-
-    ).cumcount()
-    df['tds_b'] = df.groupby(
-
-        df['cond_tds_b']
-
-    ).cumcount()
-
-    df['tdc'] = df['tds_a'] - df['tdb_a']
-    df['tdc'] = df.apply((lambda x: x['tdb_b'] % 9 if x['tdb_b'] > 9 else x['tdc']), axis=1)
-    df['tdc'] = df.apply((lambda x: (x['tds_b'] % 9)*-1 if x['tds_b'] > 9 else x['tdc']), axis=1)
-
-    return DataFrame(index=df.index, data={
-        'TD_count': df['tdc']
-    })
+    return DataFrame(index=df.index, data={"TD_count": df["tdc"]})
 
 
 def TKE(dataframe, *, length=14, emaperiod=5):
@@ -852,19 +876,22 @@ def TKE(dataframe, *, length=14, emaperiod=5):
         `dataframe['TKE'], dataframe['TKEema'] = TKE1(dataframe)`
     """
     import talib.abstract as ta
+
     df = dataframe.copy()
     # TKE=(RSI+STOCHASTIC+ULTIMATE OSCILLATOR+MFI+WIILIAMS %R+MOMENTUM+CCI)/7
     df["rsi"] = ta.RSI(df, timeperiod=length)
-    df['stoch'] = (100 * (df['close'] - df['low'].rolling(window=length).min()) /
-                   (df['high'].rolling(window=length).max()
-                    - df['low'].rolling(window=length).min()))
+    df["stoch"] = (
+        100
+        * (df["close"] - df["low"].rolling(window=length).min())
+        / (df["high"].rolling(window=length).max() - df["low"].rolling(window=length).min())
+    )
 
     df["ultosc"] = ta.ULTOSC(df, timeperiod1=7, timeperiod2=14, timeperiod3=28)
     df["mfi"] = ta.MFI(df, timeperiod=length)
     df["willr"] = ta.WILLR(df, timeperiod=length)
     df["mom"] = ta.ROCR100(df, timeperiod=length)
     df["cci"] = ta.CCI(df, timeperiod=length)
-    df['TKE'] = df[['rsi', 'stoch', 'ultosc', 'mfi', 'willr', 'mom', 'cci']].mean(axis='columns')
+    df["TKE"] = df[["rsi", "stoch", "ultosc", "mfi", "willr", "mom", "cci"]].mean(axis="columns")
     df["TKEema"] = ta.EMA(df["TKE"], timeperiod=emaperiod)
     return df["TKE"], df["TKEema"]
 
@@ -898,6 +925,7 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
     """
 
     import talib.abstract as ta
+
     df = dataframe.copy()
     df["fastMA"] = ta.EMA(df["volume"] * df["close"], fastperiod) / ta.EMA(df["volume"], fastperiod)
     df["slowMA"] = ta.EMA(df["volume"] * df["close"], slowperiod) / ta.EMA(df["volume"], slowperiod)
@@ -905,7 +933,7 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
     df["signal"] = ta.EMA(df["vwmacd"], signalperiod)
     df["hist"] = df["vwmacd"] - df["signal"]
 
-    return df[['vwmacd', 'signal', 'hist']]
+    return df[["vwmacd", "signal", "hist"]]
 
 
 def RMI(dataframe, *, length=20, mom=5):
@@ -919,16 +947,17 @@ def RMI(dataframe, *, length=20, mom=5):
 
     """
     import talib.abstract as ta
+
     df = dataframe.copy()
-    df['maxup'] = (df['close'] - df['close'].shift(mom)).clip(lower=0)
-    df['maxdown'] = (df['close'].shift(mom) - df['close']).clip(lower=0)
+    df["maxup"] = (df["close"] - df["close"].shift(mom)).clip(lower=0)
+    df["maxdown"] = (df["close"].shift(mom) - df["close"]).clip(lower=0)
 
     df.fillna(0, inplace=True)
 
-    df["emaInc"] = ta.EMA(df, price='maxup', timeperiod=length)
-    df["emaDec"] = ta.EMA(df, price='maxdown', timeperiod=length)
+    df["emaInc"] = ta.EMA(df, price="maxup", timeperiod=length)
+    df["emaDec"] = ta.EMA(df, price="maxdown", timeperiod=length)
 
-    df['RMI'] = np.where(df['emaDec'] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
+    df["RMI"] = np.where(df["emaDec"] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
     return df["RMI"]
 
 
@@ -953,27 +982,29 @@ def VIDYA(dataframe, length=9, select=True):
     """
     df = dataframe.copy()
     alpha = 2 / (length + 1)
-    df['momm'] = df['close'].diff()
-    df['m1'] = np.where(df['momm'] >= 0, df['momm'], 0.0)
-    df['m2'] = np.where(df['momm'] >= 0, 0.0, -df['momm'])
+    df["momm"] = df["close"].diff()
+    df["m1"] = np.where(df["momm"] >= 0, df["momm"], 0.0)
+    df["m2"] = np.where(df["momm"] >= 0, 0.0, -df["momm"])
 
-    df['sm1'] = df['m1'].rolling(length).sum()
-    df['sm2'] = df['m2'].rolling(length).sum()
+    df["sm1"] = df["m1"].rolling(length).sum()
+    df["sm2"] = df["m2"].rolling(length).sum()
 
-    df['chandeMO'] = 100 * (df['sm1'] - df['sm2']) / (df['sm1'] + df['sm2'])
+    df["chandeMO"] = 100 * (df["sm1"] - df["sm2"]) / (df["sm1"] + df["sm2"])
     if select:
-        df['k'] = abs(df['chandeMO']) / 100
+        df["k"] = abs(df["chandeMO"]) / 100
     else:
-        df['k'] = df['close'].rolling(length).std()
+        df["k"] = df["close"].rolling(length).std()
     df.fillna(0.0, inplace=True)
 
-    df['VIDYA'] = 0.0
+    df["VIDYA"] = 0.0
     for i in range(length, len(df)):
 
-        df['VIDYA'].iat[i] = alpha * df['k'].iat[i] * df['close'].iat[i] + \
-            (1 - alpha * df['k'].iat[i]) * df['VIDYA'].iat[i-1]
+        df["VIDYA"].iat[i] = (
+            alpha * df["k"].iat[i] * df["close"].iat[i]
+            + (1 - alpha * df["k"].iat[i]) * df["VIDYA"].iat[i - 1]
+        )
 
-    return df['VIDYA']
+    return df["VIDYA"]
 
 
 def MADR(dataframe, length=21, stds=2):
@@ -996,6 +1027,7 @@ def MADR(dataframe, length=21, stds=2):
     """
 
     import talib.abstract as ta
+
     df = dataframe.copy()
     """ tradingview's code
     _maPeriod = input(21, title="Moving average period")
@@ -1016,12 +1048,12 @@ def MADR(dataframe, length=21, stds=2):
     df["std"] = ta.STDDEV(df.rate, timeperiod=length * stds)
     df["plusdev"] = df["stdcenter"] + df["std"] * stds
     df["minusdev"] = df["stdcenter"] - df["std"] * stds
-    df = df.drop(columns=['sma', 'std'])
+    df = df.drop(columns=["sma", "std"])
     # return stdcenter , plusdev , minusdev, rate
     return df
 
 
-def SSLChannels(dataframe, length=10, mode='sma'):
+def SSLChannels(dataframe, length=10, mode="sma"):
     """
     Source: https://www.tradingview.com/script/xzIoaIJC-SSL-channel/
     Author: xmatthias
@@ -1036,23 +1068,24 @@ def SSLChannels(dataframe, length=10, mode='sma'):
     Usage:
         dataframe['sslDown'], dataframe['sslUp'] = SSLChannels(dataframe, 10)
     """
-    if mode not in ('sma'):
+    if mode not in ("sma"):
         raise ValueError(f"Mode {mode} not supported yet")
 
     df = dataframe.copy()
 
-    if mode == 'sma':
-        df['smaHigh'] = df['high'].rolling(length).mean()
-        df['smaLow'] = df['low'].rolling(length).mean()
+    if mode == "sma":
+        df["smaHigh"] = df["high"].rolling(length).mean()
+        df["smaLow"] = df["low"].rolling(length).mean()
 
-    df['hlv'] = np.where(df['close'] > df['smaHigh'], 1,
-                         np.where(df['close'] < df['smaLow'], -1, np.NAN))
-    df['hlv'] = df['hlv'].ffill()
+    df["hlv"] = np.where(
+        df["close"] > df["smaHigh"], 1, np.where(df["close"] < df["smaLow"], -1, np.NAN)
+    )
+    df["hlv"] = df["hlv"].ffill()
 
-    df['sslDown'] = np.where(df['hlv'] < 0, df['smaHigh'], df['smaLow'])
-    df['sslUp'] = np.where(df['hlv'] < 0, df['smaLow'], df['smaHigh'])
+    df["sslDown"] = np.where(df["hlv"] < 0, df["smaHigh"], df["smaLow"])
+    df["sslUp"] = np.where(df["hlv"] < 0, df["smaLow"], df["smaHigh"])
 
-    return df['sslDown'], df['sslUp']
+    return df["sslDown"], df["sslUp"]
 
 
 def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
@@ -1075,12 +1108,13 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
             PMAX Direction (pmX_$period_$multiplier_$length_$Matypeint)
     """
     import talib.abstract as ta
+
     df = dataframe.copy()
-    mavalue = 'MA_' + str(MAtype) + '_' + str(length)
-    atr = 'ATR_' + str(period)
+    mavalue = "MA_" + str(MAtype) + "_" + str(length)
+    atr = "ATR_" + str(period)
     df[atr] = ta.ATR(df, timeperiod=period)
-    pm = 'pm_' + str(period) + '_' + str(multiplier) + '_' + str(length) + '_' + str(MAtype)
-    pmx = 'pmX_' + str(period) + '_' + str(multiplier) + '_' + str(length) + '_' + str(MAtype)
+    pm = "pm_" + str(period) + "_" + str(multiplier) + "_" + str(length) + "_" + str(MAtype)
+    pmx = "pmX_" + str(period) + "_" + str(multiplier) + "_" + str(length) + "_" + str(MAtype)
     # MAtype==1 --> EMA
     # MAtype==2 --> DEMA
     # MAtype==3 --> T3
@@ -1115,37 +1149,60 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
     elif MAtype == 9:
         df[mavalue] = zema(df, period=length)
     # Compute basic upper and lower bands
-    df['basic_ub'] = df[mavalue] + (multiplier * df[atr])
-    df['basic_lb'] = df[mavalue] - (multiplier * df[atr])
+    df["basic_ub"] = df[mavalue] + (multiplier * df[atr])
+    df["basic_lb"] = df[mavalue] - (multiplier * df[atr])
     # Compute final upper and lower bands
-    df['final_ub'] = 0.00
-    df['final_lb'] = 0.00
+    df["final_ub"] = 0.00
+    df["final_lb"] = 0.00
     for i in range(period, len(df)):
-        df['final_ub'].iat[i] = df['basic_ub'].iat[i] if (
-            df['basic_ub'].iat[i] < df['final_ub'].iat[i - 1]
-            or df[mavalue].iat[i - 1] > df['final_ub'].iat[i - 1]) else df['final_ub'].iat[i - 1]
-        df['final_lb'].iat[i] = df['basic_lb'].iat[i] if (
-            df['basic_lb'].iat[i] > df['final_lb'].iat[i - 1]
-            or df[mavalue].iat[i - 1] < df['final_lb'].iat[i - 1]) else df['final_lb'].iat[i - 1]
+        df["final_ub"].iat[i] = (
+            df["basic_ub"].iat[i]
+            if (
+                df["basic_ub"].iat[i] < df["final_ub"].iat[i - 1]
+                or df[mavalue].iat[i - 1] > df["final_ub"].iat[i - 1]
+            )
+            else df["final_ub"].iat[i - 1]
+        )
+        df["final_lb"].iat[i] = (
+            df["basic_lb"].iat[i]
+            if (
+                df["basic_lb"].iat[i] > df["final_lb"].iat[i - 1]
+                or df[mavalue].iat[i - 1] < df["final_lb"].iat[i - 1]
+            )
+            else df["final_lb"].iat[i - 1]
+        )
 
     # Set the Pmax value
     df[pm] = 0.00
     for i in range(period, len(df)):
         df[pm].iat[i] = (
-            df['final_ub'].iat[i] if (df[pm].iat[i - 1] == df['final_ub'].iat[i - 1]
-                                      and df[mavalue].iat[i] <= df['final_ub'].iat[i])
-            else df['final_lb'].iat[i] if (
-                df[pm].iat[i - 1] == df['final_ub'].iat[i - 1]
-                and df[mavalue].iat[i] > df['final_ub'].iat[i]) else df['final_lb'].iat[i]
-            if (df[pm].iat[i - 1] == df['final_lb'].iat[i - 1]
-                and df[mavalue].iat[i] >= df['final_lb'].iat[i]) else df['final_ub'].iat[i]
-            if (df[pm].iat[i - 1] == df['final_lb'].iat[i - 1]
-                and df[mavalue].iat[i] < df['final_lb'].iat[i]) else 0.00)
+            df["final_ub"].iat[i]
+            if (
+                df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
+                and df[mavalue].iat[i] <= df["final_ub"].iat[i]
+            )
+            else df["final_lb"].iat[i]
+            if (
+                df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
+                and df[mavalue].iat[i] > df["final_ub"].iat[i]
+            )
+            else df["final_lb"].iat[i]
+            if (
+                df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
+                and df[mavalue].iat[i] >= df["final_lb"].iat[i]
+            )
+            else df["final_ub"].iat[i]
+            if (
+                df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
+                and df[mavalue].iat[i] < df["final_lb"].iat[i]
+            )
+            else 0.00
+        )
 
     # Mark the trend direction up/down
-    df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), 'down',  'up'), np.NaN)
+    df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), "down", "up"), np.NaN)
     # Remove basic and final bands from the columns
-    df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb'], inplace=True, axis=1)
+    df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb"], inplace=True, axis=1)
 
     df.fillna(0, inplace=True)
 

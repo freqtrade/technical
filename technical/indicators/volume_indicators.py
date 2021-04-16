@@ -17,12 +17,11 @@ from numpy.core.records import ndarray
 
 # Other Volume Indicator Functions
 def chaikin_money_flow(dataframe, period=21):
-    mfm = (
-        (dataframe['close'] - dataframe['low']) - (dataframe['high'] - dataframe['close'])
-        / (dataframe['high'] - dataframe['low'])
+    mfm = (dataframe["close"] - dataframe["low"]) - (dataframe["high"] - dataframe["close"]) / (
+        dataframe["high"] - dataframe["low"]
     )
-    mfv = mfm * dataframe['volume']
-    cmf = mfv.rolling(period).sum() / dataframe['volume'].rolling(period).sum()
+    mfv = mfm * dataframe["volume"]
+    cmf = mfv.rolling(period).sum() / dataframe["volume"].rolling(period).sum()
     return cmf
 
 

@@ -20,7 +20,7 @@ def atr_percent(dataframe, period: int = 14) -> ndarray:
     :param period: Period to use for ATR calculation (defaults to 14)
     :return: Series containing ATR_percent calculation
     """
-    return (atr(dataframe, period) / dataframe['close']) * 100
+    return (atr(dataframe, period) / dataframe["close"]) * 100
 
 
 # NATR                 Normalized Average True Range
