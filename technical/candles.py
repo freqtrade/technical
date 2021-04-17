@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from scipy.ndimage import shift
 
 
@@ -20,34 +20,46 @@ def heikinashi(bars):
 
     bars = bars.copy()
 
-    bars.loc[:, 'ha_close'] = bars.loc[:, ['open', 'high', 'low', 'close']].mean(axis=1)
+    bars.loc[:, "ha_close"] = bars.loc[:, ["open", "high", "low", "close"]].mean(axis=1)
 
-    ha_open = [ (bars.open[0] + bars.close[0]) / 2 ]
-    [ ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(0, len(bars)-1) ]
-    bars['ha_open'] = ha_open
+    ha_open = [(bars.open[0] + bars.close[0]) / 2]
+    [ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(0, len(bars) - 1)]
+    bars["ha_open"] = ha_open
 
-    bars.loc[:, 'ha_high'] = bars.loc[:, ['high', 'ha_open', 'ha_close']].max(axis=1)
-    bars.loc[:, 'ha_low'] = bars.loc[:, ['low', 'ha_open', 'ha_close']].min(axis=1)
+    bars.loc[:, "ha_high"] = bars.loc[:, ["high", "ha_open", "ha_close"]].max(axis=1)
+    bars.loc[:, "ha_low"] = bars.loc[:, ["low", "ha_open", "ha_close"]].min(axis=1)
 
     result = pd.DataFrame(
         index=bars.index,
         data={
-            'open': bars['ha_open'],
-            'high': bars['ha_high'],
-            'low': bars['ha_low'],
-            'close': bars['ha_close']})
+            "open": bars["ha_open"],
+            "high": bars["ha_high"],
+            "low": bars["ha_low"],
+            "close": bars["ha_close"],
+        },
+    )
 
     # usefull little helpers
-    result['flat_bottom'] = np.vectorize(_flat_bottom)(result['close'], result['low'], result['open'], result['high'])
-    result['flat_top'] = np.vectorize(_flat_top)(result['close'], result['low'], result['open'], result['high'])
-    result['small_body'] = np.vectorize(_small_body)(result['close'], result['low'], result['open'], result['high'])
-    result['candle'] = np.vectorize(_candle_type)(result['open'], result['close'])
-    result['reversal'] = np.vectorize(_reversal)(result['candle'], shift(result['candle'], 1, cval=np.NAN))
+    result["flat_bottom"] = np.vectorize(_flat_bottom)(
+        result["close"], result["low"], result["open"], result["high"]
+    )
+    result["flat_top"] = np.vectorize(_flat_top)(
+        result["close"], result["low"], result["open"], result["high"]
+    )
+    result["small_body"] = np.vectorize(_small_body)(
+        result["close"], result["low"], result["open"], result["high"]
+    )
+    result["candle"] = np.vectorize(_candle_type)(result["open"], result["close"])
+    result["reversal"] = np.vectorize(_reversal)(
+        result["candle"], shift(result["candle"], 1, cval=np.NAN)
+    )
 
-    result['lower_wick'] = np.vectorize(_wick_length)(result['close'], result['low'], result['open'], result['high'],
-                                                      False)
-    result['upper_wick'] = np.vectorize(_wick_length)(result['close'], result['low'], result['open'], result['high'],
-                                                      True)
+    result["lower_wick"] = np.vectorize(_wick_length)(
+        result["close"], result["low"], result["open"], result["high"], False
+    )
+    result["upper_wick"] = np.vectorize(_wick_length)(
+        result["close"], result["low"], result["open"], result["high"], True
+    )
     return result
 
 
@@ -189,8 +201,10 @@ def doji(dataframe, exact=False):
     :return:
     """
     if exact:
-        result = dataframe['open'] == dataframe['close']
+        result = dataframe["open"] == dataframe["close"]
     else:
-        result = (dataframe['open'] - dataframe['close']).abs() <= ((dataframe['high'] - dataframe['close']) * 0.1)
+        result = (dataframe["open"] - dataframe["close"]).abs() <= (
+            (dataframe["high"] - dataframe["close"]) * 0.1
+        )
 
     return result.apply(lambda x: 1 if x else 0)

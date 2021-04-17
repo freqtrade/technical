@@ -2,6 +2,7 @@
 Volatility indicator functoins
 """
 from numpy.core.records import ndarray
+
 from technical.vendor.qtpylib.indicators import atr  # noqa: F401
 
 ########################################
@@ -20,7 +21,7 @@ def atr_percent(dataframe, period: int = 14) -> ndarray:
     :param period: Period to use for ATR calculation (defaults to 14)
     :return: Series containing ATR_percent calculation
     """
-    return (atr(dataframe, period) / dataframe['close']) * 100
+    return (atr(dataframe, period) / dataframe["close"]) * 100
 
 
 # NATR                 Normalized Average True Range

@@ -5,7 +5,7 @@ https://github.com/dysonance/Trendy
 """
 
 
-def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
+def gentrends(dataframe, field="close", window=1 / 3.0, charts=False):
     """
     Returns a Pandas dataframe with support and resistance lines.
 
@@ -32,15 +32,15 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
 
     # First the max
     if max1 + window >= len(x):
-        max2 = max(x[0:(max1 - window)])
+        max2 = max(x[0 : (max1 - window)])
     else:
-        max2 = max(x[(max1 + window):])
+        max2 = max(x[(max1 + window) :])
 
     # Now the min
     if min1 - window <= 0:
-        min2 = min(x[(min1 + window):])
+        min2 = min(x[(min1 + window) :])
     else:
-        min2 = min(x[0:(min1 - window)])
+        min2 = min(x[0 : (min1 - window)])
 
     # Now find the indices of the secondary extrema
     max2 = np.where(x == max2)[0][0]  # find the index of the 2nd max
@@ -58,24 +58,26 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
 
     # OUTPUT
     trends = np.transpose(np.array((x, maxline, minline)))
-    trends = pd.DataFrame(trends, index=np.arange(0, len(x)),
-                          columns=['Data', 'Max Line', 'Min Line'])
+    trends = pd.DataFrame(
+        trends, index=np.arange(0, len(x)), columns=["Data", "Max Line", "Min Line"]
+    )
 
     if charts:
-        from matplotlib.pyplot import plot, grid, savefig, close
+        from matplotlib.pyplot import close, grid, plot, savefig
+
         plot(trends)
         grid()
 
         if isinstance(charts, str):
-            savefig("{}.png".format(charts))
+            savefig(f"{charts}.png")
         else:
-            savefig("{}_{}.png".format(x[0], x[len(x)-1]))
+            savefig(f"{x[0]}_{x[len(x) - 1]}.png")
         close()
 
     return trends
 
 
-def segtrends(dataframe, field='close', segments=2, charts=False):
+def segtrends(dataframe, field="close", segments=2, charts=False):
     """
     Turn minitrends to iterative process more easily adaptable to
     implementation in simple trading systems; allows backtesting functionality.
@@ -88,6 +90,7 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
 
     x = dataframe[field]
     import numpy as np
+
     y = np.array(x)
 
     # Implement trendlines
@@ -110,6 +113,7 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
 
     if charts:
         import matplotlib.pyplot as plt
+
         plt.plot(y)
         plt.grid(True)
 
@@ -125,16 +129,18 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
         minline = np.linspace(a_min, b_min, len(y))
 
         if charts:
-            plt.plot(maxline, 'g')
-            plt.plot(minline, 'r')
+            plt.plot(maxline, "g")
+            plt.plot(minline, "r")
 
     if charts:
         plt.show()
 
     import pandas as pd
+
     # OUTPUT
     #    return x_maxima, maxima, x_minima, minima
     trends = np.transpose(np.array((x, maxline, minline)))
-    trends = pd.DataFrame(trends, index=np.arange(0, len(x)),
-                          columns=['Data', 'Max Line', 'Min Line'])
+    trends = pd.DataFrame(
+        trends, index=np.arange(0, len(x)), columns=["Data", "Max Line", "Min Line"]
+    )
     return trends

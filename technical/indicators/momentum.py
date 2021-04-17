@@ -2,9 +2,6 @@
 Momentum indicators
 """
 
-from numpy.core.records import ndarray
-
-
 ########################################
 #
 # Momentum Indicator Functions
@@ -49,7 +46,7 @@ from numpy.core.records import ndarray
 
 # WILLR                Williams' %R
 def williams_percent(dataframe, period=14):
-    highest_high = dataframe['high'].rolling(period).max()
-    lowest_low = dataframe['low'].rolling(period).min()
-    wr = (highest_high - dataframe['close']) / (highest_high - lowest_low) * -100
+    highest_high = dataframe["high"].rolling(period).max()
+    lowest_low = dataframe["low"].rolling(period).min()
+    wr = (highest_high - dataframe["close"]) / (highest_high - lowest_low) * -100
     return wr
