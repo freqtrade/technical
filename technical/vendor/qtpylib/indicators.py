@@ -19,8 +19,8 @@
 # limitations under the License.
 #
 
-import warnings
 import sys
+import warnings
 from datetime import datetime, timedelta
 
 import numpy as np

@@ -62,7 +62,7 @@ def gentrends(dataframe, field='close', window=1 / 3.0, charts=False):
                           columns=['Data', 'Max Line', 'Min Line'])
 
     if charts:
-        from matplotlib.pyplot import plot, grid, savefig, close
+        from matplotlib.pyplot import close, grid, plot, savefig
         plot(trends)
         grid()
 
@@ -132,6 +132,7 @@ def segtrends(dataframe, field='close', segments=2, charts=False):
         plt.show()
 
     import pandas as pd
+
     # OUTPUT
     #    return x_maxima, maxima, x_minima, minima
     trends = np.transpose(np.array((x, maxline, minline)))

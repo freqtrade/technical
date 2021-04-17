@@ -2,8 +2,6 @@
 Volume indicators
 """
 
-from numpy.core.records import ndarray
-
 ########################################
 #
 # Volume Indicator Functions
@@ -13,6 +11,7 @@ from numpy.core.records import ndarray
 
 # ADOSC                Chaikin A/D Oscillator
 # OBV                  On Balance Volume
+
 
 # Other Volume Indicator Functions
 def chaikin_money_flow(dataframe, period=21):

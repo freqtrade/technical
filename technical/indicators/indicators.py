@@ -1,6 +1,6 @@
 """
-This file contains a collection of common indicators, which are based on third party or custom libraries
-
+This file contains a collection of common indicators,
+which are based on third party or custom libraries
 """
 import numpy as np
 from numpy.core.records import ndarray
@@ -173,7 +173,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
 #
 # Madrid Functions
 #
-def mmar(dataframe, matype="EMA", src="close", debug=False):
+def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
     """
     Madrid Moving Average Ribbon
 
@@ -779,7 +779,7 @@ def fibonacci_retracements(df, field="close") -> DataFrame:
     thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
 
     window_min, window_max = df[field].min(), df[field].max()
-    fib_levels = [window_min + t * (window_max - window_min) for t in thresholds]
+    # fib_levels = [window_min + t * (window_max - window_min) for t in thresholds]
 
     # Scale data to match to thresholds
     # Can be returned instead if one is looking at the movement between levels
@@ -1060,7 +1060,8 @@ def SSLChannels(dataframe, length=10, mode="sma"):
     Pinescript Author: ErwinBeckers
 
     SSL Channels.
-    Average over highs and lows form a channel - lines "flip" when close crosses either of the 2 lines.
+    Average over highs and lows form a channel - lines "flip" when close crosses
+    either of the 2 lines.
     Trading ideas:
         * Channel cross
         * as confirmation based on up > down for long
@@ -1088,7 +1089,7 @@ def SSLChannels(dataframe, length=10, mode="sma"):
     return df["sslDown"], df["sslUp"]
 
 
-def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
+def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noqa: C901
     """
     Function to compute PMAX
     Source: https://www.tradingview.com/script/sU9molfV/
