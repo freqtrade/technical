@@ -81,8 +81,9 @@ jobs:
     - name: Sort imports (isort)
       run: |
         isort --check .
-        
+
     - uses: psf/black@stable
+      if: startsWith(matrix.os, 'ubuntu')
       with:
         args: ". --check"
 
