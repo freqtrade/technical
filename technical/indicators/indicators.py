@@ -810,7 +810,7 @@ def return_on_investment(dataframe, decimals=2) -> DataFrame:
         for idx, chunk in zip(buy_idx, buy_chunks):
             # round ROI to avoid float accuracy problems
             chunk_roi = np.round(100.0 * (chunk / chunk[0] - 1.0), decimals)
-            roi[idx:idx + len(chunk)] = chunk_roi
+            roi[idx : idx + len(chunk)] = chunk_roi
 
     dataframe["roi"] = roi
 
