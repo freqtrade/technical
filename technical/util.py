@@ -85,7 +85,7 @@ def resampled_merge(original, resampled, fill_na=False):
     # rename all the colums to the correct interval
     for header in list(resampled):
         # store the resampled columns in it
-        resampled["resample_{}_{}".format(resampled_interval, header)] = resampled[header]
+        resampled[f"resample_{resampled_interval}_{header}"] = resampled[header]
 
     # drop columns which should not be joined
     resampled = resampled.drop(columns=["open", "high", "low", "close"])

@@ -69,9 +69,9 @@ def gentrends(dataframe, field="close", window=1 / 3.0, charts=False):
         grid()
 
         if isinstance(charts, str):
-            savefig("{}.png".format(charts))
+            savefig(f"{charts}.png")
         else:
-            savefig("{}_{}.png".format(x[0], x[len(x) - 1]))
+            savefig(f"{x[0]}_{x[len(x) - 1]}.png")
         close()
 
     return trends
