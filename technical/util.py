@@ -62,7 +62,7 @@ def resample_to_interval(dataframe, interval):
     df = dataframe.copy()
     df = df.set_index(DatetimeIndex(df["date"]))
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
-    df = df.resample(str(interval) + "min", label="right").agg(ohlc_dict).dropna()
+    df = df.resample(str(interval) + "min", label="left").agg(ohlc_dict).dropna()
     df["date"] = df.index
 
     return df
