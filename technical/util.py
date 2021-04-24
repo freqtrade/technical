@@ -46,9 +46,6 @@ def ticker_history_to_dataframe(ticker: list) -> DataFrame:
 
 
 def resample_to_interval(dataframe, interval):
-    if isinstance(interval, str):
-        interval = TICKER_INTERVAL_MINUTES[interval]
-
     """
         resamples the given dataframe to the desired interval.
         Please be aware you need to upscale this to join the results
@@ -58,17 +55,19 @@ def resample_to_interval(dataframe, interval):
     :param interval: to which ticker value in minutes would you like to resample it
     :return:
     """
-
+    if isinstance(interval, str):
+        interval = TICKER_INTERVAL_MINUTES[interval]
+    
     df = dataframe.copy()
     df = df.set_index(DatetimeIndex(df["date"]))
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
     df = df.resample(str(interval) + "min", label="left").agg(ohlc_dict).dropna()
-    df["date"] = df.index
+    df.reset_index(inplace=True)
 
     return df
 
 
-def resampled_merge(original, resampled, fill_na=False):
+def resampled_merge(original, resampled, fill_na=True):
     """
     this method merges a resampled dataset back into the orignal data set
 
@@ -79,23 +78,14 @@ def resampled_merge(original, resampled, fill_na=False):
 
     resampled_interval = compute_interval(resampled)
 
-    # no point in interpolating these columns
-    resampled = resampled.drop(columns=["date", "volume"])
-
     # rename all the columns to the correct interval
-    for header in list(resampled):
-        # store the resampled columns in it
-        resampled[f"resample_{resampled_interval}_{header}"] = resampled[header]
+    resampled.columns = [f"resample_{resampled_interval}_{col}" for col in resampled.columns]
 
-    # drop columns which should not be joined
-    resampled = resampled.drop(columns=["open", "high", "low", "close"])
-
-    resampled["date"] = resampled.index
-    resampled.index = range(len(resampled))
-    dataframe = merge(original, resampled, on="date", how="left")
+    dataframe = merge(original, resampled, left_on='date', right_on=f'resample_{resampled_interval}_date', how="left")
 
     if fill_na:
         dataframe.fillna(method="ffill", inplace=True)
+
     return dataframe
 
 
