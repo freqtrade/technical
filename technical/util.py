@@ -1,7 +1,7 @@
 """
     defines utility functions to be used
 """
-from pandas import DataFrame, DatetimeIndex, merge, to_datetime
+from pandas import DataFrame, DatetimeIndex, merge, to_datetime, to_timedelta
 
 TICKER_INTERVAL_MINUTES = {
     "1m": 1,
@@ -77,12 +77,24 @@ def resampled_merge(original, resampled, fill_na=True):
     :return: the merged dataset
     """
 
-    resampled_interval = compute_interval(resampled)
+    original_int = compute_interval(original)
+    resampled_int = compute_interval(resampled)
+
+    if original_int < resampled_int:
+        # Subtract "small" timeframe so merging is not delayed by 1 small candle.
+        # Detailed explanation in https://github.com/freqtrade/freqtrade/issues/4073
+        resampled['date_merge'] = (
+            resampled["date"] + to_timedelta(resampled_int, 'm') - to_timedelta(original_int, 'm')
+            )
+    else:
+        raise ValueError("Tried to merge a faster timeframe to a slower timeframe."
+                         "Upsampling is not possible.")
 
     # rename all the columns to the correct interval
-    resampled.columns = [f"resample_{resampled_interval}_{col}" for col in resampled.columns]
+    resampled.columns = [f"resample_{resampled_int}_{col}" for col in resampled.columns]
 
-    dataframe = merge(original, resampled, left_on='date', right_on=f'resample_{resampled_interval}_date', how="left")
+    dataframe = merge(original, resampled, left_on='date', right_on=f'resample_{resampled_int}_date_merge', how="left")
+    dataframe = dataframe.drop(f'resample_{resampled_int}_date_merge', axis=1)
 
     if fill_na:
         dataframe.fillna(method="ffill", inplace=True)
