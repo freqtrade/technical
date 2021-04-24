@@ -79,10 +79,10 @@ def resampled_merge(original, resampled, fill_na=False):
 
     resampled_interval = compute_interval(resampled)
 
-    # no point in interpolating these colums
+    # no point in interpolating these columns
     resampled = resampled.drop(columns=["date", "volume"])
 
-    # rename all the colums to the correct interval
+    # rename all the columns to the correct interval
     for header in list(resampled):
         # store the resampled columns in it
         resampled[f"resample_{resampled_interval}_{header}"] = resampled[header]
