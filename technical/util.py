@@ -3,6 +3,7 @@
 """
 from pandas import DataFrame, DatetimeIndex, merge, to_datetime, to_timedelta
 
+
 TICKER_INTERVAL_MINUTES = {
     "1m": 1,
     "5m": 5,
