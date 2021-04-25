@@ -1,4 +1,5 @@
 import json
+
 import pandas as pd
 
 from technical.indicators import chaikin_money_flow
@@ -34,7 +35,7 @@ def test_resampled_merge(testdata_1m_btc):
     assert "resample_5_volume" in merged
     # Verify the assignment goes to the correct candle
     # If resampling to 5m, then the resampled value needs to be on the 5m candle.
-    date = pd.to_datetime('2017-11-14 22:45:00', utc=True)
+    date = pd.to_datetime("2017-11-14 22:45:00", utc=True)
     assert merged.loc[merged["date"] == "2017-11-14 22:48:00", "resample_5_date"].iloc[0] != date
     # The 5m candle for 22:45 is available at 22:50,
     # when both :49 1m and :45 5m candles close
@@ -45,7 +46,7 @@ def test_resampled_merge(testdata_1m_btc):
     assert merged.loc[merged["date"] == "2017-11-14 22:53:00", "resample_5_date"].iloc[0] == date
     # The 5m candle for 22:50 is available at 22:54,
     # when both :54 1m and :50 5m candles close
-    date = pd.to_datetime('2017-11-14 22:50:00', utc=True)
+    date = pd.to_datetime("2017-11-14 22:50:00", utc=True)
     assert merged.loc[merged["date"] == "2017-11-14 22:54:00", "resample_5_date"].iloc[0] == date
     assert merged.loc[merged["date"] == "2017-11-14 22:55:00", "resample_5_date"].iloc[0] == date
     assert merged.loc[merged["date"] == "2017-11-14 22:56:00", "resample_5_date"].iloc[0] == date
