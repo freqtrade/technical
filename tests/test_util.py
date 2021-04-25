@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 
 from technical.indicators import chaikin_money_flow
 from technical.util import resample_to_interval, resampled_merge, ticker_history_to_dataframe
@@ -29,13 +30,27 @@ def test_resampled_merge(testdata_1m_btc):
     assert "resample_5_low" in merged
     assert "resample_5_high" in merged
 
-    assert "resample_5_date" not in merged
-    assert "resample_5_volume" not in merged
+    assert "resample_5_date" in merged
+    assert "resample_5_volume" in merged
     # Verify the assignment goes to the correct candle
     # If resampling to 5m, then the resampled value needs to be on the 5m candle.
-    assert sum(merged.loc[merged["date"] == "2017-11-14 22:54:00", "resample_5_close"].isna()) == 1
-    assert sum(merged.loc[merged["date"] == "2017-11-14 22:55:00", "resample_5_close"].isna()) == 0
-    assert sum(merged.loc[merged["date"] == "2017-11-14 22:56:00", "resample_5_close"].isna()) == 1
+    date = pd.to_datetime('2017-11-14 22:45:00', utc=True)
+    assert merged.loc[merged["date"] == "2017-11-14 22:48:00", "resample_5_date"].iloc[0] != date
+    # The 5m candle for 22:45 is available at 22:50,
+    # when both :49 1m and :45 5m candles close
+    assert merged.loc[merged["date"] == "2017-11-14 22:49:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:50:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:51:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:52:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:53:00", "resample_5_date"].iloc[0] == date
+    # The 5m candle for 22:50 is available at 22:54,
+    # when both :54 1m and :50 5m candles close
+    date = pd.to_datetime('2017-11-14 22:50:00', utc=True)
+    assert merged.loc[merged["date"] == "2017-11-14 22:54:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:55:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:56:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:57:00", "resample_5_date"].iloc[0] == date
+    assert merged.loc[merged["date"] == "2017-11-14 22:58:00", "resample_5_date"].iloc[0] == date
 
 
 def test_resampled_merge_contains_indicator(testdata_1m_btc):
