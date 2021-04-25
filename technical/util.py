@@ -57,7 +57,7 @@ def resample_to_interval(dataframe, interval):
     """
     if isinstance(interval, str):
         interval = TICKER_INTERVAL_MINUTES[interval]
-    
+
     df = dataframe.copy()
     df = df.set_index(DatetimeIndex(df["date"]))
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
@@ -70,7 +70,7 @@ def resample_to_interval(dataframe, interval):
 def resampled_merge(original, resampled, fill_na=True):
     """
         this method merges a resampled dataset back into the orignal data set.
-        Resampled candle will match OHLC only if full timespan is available in original dataframe. 
+        Resampled candle will match OHLC only if full timespan is available in original dataframe.
 
     :param original: the original non resampled dataset
     :param resampled:  the resampled dataset
@@ -93,7 +93,8 @@ def resampled_merge(original, resampled, fill_na=True):
     # rename all the columns to the correct interval
     resampled.columns = [f"resample_{resampled_int}_{col}" for col in resampled.columns]
 
-    dataframe = merge(original, resampled, left_on='date', right_on=f'resample_{resampled_int}_date_merge', how="left")
+    dataframe = merge(original, resampled, how="left",
+                      left_on='date', right_on=f'resample_{resampled_int}_date_merge')
     dataframe = dataframe.drop(f'resample_{resampled_int}_date_merge', axis=1)
 
     if fill_na:
