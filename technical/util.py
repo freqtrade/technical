@@ -45,11 +45,11 @@ def ticker_history_to_dataframe(ticker: list) -> DataFrame:
     return frame
 
 
-def resample_to_interval(dataframe, interval):
+def resample_to_interval(dataframe: DataFrame, interval):
     """
-        resamples the given dataframe to the desired interval.
-        Please be aware you need to upscale this to join the results
-        with the other dataframe
+    Resamples the given dataframe to the desired interval.
+    Please be aware you need to use resampled_merge to merge to another dataframe to
+    avoid lookahead bias
 
     :param dataframe: dataframe containing close/high/low/open/volume
     :param interval: to which ticker value in minutes would you like to resample it
@@ -61,16 +61,17 @@ def resample_to_interval(dataframe, interval):
     df = dataframe.copy()
     df = df.set_index(DatetimeIndex(df["date"]))
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
+    # Resample to "left" border as dates are candle open dates
     df = df.resample(str(interval) + "min", label="left").agg(ohlc_dict).dropna()
     df.reset_index(inplace=True)
 
     return df
 
 
-def resampled_merge(original, resampled, fill_na=True):
+def resampled_merge(original: DataFrame, resampled: DataFrame, fill_na=True):
     """
-        this method merges a resampled dataset back into the orignal data set.
-        Resampled candle will match OHLC only if full timespan is available in original dataframe.
+    Merges a resampled dataset back into the orignal data set.
+    Resampled candle will match OHLC only if full timespan is available in original dataframe.
 
     :param original: the original non resampled dataset
     :param resampled:  the resampled dataset
@@ -111,7 +112,7 @@ def resampled_merge(original, resampled, fill_na=True):
 
 def compute_interval(dataframe: DataFrame, exchange_interval=False):
     """
-        calculates the interval of the given dataframe for us
+    Calculates the interval of the given dataframe for us
     :param dataframe:
     :param exchange_interval: should we convert the result to an exchange interval or just a number
     :return:
