@@ -1216,11 +1216,12 @@ def tv_wma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
     Pinescript Author: Unknown
 
     Args :
-        series : Pandas Series
+        dataframe : Pandas Dataframe
         length : WMA length
+        field : Field to use for the calculation
 
     Returns :
-        series : Resulting Pandas Series
+        dataframe : Pandas DataFrame with new columns 'tv_wma'
     """
 
     norm = 0
