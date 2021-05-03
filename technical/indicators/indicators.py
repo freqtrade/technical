@@ -1208,3 +1208,29 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     df.fillna(0, inplace=True)
 
     return df
+
+
+def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
+    """
+    Source: Tradingview "Moving Average Weighted"
+    Pinescript Author: Unknown
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : WMA length
+        field : Field to use for the calculation
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'tv_wma'
+    """
+
+    norm = 0
+    sum = 0
+
+    for i in range(1, length - 1):
+        weight = (length - i) * length
+        norm = norm + weight
+        sum = sum + dataframe[field].shift(i) * weight
+
+    dataframe["tv_wma"] = sum / norm
+    return dataframe
