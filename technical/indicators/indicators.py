@@ -1234,3 +1234,33 @@ def tv_wma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
 
     dataframe['tv_wma'] = sum / norm
     return dataframe
+
+
+def tv_hma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
+    """
+    Source: Tradingview "Hull Moving Average"
+    Pinescript Author: Unknown
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : HMA length
+        field : Field to use for the calculation
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'tv_hma'
+    """
+
+    dataframe['h'] = 2 * tv_wma(
+        dataframe,
+        math.floor(length / 2),
+        field
+    ) - tv_wma(
+        dataframe,
+        length,
+        field
+    )
+
+    dataframe['tv_hma'] = tv_wma(dataframe, math.floor(math.sqrt(length)), 'h')
+    dataframe.drop('h', inplace=True, axis=1)
+
+    return dataframe
