@@ -1231,5 +1231,5 @@ def tv_wma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
         norm = norm + weight
         sum = sum + dataframe[field].shift(i) * weight
 
-    dataframe[field] = sum / norm
+    dataframe['tv_wma'] = sum / norm
     return dataframe
