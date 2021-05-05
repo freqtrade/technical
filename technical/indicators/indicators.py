@@ -2,6 +2,8 @@
 This file contains a collection of common indicators,
 which are based on third party or custom libraries
 """
+import math
+
 import numpy as np
 from numpy.core.records import ndarray
 from pandas import DataFrame, Series
@@ -1233,4 +1235,28 @@ def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
         sum = sum + dataframe[field].shift(i) * weight
 
     dataframe["tv_wma"] = sum / norm
+    return dataframe
+
+
+def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
+    """
+    Source: Tradingview "Hull Moving Average"
+    Pinescript Author: Unknown
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : HMA length
+        field : Field to use for the calculation
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'tv_hma'
+    """
+
+    dataframe["h"] = 2 * tv_wma(dataframe, math.floor(length / 2), field) - tv_wma(
+        dataframe, length, field=field
+    )
+
+    dataframe["tv_hma"] = tv_wma(dataframe, math.floor(math.sqrt(length)), field="h")
+    dataframe.drop("h", inplace=True, axis=1)
+
     return dataframe
