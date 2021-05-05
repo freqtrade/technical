@@ -1,7 +1,7 @@
 """
     defines utility functions to be used
 """
-from pandas import DataFrame, DatetimeIndex, merge, to_datetime
+from pandas import DataFrame, DatetimeIndex, merge, to_datetime, to_timedelta
 
 TICKER_INTERVAL_MINUTES = {
     "1m": 1,
@@ -45,63 +45,74 @@ def ticker_history_to_dataframe(ticker: list) -> DataFrame:
     return frame
 
 
-def resample_to_interval(dataframe, interval):
-    if isinstance(interval, str):
-        interval = TICKER_INTERVAL_MINUTES[interval]
-
+def resample_to_interval(dataframe: DataFrame, interval):
     """
-        resamples the given dataframe to the desired interval.
-        Please be aware you need to upscale this to join the results
-        with the other dataframe
+    Resamples the given dataframe to the desired interval.
+    Please be aware you need to use resampled_merge to merge to another dataframe to
+    avoid lookahead bias
 
     :param dataframe: dataframe containing close/high/low/open/volume
     :param interval: to which ticker value in minutes would you like to resample it
     :return:
     """
+    if isinstance(interval, str):
+        interval = TICKER_INTERVAL_MINUTES[interval]
 
     df = dataframe.copy()
     df = df.set_index(DatetimeIndex(df["date"]))
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
-    df = df.resample(str(interval) + "min", label="right").agg(ohlc_dict).dropna()
-    df["date"] = df.index
+    # Resample to "left" border as dates are candle open dates
+    df = df.resample(str(interval) + "min", label="left").agg(ohlc_dict).dropna()
+    df.reset_index(inplace=True)
 
     return df
 
 
-def resampled_merge(original, resampled, fill_na=False):
+def resampled_merge(original: DataFrame, resampled: DataFrame, fill_na=True):
     """
-    this method merges a resampled dataset back into the orignal data set
+    Merges a resampled dataset back into the orignal data set.
+    Resampled candle will match OHLC only if full timespan is available in original dataframe.
 
     :param original: the original non resampled dataset
     :param resampled:  the resampled dataset
     :return: the merged dataset
     """
 
-    resampled_interval = compute_interval(resampled)
+    original_int = compute_interval(original)
+    resampled_int = compute_interval(resampled)
 
-    # no point in interpolating these colums
-    resampled = resampled.drop(columns=["date", "volume"])
+    if original_int < resampled_int:
+        # Subtract "small" timeframe so merging is not delayed by 1 small candle.
+        # Detailed explanation in https://github.com/freqtrade/freqtrade/issues/4073
+        resampled["date_merge"] = (
+            resampled["date"] + to_timedelta(resampled_int, "m") - to_timedelta(original_int, "m")
+        )
+    else:
+        raise ValueError(
+            "Tried to merge a faster timeframe to a slower timeframe." "Upsampling is not possible."
+        )
 
-    # rename all the colums to the correct interval
-    for header in list(resampled):
-        # store the resampled columns in it
-        resampled[f"resample_{resampled_interval}_{header}"] = resampled[header]
+    # rename all the columns to the correct interval
+    resampled.columns = [f"resample_{resampled_int}_{col}" for col in resampled.columns]
 
-    # drop columns which should not be joined
-    resampled = resampled.drop(columns=["open", "high", "low", "close"])
-
-    resampled["date"] = resampled.index
-    resampled.index = range(len(resampled))
-    dataframe = merge(original, resampled, on="date", how="left")
+    dataframe = merge(
+        original,
+        resampled,
+        how="left",
+        left_on="date",
+        right_on=f"resample_{resampled_int}_date_merge",
+    )
+    dataframe = dataframe.drop(f"resample_{resampled_int}_date_merge", axis=1)
 
     if fill_na:
         dataframe.fillna(method="ffill", inplace=True)
+
     return dataframe
 
 
 def compute_interval(dataframe: DataFrame, exchange_interval=False):
     """
-        calculates the interval of the given dataframe for us
+    Calculates the interval of the given dataframe for us
     :param dataframe:
     :param exchange_interval: should we convert the result to an exchange interval or just a number
     :return:
