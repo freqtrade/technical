@@ -2,8 +2,9 @@
 This file contains a collection of common indicators,
 which are based on third party or custom libraries
 """
-import numpy as np
 import math
+
+import numpy as np
 from numpy.core.records import ndarray
 from pandas import DataFrame, Series
 
@@ -1211,7 +1212,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     return df
 
 
-def tv_wma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
+def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     """
     Source: Tradingview "Moving Average Weighted"
     Pinescript Author: Unknown
@@ -1233,11 +1234,11 @@ def tv_wma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
         norm = norm + weight
         sum = sum + dataframe[field].shift(i) * weight
 
-    dataframe['tv_wma'] = sum / norm
+    dataframe["tv_wma"] = sum / norm
     return dataframe
 
 
-def tv_hma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
+def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     """
     Source: Tradingview "Hull Moving Average"
     Pinescript Author: Unknown
@@ -1251,17 +1252,11 @@ def tv_hma(dataframe: DataFrame, length=9, field='close') -> DataFrame:
         dataframe : Pandas DataFrame with new columns 'tv_hma'
     """
 
-    dataframe['h'] = 2 * tv_wma(
-        dataframe,
-        math.floor(length / 2),
-        field
-    ) - tv_wma(
-        dataframe,
-        length,
-        field
+    dataframe["h"] = 2 * tv_wma(dataframe, math.floor(length / 2), field) - tv_wma(
+        dataframe, length, field=field
     )
 
-    dataframe['tv_hma'] = tv_wma(dataframe, math.floor(math.sqrt(length)), 'h')
-    dataframe.drop('h', inplace=True, axis=1)
+    dataframe["tv_hma"] = tv_wma(dataframe, math.floor(math.sqrt(length)), field="h")
+    dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
