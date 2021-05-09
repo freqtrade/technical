@@ -1262,7 +1262,7 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     return dataframe
 
 
-def tv_rma(dataframe: DataFrame, length: int = 15, field="close") -> DataFrame:
+def rma(dataframe: DataFrame, length: int = 15, field="close") -> DataFrame:
     """
     Source: Tradingview rma
     Pinescript Author: Unknown
