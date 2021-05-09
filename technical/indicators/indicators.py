@@ -1275,7 +1275,7 @@ def dmi(dataframe: DataFrame, length: int = 9) -> DataFrame:
         dataframe : Pandas DataFrame with new columns 'plus' and 'minus'
     """
 
-    trur = self.rma(
+    trur = rma(
         pd.DataFrame({
             'close': ta.TRANGE(dataframe['high'], dataframe['low'], dataframe['close'])
         }, length)
@@ -1287,7 +1287,7 @@ def dmi(dataframe: DataFrame, length: int = 9) -> DataFrame:
     plus_dm = up.where((up > down) & (up > 0), other=0)
     minus_dm = down.where((down > up) & (down > 0), other=0)
 
-    dataframe['plus'] = (100 * self.rma(plus_dm, length) / trur).fillna(method='ffill')
-    dataframe['minus'] = (100 * self.rma(minus_dm, length) / trur).fillna(method='ffill')
+    dataframe['plus'] = (100 * rma(plus_dm, length) / trur).fillna(method='ffill')
+    dataframe['minus'] = (100 * rma(minus_dm, length) / trur).fillna(method='ffill')
 
     return dataframe
