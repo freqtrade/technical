@@ -1260,3 +1260,33 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
+
+
+def dmi(dataframe: DataFrame, length: int = 9) -> DataFrame:
+    """
+    Source: Tradingview dmi
+    Pinescript Author: Unknown
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : DMI length
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'plus' and 'minus'
+    """
+
+    trur = self.rma(pd.Series(ta.TRANGE(high, low, close)), length)
+
+    up = high.diff()
+    down = low.diff() * -1
+
+    plusDM = up.where((up > down) & (up > 0), other=0)
+    minusDM = down.where((down > up) & (down > 0), other=0)
+
+    plus = (100 * self.rma(plusDM, length) / trur).fillna(method='ffill')
+    minus = (100 * self.rma(minusDM, length) / trur).fillna(method='ffill')
+
+    return pd.DataFrame({
+        'plus': plus,
+        'minus': minus
+    })
