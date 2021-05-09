@@ -1260,3 +1260,27 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
+
+
+def tv_rma(dataframe: DataFrame, length: int = 15, field="close") -> DataFrame:
+    """
+    Source: Tradingview rma
+    Pinescript Author: Unknown
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : RMA length
+        field : Field to use for the calculation
+
+    Returns :
+        dataframe : Pandas DataFrame with new column 'tv_rma'
+    """
+    alpha = 1.0 / length
+    series = dataframe[field]
+
+    for i in range(1, series.size):
+        series.iloc[i] = series.iloc[i] * alpha + (1 - alpha) * (
+            series.iloc[i - 1] if not pd.isna(series.iloc[i - 1]) else 0)
+
+    dataframe['rv_rma'] = series
+    return dataframe
