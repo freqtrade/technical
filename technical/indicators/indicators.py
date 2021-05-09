@@ -1260,3 +1260,25 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
+
+
+def sdmi(dataframe: DataFrame, length: int = 9, smooth_length: int = 5) -> DataFrame:
+    """
+    Source: https://www.tradingview.com/script/9L6Wof1i-Smoothed-Directional-Movement-Index/
+    Pinescript Author: Unknown / Sean Nowotny
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : DMI length
+        smooth_length : SMA smoothing length
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'plus' and 'minus'
+    """
+
+    result = dmi(dataframe, length)
+
+    result['plus'] = ta.SMA(result['plus'], smooth_length),
+    result['minus'] = ta.SMA(result['minus'], smooth_length),
+
+    return dataframe
