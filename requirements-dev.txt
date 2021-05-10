@@ -1,6 +1,6 @@
 -r requirements.txt
 
-pytest==6.2.3
+pytest==6.2.4
 pytest-cov==2.11.1
 pytest-mock==3.6.0
 pytest-random-order==1.0.4
