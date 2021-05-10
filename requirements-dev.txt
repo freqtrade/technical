@@ -2,7 +2,7 @@
 
 pytest==6.2.4
 pytest-cov==2.11.1
-pytest-mock==3.6.0
+pytest-mock==3.6.1
 pytest-random-order==1.0.4
 flake8==3.9.2
 flake8-type-annotations==0.1.0
