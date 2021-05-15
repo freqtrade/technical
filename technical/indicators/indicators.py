@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 from numpy.core.records import ndarray
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, isna
 
 from .overlap_studies import sma, vwma, zema
 
@@ -1280,7 +1280,8 @@ def rma(dataframe: DataFrame, length: int = 15, field="close") -> DataFrame:
 
     for i in range(1, series.size):
         series.iloc[i] = series.iloc[i] * alpha + (1 - alpha) * (
-            series.iloc[i - 1] if not pd.isna(series.iloc[i - 1]) else 0)
+            series.iloc[i - 1] if not isna(series.iloc[i - 1]) else 0
+        )
 
-    dataframe['rv_rma'] = series
+    dataframe["rv_rma"] = series
     return dataframe
