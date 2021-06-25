@@ -8,15 +8,15 @@ class Consensus:
     """
     This file provides you with the consensus indicator and all associated helper methods.
 
-    The idea is based on the concept that, if you have 1 indicators telling you to buy
+    The idea is based on the concept that, if you have one indicator telling you to buy
     things are great.
-    if 100 indecators telling you to buy at the same time, things are better.
+    If 100 indicators are telling you to buy at the same time, things are better.
 
-    If we can now have an easily understandalbe score, things should be perfect.
+    If we can now have an easily understandable score, things should be perfect.
 
     Configuration:
 
-    each of the utility methods, utilizes the default parameters as based in the literature.
+    Each of the utility methods utilizes the default parameters as based in the literature.
     Assuming that these are the signals, most trades will use.
 
     Usage:
@@ -50,7 +50,7 @@ class Consensus:
 
     def __init__(self, dataframe: pd.DataFrame):
         """
-        initializes the conesensus object.
+        initializes the consensus object.
         :param dataframe: dataframe to evaluate
         """
         self.dataframe = dataframe.copy()
@@ -59,7 +59,7 @@ class Consensus:
 
     def _weights(self, impact_buy, impact_sell):
         """
-            helper method to compute total count of utilized indicators and their weigths
+            helper method to compute total count of utilized indicators and their weights
         :param impact_buy:
         :param impact_sell:
         :return:
