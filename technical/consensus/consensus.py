@@ -575,7 +575,6 @@ class Consensus:
         """
         evaluates the ao (Awesome Oscillator)
         :param dataframe:
-        :param period:
         :param prefix:
         :return:
         """
