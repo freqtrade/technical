@@ -121,15 +121,15 @@ class Consensus:
 
         dataframe.loc[((dataframe[name] > 70)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_stoch(self, prefix="stoch", impact_buy=1, impact_sell=1):
+    def evaluate_stoch(self, period=14, prefix="stoch", impact_buy=1, impact_sell=1):
         """
-        evaluates a s
+        evaluates the stochastic fast
         :param dataframe:
         :param period:
         :param prefix:
         :return:
         """
-        name = f"{prefix}"
+        name = f"{prefix}_{period}"
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         stoch_fast = ta.STOCHF(dataframe, 5, 3, 0, 3, 0)
@@ -141,10 +141,36 @@ class Consensus:
 
         dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
 
+    def evaluate_stoch_rsi(self, period=14, SmoothD=3,SmoothK=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1):
+        """
+        evaluates the stochastic rsi fast (TradingView version)
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+ 
+        name = f"{prefix}_{period}"
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+
+        # We don't use the talib.STOCHRSI library because it seems
+        # like the results are not identical to Trading View's version
+        dataframe["rsi"] = ta.RSI(dataframe, timeperiod=period)
+
+        stochrsi = (dataframe['rsi'] - dataframe['rsi'].rolling(period).min()) / (dataframe['rsi'].rolling(period).max() - dataframe['rsi'].rolling(period).min())
+        dataframe[f"{name}_fastk"] = stochrsi.rolling(SmoothK).mean() * 100
+        dataframe[f"{name}_fastd"] = dataframe['srsi_k'].rolling(SmoothD).mean() # Not used here
+
+        dataframe.loc[((dataframe[f"{name}_fastk"] < 20)), f"buy_{name}"] = 1 * impact_buy
+
+        dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
+
     def evaluate_macd_cross_over(self, prefix="macd_crossover", impact_buy=2, impact_sell=2):
         """
-            evaluates the MACD if we should buy or sale based on a crossover
+        evaluates the MACD if we should buy or sale based on a crossover
         :param dataframe:
+        :param prefix:
         :return:
         """
 
@@ -167,8 +193,9 @@ class Consensus:
 
     def evaluate_macd(self, prefix="macd", impact_buy=1, impact_sell=1):
         """
-            evaluates the MACD if we should buy or sale
+        evaluates the MACD if we should buy or sale
         :param dataframe:
+        :param prefix:
         :return:
         """
 
@@ -195,7 +222,7 @@ class Consensus:
 
     def evaluate_hull(self, period=9, field="close", prefix="hull", impact_buy=1, impact_sell=1):
         """
-        evaluates a tema moving average
+        evaluates a hull moving average
         :param dataframe:
         :param period:
         :param prefix:
@@ -212,7 +239,7 @@ class Consensus:
 
         dataframe.loc[((dataframe[name] < dataframe[field])), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_vwma(self, period=9, prefix="hull", impact_buy=1, impact_sell=1):
+    def evaluate_vwma(self, period=9, prefix="vwma", impact_buy=1, impact_sell=1):
         """
         evaluates a volume weighted moving average
         :param dataframe:
@@ -284,7 +311,7 @@ class Consensus:
 
     def evaluate_laguerre(self, prefix="lag", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the laguerre
         :param dataframe:
         :param period:
         :param prefix:
@@ -322,7 +349,7 @@ class Consensus:
 
     def evaluate_cmf(self, period=12, prefix="cmf", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the cmf
         :param dataframe:
         :param period:
         :param prefix:
@@ -343,7 +370,7 @@ class Consensus:
         self, period=20, prefix="cci", impact_buy=1, impact_sell=1, sell_signal=100, buy_signal=-100
     ):
         """
-        evaluates the osc
+        evaluates the cci
         :param dataframe:
         :param period:
         :param prefix:
@@ -414,7 +441,7 @@ class Consensus:
 
     def evaluate_cmo(self, period=20, prefix="cmo", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the cmo
         :param dataframe:
         :param period:
         :param prefix:
@@ -470,7 +497,7 @@ class Consensus:
 
     def evaluate_ultimate_oscilator(self, prefix="uo", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the ultimate_oscilator
         :param dataframe:
         :param period:
         :param prefix:
@@ -487,7 +514,7 @@ class Consensus:
 
     def evaluate_williams(self, prefix="williams", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the williams
         :param dataframe:
         :param period:
         :param prefix:
@@ -506,7 +533,7 @@ class Consensus:
 
     def evaluate_momentum(self, period=20, prefix="momentum", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the momentum
         :param dataframe:
         :param period:
         :param prefix:
@@ -522,9 +549,9 @@ class Consensus:
 
         dataframe.loc[((dataframe[name] < 100)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_adx(self, period=14, prefix="momentum", impact_buy=1, impact_sell=1):
+    def evaluate_adx(self, period=14, prefix="adx", impact_buy=1, impact_sell=1):
         """
-        evaluates the osc
+        evaluates the adx
         :param dataframe:
         :param period:
         :param prefix:
@@ -536,6 +563,65 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = ta.ADX(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] > 25)), f"buy_{name}"] = 1 * impact_buy
+        # We also need to use PLUS_DI and MINUS_DI to be able to detect if we should buy or sell
+        dataframe[f"{name}_plus_di"] = ta.PLUS_DI(dataframe, timeperiod=period)
+        dataframe[f"{name}_minus_di"] = ta.MINUS_DI(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] > 25)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[((dataframe[name] > 25) & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])), f"buy_{name}"] = 1 * impact_buy
+
+        dataframe.loc[((dataframe[name] > 25) & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])), f"sell_{name}"] = 1 * impact_sell
+
+    def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
+        """
+        evaluates the ao (Awesome Oscillator)
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+        from technical.qtpylib import awesome_oscillator
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = f"{prefix}"
+        dataframe[name] = awesome_oscillator(dataframe)
+
+        dataframe.loc[((dataframe[name] > (dataframe[name].shift(1) + 0.05))), f"buy_{name}"] = 1 * impact_buy
+
+        dataframe.loc[((dataframe[name] < (dataframe[name].shift(1) - 0.05))), f"sell_{name}"] = 1 * impact_sell
+
+    def evaluate_bbp(self, period=13, prefix="bbp", impact_buy=1, impact_sell=1):
+        """
+        evaluates the bbp (Bears Bulls Power)
+        :param dataframe:
+        :param period:
+        :param prefix:
+        :return:
+        """
+
+        self._weights(impact_buy, impact_sell)
+        dataframe = self.dataframe
+        name = f"{prefix}_{period}"
+
+        # Bears/Bulls Power is using EMA
+        dataframe[f"{name}_ema"] = ta.EMA(dataframe, timeperiod=period)
+        dataframe[f"{name}_bulls"] = dataframe['high'] - dataframe[f"{name}_ema"]
+        dataframe[f"{name}_bears"] = dataframe['low'] - dataframe[f"{name}_ema"]
+
+        dataframe.loc[
+            (
+                (dataframe[f"{name}_ema"] > dataframe[f"{name}_ema"].shift(1))
+                &
+                (dataframe[f"{name}_bulls"] > dataframe[f"{name}_bulls"].shift(1))
+            )
+            , f"buy_{name}",
+        ] = 1 * impact_buy
+
+        dataframe.loc[
+            (
+                (dataframe[f"{name}_ema"] < dataframe[f"{name}_ema"].shift(1))
+                &
+                (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
+            )
+        , f"sell_{name}"
+        ] = 1 * impact_sell
