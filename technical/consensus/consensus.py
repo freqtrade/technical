@@ -141,7 +141,7 @@ class Consensus:
 
         dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_stoch_rsi(self, period=14, SmoothD=3,SmoothK=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1):
+    def evaluate_stoch_rsi(self, period=14, smoothd=3,smoothk=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1):
         """
         evaluates the stochastic rsi fast (TradingView version)
         :param dataframe:
@@ -156,11 +156,10 @@ class Consensus:
 
         # We don't use the talib.STOCHRSI library because it seems
         # like the results are not identical to Trading View's version
-        dataframe["rsi"] = ta.RSI(dataframe, timeperiod=period)
-
-        stochrsi = (dataframe['rsi'] - dataframe['rsi'].rolling(period).min()) / (dataframe['rsi'].rolling(period).max() - dataframe['rsi'].rolling(period).min())
-        dataframe[f"{name}_fastk"] = stochrsi.rolling(SmoothK).mean() * 100
-        dataframe[f"{name}_fastd"] = dataframe['srsi_k'].rolling(SmoothD).mean() # Not used here
+        dataframe[f"rsi_{period}"] = ta.RSI(dataframe, timeperiod=period)
+        stochrsi = (dataframe[f"rsi_{period}"] - dataframe[f"rsi_{period}"].rolling(period).min()) / (dataframe[f"rsi_{period}"].rolling(period).max() - dataframe[f"rsi_{period}"].rolling(period).min())
+        dataframe[f"{name}_fastk"] = stochrsi.rolling(smoothk).mean() * 100
+        dataframe[f"{name}_fastd"] = dataframe[f"{name}_fastk"].rolling(smoothd).mean() # Not used here
 
         dataframe.loc[((dataframe[f"{name}_fastk"] < 20)), f"buy_{name}"] = 1 * impact_buy
 
