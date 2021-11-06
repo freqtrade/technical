@@ -160,11 +160,10 @@ class Consensus:
         # like the results are not identical to Trading View's version
         dataframe[f"rsi_{period}"] = ta.RSI(dataframe, timeperiod=period)
         stochrsi = (
-            (dataframe[f"rsi_{period}"] - dataframe[f"rsi_{period}"].rolling(period).min()) /
-            (
-                dataframe[f"rsi_{period}"].rolling(period).max() -
-                dataframe[f"rsi_{period}"].rolling(period).min()
-            )
+            dataframe[f"rsi_{period}"] - dataframe[f"rsi_{period}"].rolling(period).min()
+        ) / (
+            dataframe[f"rsi_{period}"].rolling(period).max()
+            - dataframe[f"rsi_{period}"].rolling(period).min()
         )
 
         dataframe[f"{name}_fastk"] = stochrsi.rolling(smoothk).mean() * 100
@@ -579,20 +578,18 @@ class Consensus:
         dataframe.loc[
             (
                 (dataframe[name] > 25)
-                &
-                (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
-            )
-            , f"buy_{name}"
-        ] = 1 * impact_buy
+                & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
+            ),
+            f"buy_{name}",
+        ] = (1 * impact_buy)
 
         dataframe.loc[
             (
                 (dataframe[name] > 25)
-                &
-                (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
-            )
-            , f"sell_{name}"
-        ] = 1 * impact_sell
+                & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
+            ),
+            f"sell_{name}",
+        ] = (1 * impact_sell)
 
     def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
         """
@@ -608,19 +605,13 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = awesome_oscillator(dataframe)
 
-        dataframe.loc[
-            (
-                (dataframe[name] > (dataframe[name].shift(1) + 0.05))
-            )
-            , f"buy_{name}"
-        ] = 1 * impact_buy
+        dataframe.loc[((dataframe[name] > (dataframe[name].shift(1) + 0.05))), f"buy_{name}"] = (
+            1 * impact_buy
+        )
 
-        dataframe.loc[
-            (
-                (dataframe[name] < (dataframe[name].shift(1) - 0.05))
-            )
-            , f"sell_{name}"
-        ] = 1 * impact_sell
+        dataframe.loc[((dataframe[name] < (dataframe[name].shift(1) - 0.05))), f"sell_{name}"] = (
+            1 * impact_sell
+        )
 
     def evaluate_bbp(self, period=13, prefix="bbp", impact_buy=1, impact_sell=1):
         """
@@ -637,23 +628,23 @@ class Consensus:
 
         # Bears/Bulls Power is using EMA
         dataframe[f"{name}_ema"] = ta.EMA(dataframe, timeperiod=period)
-        dataframe[f"{name}_bulls"] = dataframe['high'] - dataframe[f"{name}_ema"]
-        dataframe[f"{name}_bears"] = dataframe['low'] - dataframe[f"{name}_ema"]
+        dataframe[f"{name}_bulls"] = dataframe["high"] - dataframe[f"{name}_ema"]
+        dataframe[f"{name}_bears"] = dataframe["low"] - dataframe[f"{name}_ema"]
 
         dataframe.loc[
             (
                 (dataframe[f"{name}_ema"] > dataframe[f"{name}_ema"].shift(1))
-                &
-                (dataframe[f"{name}_bulls"] > dataframe[f"{name}_bulls"].shift(1))
-            )
-            , f"buy_{name}",
-        ] = 1 * impact_buy
+                & (dataframe[f"{name}_bulls"] > dataframe[f"{name}_bulls"].shift(1))
+            ),
+            f"buy_{name}",
+        ] = (
+            1 * impact_buy
+        )
 
         dataframe.loc[
             (
                 (dataframe[f"{name}_ema"] < dataframe[f"{name}_ema"].shift(1))
-                &
-                (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
-            )
-            , f"sell_{name}"
-        ] = 1 * impact_sell
+                & (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
+            ),
+            f"sell_{name}",
+        ] = (1 * impact_sell)
