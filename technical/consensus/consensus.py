@@ -141,7 +141,9 @@ class Consensus:
 
         dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_stoch_rsi(self, period=14, smoothd=3,smoothk=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1):
+    def evaluate_stoch_rsi(
+        self, period=14, smoothd=3, smoothk=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1
+    ):
         """
         evaluates the stochastic rsi fast (TradingView version)
         :param dataframe:
@@ -149,7 +151,7 @@ class Consensus:
         :param prefix:
         :return:
         """
- 
+
         name = f"{prefix}_{period}"
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
@@ -157,9 +159,17 @@ class Consensus:
         # We don't use the talib.STOCHRSI library because it seems
         # like the results are not identical to Trading View's version
         dataframe[f"rsi_{period}"] = ta.RSI(dataframe, timeperiod=period)
-        stochrsi = (dataframe[f"rsi_{period}"] - dataframe[f"rsi_{period}"].rolling(period).min()) / (dataframe[f"rsi_{period}"].rolling(period).max() - dataframe[f"rsi_{period}"].rolling(period).min())
+        stochrsi = (
+            (dataframe[f"rsi_{period}"] - dataframe[f"rsi_{period}"].rolling(period).min()) /
+            (
+                dataframe[f"rsi_{period}"].rolling(period).max() -
+                dataframe[f"rsi_{period}"].rolling(period).min()
+            )
+        )
+
         dataframe[f"{name}_fastk"] = stochrsi.rolling(smoothk).mean() * 100
-        dataframe[f"{name}_fastd"] = dataframe[f"{name}_fastk"].rolling(smoothd).mean() # Not used here
+        # The fastd below is not used
+        dataframe[f"{name}_fastd"] = dataframe[f"{name}_fastk"].rolling(smoothd).mean()
 
         dataframe.loc[((dataframe[f"{name}_fastk"] < 20)), f"buy_{name}"] = 1 * impact_buy
 
@@ -566,9 +576,23 @@ class Consensus:
         dataframe[f"{name}_plus_di"] = ta.PLUS_DI(dataframe, timeperiod=period)
         dataframe[f"{name}_minus_di"] = ta.MINUS_DI(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] > 25) & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[
+            (
+                (dataframe[name] > 25)
+                &
+                (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
+            )
+            , f"buy_{name}"
+        ] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 25) & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[
+            (
+                (dataframe[name] > 25)
+                &
+                (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
+            )
+            , f"sell_{name}"
+        ] = 1 * impact_sell
 
     def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
         """
@@ -584,9 +608,19 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = awesome_oscillator(dataframe)
 
-        dataframe.loc[((dataframe[name] > (dataframe[name].shift(1) + 0.05))), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[
+            (
+                (dataframe[name] > (dataframe[name].shift(1) + 0.05))
+            )
+            , f"buy_{name}"
+        ] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] < (dataframe[name].shift(1) - 0.05))), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[
+            (
+                (dataframe[name] < (dataframe[name].shift(1) - 0.05))
+            )
+            , f"sell_{name}"
+        ] = 1 * impact_sell
 
     def evaluate_bbp(self, period=13, prefix="bbp", impact_buy=1, impact_sell=1):
         """
@@ -621,5 +655,5 @@ class Consensus:
                 &
                 (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
             )
-        , f"sell_{name}"
+            , f"sell_{name}"
         ] = 1 * impact_sell
