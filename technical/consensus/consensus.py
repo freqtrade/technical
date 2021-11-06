@@ -581,7 +581,9 @@ class Consensus:
                 & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
             ),
             f"buy_{name}",
-        ] = (1 * impact_buy)
+        ] = (
+            1 * impact_buy
+        )
 
         dataframe.loc[
             (
@@ -589,7 +591,9 @@ class Consensus:
                 & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
             ),
             f"sell_{name}",
-        ] = (1 * impact_sell)
+        ] = (
+            1 * impact_sell
+        )
 
     def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
         """
@@ -647,4 +651,6 @@ class Consensus:
                 & (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
             ),
             f"sell_{name}",
-        ] = (1 * impact_sell)
+        ] = (
+            1 * impact_sell
+        )
