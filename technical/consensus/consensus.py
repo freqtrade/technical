@@ -557,12 +557,16 @@ class Consensus:
 
         dataframe.loc[((dataframe[name] < 100)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_adx(self, period=14, prefix="adx", impact_buy=1, impact_sell=1):
+    def evaluate_adx(
+        self, period=14, prefix="adx", trend_line=25, use_di=True, impact_buy=1, impact_sell=1
+    ):
         """
-        evaluates the adx
+        evaluates the adx (optionally use plus_di and minus_di to detect buy or sell)
         :param dataframe:
         :param period:
         :param prefix:
+        :param trend_line: The ADX value at which we consider that a trend is present (Default: 25)
+        :param use_di: Enable/disable the usage of plus_di and minus_di (Default: Enabled)
         :return:
         """
 
@@ -571,29 +575,35 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = ta.ADX(dataframe, timeperiod=period)
 
-        # We also need to use PLUS_DI and MINUS_DI to be able to detect if we should buy or sell
-        dataframe[f"{name}_plus_di"] = ta.PLUS_DI(dataframe, timeperiod=period)
-        dataframe[f"{name}_minus_di"] = ta.MINUS_DI(dataframe, timeperiod=period)
+        # We can use PLUS_DI and MINUS_DI to be able to detect if we should buy or sell
+        # See https://www.investopedia.com/articles/trading/07/adx-trend-indicator.asp
+        if use_di:
+            dataframe[f"{name}_plus_di"] = ta.PLUS_DI(dataframe, timeperiod=period)
+            dataframe[f"{name}_minus_di"] = ta.MINUS_DI(dataframe, timeperiod=period)
 
-        dataframe.loc[
-            (
-                (dataframe[name] > 25)
-                & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
-            ),
-            f"buy_{name}",
-        ] = (
-            1 * impact_buy
-        )
+            dataframe.loc[
+                (
+                    (dataframe[name] > trend_line)
+                    & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
+                ),
+                f"buy_{name}",
+            ] = (
+                1 * impact_buy
+            )
 
-        dataframe.loc[
-            (
-                (dataframe[name] > 25)
-                & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
-            ),
-            f"sell_{name}",
-        ] = (
-            1 * impact_sell
-        )
+            dataframe.loc[
+                (
+                    (dataframe[name] > trend_line)
+                    & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
+                ),
+                f"sell_{name}",
+            ] = (
+                1 * impact_sell
+            )
+        else:
+            dataframe.loc[((dataframe[name] > trend_line)), f"buy_{name}"] = 1 * impact_buy
+
+            dataframe.loc[((dataframe[name] > trend_line)), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
         """
