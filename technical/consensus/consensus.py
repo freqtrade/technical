@@ -59,7 +59,7 @@ class Consensus:
 
     def _weights(self, impact_buy, impact_sell):
         """
-            helper method to compute total count of utilized indicators and their weights
+        helper method to compute total count of utilized indicators and their weights
         :param impact_buy:
         :param impact_sell:
         :return:
@@ -70,6 +70,7 @@ class Consensus:
     def score(self, prefix="consensus", smooth=None):
         """
         this computes the consensus score, which should always be between 0 and 100
+        :param prefix:
         :param smooth: Allows to specify an integer for a smoothing interval
         :return:
         """
@@ -121,15 +122,14 @@ class Consensus:
 
         dataframe.loc[((dataframe[name] > 70)), f"sell_{name}"] = 1 * impact_sell
 
-    def evaluate_stoch(self, period=14, prefix="stoch", impact_buy=1, impact_sell=1):
+    def evaluate_stoch(self, prefix="stoch", impact_buy=1, impact_sell=1):
         """
         evaluates the stochastic fast
         :param dataframe:
-        :param period:
         :param prefix:
         :return:
         """
-        name = f"{prefix}_{period}"
+        name = f"{prefix}"
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         stoch_fast = ta.STOCHF(dataframe, 5, 3, 0, 3, 0)
