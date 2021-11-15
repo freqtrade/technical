@@ -6,4 +6,4 @@ pytest-mock==3.6.1
 pytest-random-order==1.0.4
 flake8==4.0.1
 flake8-tidy-imports==4.5.0
-isort==5.10.0
+isort==5.10.1
