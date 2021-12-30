@@ -2,7 +2,8 @@
 
 This page is intended for developers of the `technical` library, people who want to contribute to the `technical` codebase or documentation, or people who want to understand the source code of the application they're running.
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/freqtrade/technical/issues) on [GitHub](https://github.com) and also have a dev channel in the [Freqtrade Slack](https://join.slack.com/t/highfrequencybot/shared_invite/enQtNjU5ODcwNjI1MDU3LTU1MTgxMjkzNmYxNWE1MDEzYzQ3YmU4N2MwZjUyNjJjODRkMDVkNjg4YTAyZGYzYzlhOTZiMTE4ZjQ4YzM0OGE) where you can ask questions.
+All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/freqtrade/technical/issues) on [GitHub](https://github.com/freqtrade/technical).
+For generic questions, please use the [discord server](https://discord.gg/p7nuUNVfP7), where you can ask questions.
 
 ## Releases
 
