@@ -58,7 +58,7 @@ def ichimoku(
         + dataframe["low"].rolling(window=laggin_span).min()
     ) / 2
 
-    senkou_span_a = leading_senkou_span_a.shift(displacement -1)
+    senkou_span_a = leading_senkou_span_a.shift(displacement - 1)
 
     senkou_span_b = leading_senkou_span_b.shift(displacement - 1)
 
