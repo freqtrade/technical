@@ -58,11 +58,11 @@ def ichimoku(
         + dataframe["low"].rolling(window=laggin_span).min()
     ) / 2
 
-    senkou_span_a = leading_senkou_span_a.shift(displacement)
+    senkou_span_a = leading_senkou_span_a.shift(displacement - 1)
 
-    senkou_span_b = leading_senkou_span_b.shift(displacement)
+    senkou_span_b = leading_senkou_span_b.shift(displacement - 1)
 
-    chikou_span = dataframe["close"].shift(-displacement)
+    chikou_span = dataframe["close"].shift(-displacement + 1)
 
     cloud_green = senkou_span_a > senkou_span_b
     cloud_red = senkou_span_b > senkou_span_a
