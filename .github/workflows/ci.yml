@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-18.04, macos-latest ]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -102,7 +102,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -122,10 +122,7 @@ jobs:
     - name: Installation (uses freqtrade dependencies)
       run: |
         mkdir build_helpers/
-        # TODO: Update this to not download 3 files while only needing 1.
         Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.24-cp38-cp38-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.24-cp38-cp38-win_amd64.whl
-        Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.24-cp39-cp39-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.24-cp39-cp39-win_amd64.whl
-        Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.24-cp310-cp310-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.24-cp310-cp310-win_amd64.whl
         Invoke-WebRequest -Outfile build_helpers/install_windows.ps1 https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/install_windows.ps1
         ./build_helpers/install_windows.ps1
 
@@ -167,7 +164,7 @@ jobs:
       uses: rjstone/discord-webhook-notify@v1
       if: always() && steps.check.outputs.has-permission && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: error
+          severity: info
           details: Technical CI
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
@@ -181,7 +178,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2.3.1
       with:
-        python-version: 3.9
+        python-version: 3.8
 
     - name: Extract branch name
       shell: bash
@@ -213,6 +210,6 @@ jobs:
       uses: rjstone/discord-webhook-notify@v1
       if: always() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: error
+          severity: info
           details: Technical CI Deploy
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
