@@ -38,7 +38,7 @@ def atr_percent(dataframe, period: int = 14) -> ndarray:
 # Choppiness index
 # 
 #  theory https://www.tradingview.com/scripts/choppinessindex/
-#  slightly adapeted from https://medium.com/codex/detecting-ranging-and-trending-markets-with-choppiness-index-in-python-1942e6450b58
+#  slightly adapted from https://medium.com/codex/detecting-ranging-and-trending-markets-with-choppiness-index-in-python-1942e6450b58
 
 def chopiness(dataframe, period: int = 14):
     """
@@ -59,5 +59,3 @@ def chopiness(dataframe, period: int = 14):
     lowl = dataframe['low'].rolling(period).min()
     ci = 100 * np.log10((atr.rolling(period).sum()) / (highh - lowl)) / np.log10(period)
     return ci
-
-    
