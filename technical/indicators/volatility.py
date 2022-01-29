@@ -48,12 +48,11 @@ def chopiness(dataframe, period: int = 14):
     :return: Float value from chopiness calculation :values 0 to +100
     """
 
-    tr1 = pd.DataFrame(dataframe['high'] - dataframe['low']).rename(columns = {0:'tr1'})
-    tr2 = pd.DataFrame(abs(dataframe['high'] - dataframe['close'].shift(1))).rename(columns = {0:'tr2'})
-    tr3 = pd.DataFrame(abs(dataframe['low'] - dataframe['close'].shift(1))).rename(columns = {0:'tr3'})
-    frames = [tr1, tr2, tr3]
+    tr1 = dataframe['high'] - dataframe['low']
+    tr2 = abs(dataframe['high'] - dataframe['close'].shift(1))
+    tr3 = abs(dataframe['low'] - dataframe['close'].shift(1))
 
-    tr = pd.concat(frames, axis = 1, join = 'inner').dropna().max(axis = 1)
+    tr = pd.concat([tr1, tr2, tr3], axis = 1, join = 'inner').dropna().max(axis = 1)
     atr = tr.rolling(1).mean()
     highh = dataframe['high'].rolling(period).max()
     lowl = dataframe['low'].rolling(period).min()
