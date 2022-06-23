@@ -11,6 +11,10 @@ on:
   schedule:
     - cron:  '0 5 * * 4'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
 
@@ -140,15 +144,6 @@ jobs:
           severity: error
           details: Technical CI failed on ${{ matrix.os }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-  cleanup-prior-runs:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Cleanup previous runs on this branch
-      uses: rokroskar/workflow-run-cleanup-action@v0.3.3
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.repository == 'freqtrade/technical'"
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   # Notify on discord only once - when CI completes (and after deploy) in case it's successfull
   notify-complete:
