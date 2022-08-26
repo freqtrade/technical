@@ -16,7 +16,6 @@ def gentrends(dataframe, field="close", window=1 / 3.0, charts=False):
     :param charts: Boolean value saying whether to print chart to screen
     """
 
-    print(dataframe)
     x = dataframe[field]
 
     import numpy as np
