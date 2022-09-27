@@ -82,8 +82,8 @@ def hull_moving_average(dataframe, period, field="close") -> ndarray:
     return hma(dataframe[field], period)
 
 
-def vwma(df, window):
-    return (df["close"] * df["volume"]).rolling(window).sum() / df.volume.rolling(window).sum()
+def vwma(df, window, price="close"):
+    return (df[price] * df["volume"]).rolling(window).sum() / df.volume.rolling(window).sum()
 
 
 def zema(dataframe, period, field="close"):
