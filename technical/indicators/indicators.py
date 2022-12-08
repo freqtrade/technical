@@ -31,6 +31,16 @@ def ichimoku(
     Note: Do not use chikou_span for backtesting.
         It looks into the future, is not printed by most charting platforms.
         It is only useful for visual analysis
+
+    Usage:
+        ichi = ichimoku(dataframe)
+        dataframe['tenkan_sen'] = ichi['tenkan_sen']
+        dataframe['kijun_sen'] = ichi['kijun_sen']
+        dataframe['senkou_span_a'] = ichi['senkou_span_a']
+        dataframe['senkou_span_b'] = ichi['senkou_span_b']
+        dataframe['cloud_green'] = ichi['cloud_green']
+        dataframe['cloud_red'] = ichi['cloud_red']
+
     :param dataframe: Dataframe containing OHLCV data
     :param conversion_line_period: Conversion line Period (defaults to 9)
     :param base_line_periods: Base line Periods (defaults to 26)
