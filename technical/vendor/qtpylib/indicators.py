@@ -27,7 +27,6 @@ import numpy as np
 import pandas as pd
 from pandas.core.base import PandasObject
 
-
 # =============================================
 # check min, python version
 if sys.version_info < (3, 4):
