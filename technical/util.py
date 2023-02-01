@@ -122,7 +122,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
     if exchange_interval:
         # convert to our allowed ticker values
         converted = list(TICKER_INTERVAL_MINUTES.keys())[
-            list(TICKER_INTERVAL_MINUTES.values()).index(exchange_interval)
+            list(TICKER_INTERVAL_MINUTES.values()).index(res_interval)
         ]
         if len(converted) > 0:
             return converted
