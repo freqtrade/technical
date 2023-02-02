@@ -3,7 +3,7 @@ name: Technical CI
 on:
   push:
     branches:
-      - master
+      - main
       - ci/*
     tags:
   release:
