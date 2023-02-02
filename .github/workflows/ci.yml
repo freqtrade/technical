@@ -128,10 +128,17 @@ jobs:
       run: |
         mkdir build_helpers/
         # TODO: Update this to not download 3 files while only needing 1.
-        Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl
-        Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl
-        Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl
         Invoke-WebRequest -Outfile build_helpers/install_windows.ps1 https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/install_windows.ps1
+
+        if [ ${{ matrix.python-version }} -eq "3.8" ]; then
+          Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl
+        fi
+        if [ ${{ matrix.python-version }} -eq "3.8" ]; then
+          Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl
+        fi
+        if [ ${{ matrix.python-version }} -eq "3.10" ]; then
+          Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl
+        fi
         ./build_helpers/install_windows.ps1
 
     - name: Tests
