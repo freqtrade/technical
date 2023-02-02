@@ -719,7 +719,6 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
 
 
 def stc(dataframe, fast=23, slow=50, length=10):
-
     # First, the 23-period and the 50-period EMA and the MACD values are calculated:
     # EMA1 = EMA (Close, Short Length);
     # EMA2 = EMA (Close, Long Length);
@@ -1010,7 +1009,6 @@ def VIDYA(dataframe, length=9, select=True):
 
     df["VIDYA"] = 0.0
     for i in range(length, len(df)):
-
         df["VIDYA"].iat[i] = (
             alpha * df["k"].iat[i] * df["close"].iat[i]
             + (1 - alpha * df["k"].iat[i]) * df["VIDYA"].iat[i - 1]

@@ -35,6 +35,7 @@ def bollinger_bands(
 
 # DEMA                 Double Exponential Moving Average
 
+
 # EMA                  Exponential Moving Average
 def ema(dataframe: DataFrame, period: int, field="close") -> Series:
     """
@@ -55,6 +56,7 @@ def ema(dataframe: DataFrame, period: int, field="close") -> Series:
 # SAR                  Parabolic SAR
 # SAREXT               Parabolic SAR - Extended
 
+
 # SMA                  Simple Moving Average
 def sma(dataframe, period, field="close"):
     import talib.abstract as ta
@@ -63,6 +65,7 @@ def sma(dataframe, period, field="close"):
 
 
 # T3                   Triple Exponential Moving Average (T3)
+
 
 # TEMA                 Triple Exponential Moving Average
 def tema(dataframe, period, field="close"):
@@ -73,6 +76,7 @@ def tema(dataframe, period, field="close"):
 
 # TRIMA                Triangular Moving Average
 # WMA                  Weighted Moving Average
+
 
 # Other Overlap Studies Functions
 def hull_moving_average(dataframe, period, field="close") -> ndarray:
