@@ -151,6 +151,10 @@ jobs:
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc tests
 
+    - name: Run Ruff
+      run: |
+        ruff check --format=github .
+
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
       if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
