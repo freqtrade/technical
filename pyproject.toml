@@ -25,3 +25,15 @@ line_length = 100
 [build-system]
 requires = ["setuptools >= 46.4.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+extend-select = [
+  "TID",
+  "EXE",
+  "YTT",
+  # "DTZ",
+  # "RSE",
+  # "TCH",
+  # "PTH",
+]

@@ -79,9 +79,9 @@ jobs:
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc
 
-    - name: Flake8
+    - name: Run Ruff
       run: |
-        flake8
+        ruff check --format=github .
 
     - name: Sort imports (isort)
       run: |
