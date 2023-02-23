@@ -147,13 +147,14 @@ jobs:
         # }
         ./build_helpers/install_windows.ps1
 
+
     - name: Tests
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc tests
 
     - name: Run Ruff
       run: |
-        ruff check --format=github .
+        ruff check --format=github technical tests
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
