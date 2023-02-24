@@ -79,9 +79,9 @@ jobs:
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc
 
-    - name: Flake8
+    - name: Run Ruff
       run: |
-        flake8
+        ruff check --format=github .
 
     - name: Sort imports (isort)
       run: |
@@ -147,9 +147,14 @@ jobs:
         # }
         ./build_helpers/install_windows.ps1
 
+
     - name: Tests
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc tests
+
+    - name: Run Ruff
+      run: |
+        ruff check --format=github technical tests
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
