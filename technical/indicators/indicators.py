@@ -1268,3 +1268,33 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
+
+def trama(dataframe, length=22, field="close"):
+    # ama = 0.
+    # hh = math.max(math.sign(ta.change(ta.highest(len))),0)
+    # ll = math.max(math.sign(ta.change(ta.lowest(len))*-1),0)
+    # tc = math.pow(ta.sma(hh or ll ? 1 : 0,len),2)
+    # ama := nz(ama[1]+tc*(src-ama[1]),src)
+    dataframe['trama_hh'] = dataframe["high"].rolling(window=length).max()
+    dataframe['trama_ll'] = dataframe["low"].rolling(window=length).min()
+    
+    dataframe['trama_change_hh'] = math.max(math.sign((dataframe['trama_hh'] - \
+                                    dataframe['trama_hh'].shift(length))        ), 0)
+    dataframe['trama_change_ll'] = math.max(math.sign((dataframe['trama_ll'] - \
+                                    dataframe['trama_ll'].shift(length)) * -1   ), 0)
+
+    trama_source = 1 if dataframe['trama_change_ll'].iat[-1] or \
+                        dataframe['trama_change_hh'].iat[-1] else 0
+
+    tc = math.pow(sma(trama_source, length), 2)
+    
+    dataframe['ama'] = (dataframe['ama'].iat[-2] + tc * (field-dataframe['ama'].iat[-2]))
+    
+    dataframe['ama'].fillna(field, inplace = True)
+
+    dataframe['trama'] = dataframe['ama']
+    
+    dataframe.drop(["trama_ll", "trama_hh", "trama_change_hh", "trama_change_ll", "ama"], \
+                   inplace=True, axis=1)
+    
+    return dataframe
