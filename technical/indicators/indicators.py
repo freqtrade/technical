@@ -1270,31 +1270,33 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     return dataframe
 
 def trama(dataframe, length=22, field="close"):
-    # ama = 0.
-    # hh = math.max(math.sign(ta.change(ta.highest(len))),0)
-    # ll = math.max(math.sign(ta.change(ta.lowest(len))*-1),0)
-    # tc = math.pow(ta.sma(hh or ll ? 1 : 0,len),2)
-    # ama := nz(ama[1]+tc*(src-ama[1]),src)
-    dataframe['trama_hh'] = dataframe["high"].rolling(window=length).max()
-    dataframe['trama_ll'] = dataframe["low"].rolling(window=length).min()
+    import talib.abstract as ta
+    # def ama_func(x, ama, tc):
+    # return np.nan_to_num(ama) + tc*(x-np.nan_to_num(ama))
     
-    dataframe['trama_change_hh'] = math.max(math.sign((dataframe['trama_hh'] - \
-                                    dataframe['trama_hh'].shift(length))        ), 0)
-    dataframe['trama_change_ll'] = math.max(math.sign((dataframe['trama_ll'] - \
-                                    dataframe['trama_ll'].shift(length)) * -1   ), 0)
+    # dataframe['ama'] = 0.
 
-    trama_source = 1 if dataframe['trama_change_ll'].iat[-1] or \
-                        dataframe['trama_change_hh'].iat[-1] else 0
+    hh = np.maximum(np.sign(np.diff(ta.MAX(dataframe['close'], length))), 0)
+    ll = np.maximum(np.sign(np.diff(ta.MIN(dataframe['close'], length))*-1), 0)
+    # print(np.where(hh + ll > 0, 1, 0))
+    tc = np.power(ta.SMA(np.where(hh + ll > 0, 1, 0).astype(float), length), 2)
+    tc[np.isnan(tc)] = 0.
+    # trama = []
+    ama = 0.
+    # print(ama, tc[0])
+    for i, price in enumerate(dataframe['close']):
+        #print(price, ama)
+        try:
+            # print(ama, '+', "(", price, "-", ama, ")", "*", tc[i])
+            ama += (price - ama) * tc[i]
+        except:
+            ama += (price - ama) * tc[-1]
+        # trama.append(ama)
+        dataframe.at[i,'trama'] = ama
+    
+    # dataframe['ama'] = dataframe['ama'].iloc[1:] + tc * (dataframe['close'].iloc[1:] - dataframe['ama'].iloc[1:])
 
-    tc = math.pow(sma(trama_source, length), 2)
-    
-    dataframe['ama'] = (dataframe['ama'].iat[-2] + tc * (field-dataframe['ama'].iat[-2]))
-    
-    dataframe['ama'].fillna(field, inplace = True)
-
-    dataframe['trama'] = dataframe['ama']
-    
-    dataframe.drop(["trama_ll", "trama_hh", "trama_change_hh", "trama_change_ll", "ama"], \
-                   inplace=True, axis=1)
+    # dataframe['trama'] = trama  # dataframe['ama'].fillna(method='ffill')
+    # dataframe.drop("ama", inplace=True, axis=1)
     
     return dataframe
