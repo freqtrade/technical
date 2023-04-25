@@ -1269,34 +1269,33 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
 
     return dataframe
 
-def trama(dataframe, length=22, field="close"):
+def trama(dataframe, timeperiod=22, source="close"):
+    """
+    Name : Tradingview "Trend Regularity Adaptive Moving Average"
+    Pinescript Author : LuxAlgo
+    Link : https://www.tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo/
+
+    Args :
+        dataframe : Pandas Dataframe
+        timeperiod : TRAMA length
+        source : Field to use for the calculation
+
+    Returns :
+        dataframe : Pandas DataFrame with new columns 'trama'
+    """
+    
     import talib.abstract as ta
-    # def ama_func(x, ama, tc):
-    # return np.nan_to_num(ama) + tc*(x-np.nan_to_num(ama))
     
-    # dataframe['ama'] = 0.
-
-    hh = np.maximum(np.sign(np.diff(ta.MAX(dataframe['close'], length))), 0)
-    ll = np.maximum(np.sign(np.diff(ta.MIN(dataframe['close'], length))*-1), 0)
-    # print(np.where(hh + ll > 0, 1, 0))
-    tc = np.power(ta.SMA(np.where(hh + ll > 0, 1, 0).astype(float), length), 2)
-    tc[np.isnan(tc)] = 0.
-    # trama = []
-    ama = 0.
-    # print(ama, tc[0])
-    for i, price in enumerate(dataframe['close']):
-        #print(price, ama)
-        try:
-            # print(ama, '+', "(", price, "-", ama, ")", "*", tc[i])
-            ama += (price - ama) * tc[i]
-        except:
-            ama += (price - ama) * tc[-1]
-        # trama.append(ama)
-        dataframe.at[i,'trama'] = ama
+    hh = ta.MAX(dataframe[source], timeperiod)
+    ll = ta.MIN(dataframe[source], timeperiod)
+    hhll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
+    tc = ta.SMA(hhll.astype(float), timeperiod) ** 2
+    tc = np.nan_to_num(tc)
     
-    # dataframe['ama'] = dataframe['ama'].iloc[1:] + tc * (dataframe['close'].iloc[1:] - dataframe['ama'].iloc[1:])
-
-    # dataframe['trama'] = trama  # dataframe['ama'].fillna(method='ffill')
-    # dataframe.drop("ama", inplace=True, axis=1)
+    trama = np.zeros(len(dataframe))
+    trama[0] = dataframe[source][0]
     
-    return dataframe
+    for i in range(1, len(dataframe)):
+        trama[i] = trama[i-1] + tc[i-1] * (dataframe[source][i] - trama[i-1])
+    
+    return trama
