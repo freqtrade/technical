@@ -1283,19 +1283,19 @@ def trama(dataframe, timeperiod=22, source="close"):
     Returns :
         dataframe : Pandas DataFrame with new columns 'trama'
     """
-    
+
     import talib.abstract as ta
-    
+
     hh = ta.MAX(dataframe[source], timeperiod)
     ll = ta.MIN(dataframe[source], timeperiod)
     hhll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
     tc = ta.SMA(hhll.astype(float), timeperiod) ** 2
     tc = np.nan_to_num(tc)
-    
+
     trama = np.zeros(len(dataframe))
     trama[0] = dataframe[source][0]
-    
+
     for i in range(1, len(dataframe)):
         trama[i] = trama[i-1] + tc[i-1] * (dataframe[source][i] - trama[i-1])
-    
+
     return trama
