@@ -1273,7 +1273,7 @@ def trama(dataframe, timeperiod=22, source="close"):
     """
     Name : Tradingview "Trend Regularity Adaptive Moving Average"
     Pinescript Author : LuxAlgo
-    Link : https://www.tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo/
+    Link : tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo/
 
     Args :
         dataframe : Pandas Dataframe
