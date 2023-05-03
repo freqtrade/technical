@@ -1269,7 +1269,8 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
 
     return dataframe
 
-def trama(dataframe, length: int = 22, field = "close"):
+
+def trama(dataframe, length: int = 22, field="close"):
     """
     Name : Tradingview "Trend Regularity Adaptive Moving Average"
     Pinescript Author : LuxAlgo
@@ -1296,6 +1297,6 @@ def trama(dataframe, length: int = 22, field = "close"):
     trama[0] = dataframe[field][0]
 
     for i in range(1, len(dataframe)):
-        trama[i] = trama[i-1] + tc[i-1] * (dataframe[field][i] - trama[i-1])
+        trama[i] = trama[i - 1] + tc[i - 1] * (dataframe[field][i] - trama[i - 1])
 
     return trama
