@@ -1269,7 +1269,7 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
 
     return dataframe
 
-def trama(dataframe, timeperiod=22, source="close"):
+def trama(dataframe, length: int = 22, field = "close"):
     """
     Name : Tradingview "Trend Regularity Adaptive Moving Average"
     Pinescript Author : LuxAlgo
@@ -1286,16 +1286,16 @@ def trama(dataframe, timeperiod=22, source="close"):
 
     import talib.abstract as ta
 
-    hh = ta.MAX(dataframe[source], timeperiod)
-    ll = ta.MIN(dataframe[source], timeperiod)
+    hh = ta.MAX(dataframe[field], length)
+    ll = ta.MIN(dataframe[field], length)
     hhll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
-    tc = ta.SMA(hhll.astype(float), timeperiod) ** 2
+    tc = ta.SMA(hhll.astype(float), length) ** 2
     tc = np.nan_to_num(tc)
 
     trama = np.zeros(len(dataframe))
-    trama[0] = dataframe[source][0]
+    trama[0] = dataframe[field][0]
 
     for i in range(1, len(dataframe)):
-        trama[i] = trama[i-1] + tc[i-1] * (dataframe[source][i] - trama[i-1])
+        trama[i] = trama[i-1] + tc[i-1] * (dataframe[field][i] - trama[i-1])
 
     return trama
