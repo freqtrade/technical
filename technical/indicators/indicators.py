@@ -1286,9 +1286,8 @@ def trama(dataframe, length: int = 22, field="close"):
     """
 
     import talib.abstract as ta
-
-    hh = ta.MAX(dataframe[field], length)
-    ll = ta.MIN(dataframe[field], length)
+    hh = ta.MAX(dataframe['high'], length)
+    ll = ta.MIN(dataframe['low'], length)
     hhll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
     tc = ta.SMA(hhll.astype(float), length) ** 2
     tc = np.nan_to_num(tc)
@@ -1297,6 +1296,6 @@ def trama(dataframe, length: int = 22, field="close"):
     trama[0] = dataframe[field][0]
 
     for i in range(1, len(dataframe)):
-        trama[i] = trama[i - 1] + tc[i - 1] * (dataframe[field][i] - trama[i - 1])
+        trama[i] = trama[i - 1] + tc[i] * (dataframe[field][i] - trama[i - 1])
 
     return trama
