@@ -1,4 +1,4 @@
-# flake8: noqa: F401
+# flake8: noqa: F401 F403
 from .cycle_indicators import *
 from .indicators import *
 from .momentum import *
