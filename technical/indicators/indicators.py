@@ -8,7 +8,7 @@ import numpy as np
 from numpy.core.records import ndarray
 from pandas import DataFrame, Series
 
-from .overlap_studies import sma, vwma, zema
+from .overlap_studies import sma, vwma
 
 ########################################
 #
@@ -1134,7 +1134,6 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     # MAtype==6 --> TEMA
     # MAtype==7 --> WMA
     # MAtype==8 --> VWMA
-    # MAtype==9 --> zema
     if src == 1:
         masrc = df["close"]
     elif src == 2:
@@ -1157,8 +1156,6 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
         df[mavalue] = ta.WMA(df, timeperiod=length)
     elif MAtype == 8:
         df[mavalue] = vwma(df, length)
-    elif MAtype == 9:
-        df[mavalue] = zema(df, period=length)
     # Compute basic upper and lower bands
     df["basic_ub"] = df[mavalue] + (multiplier * df[atr])
     df["basic_lb"] = df[mavalue] - (multiplier * df[atr])

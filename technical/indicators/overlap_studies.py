@@ -34,6 +34,10 @@ def bollinger_bands(
 
 
 # DEMA                 Double Exponential Moving Average
+def dema(dataframe, period, field="close"):
+    import talib.abstract as ta
+
+    return ta.DEMA(dataframe, timeperiod=period, price=field)
 
 
 # EMA                  Exponential Moving Average
@@ -88,19 +92,3 @@ def hull_moving_average(dataframe, period, field="close") -> ndarray:
 
 def vwma(df, window, price="close"):
     return (df[price] * df["volume"]).rolling(window).sum() / df.volume.rolling(window).sum()
-
-
-def zema(dataframe, period, field="close"):
-    """
-    zero lag ema
-    :param dataframe:
-    :param period:
-    :param field:
-    :return:
-    """
-    dataframe = dataframe.copy()
-    dataframe["ema1"] = ema(dataframe, period, field)
-    dataframe["ema2"] = ema(dataframe, period, "ema1")
-    dataframe["d"] = dataframe["ema1"] - dataframe["ema2"]
-    dataframe["zema"] = dataframe["ema1"] + dataframe["d"]
-    return dataframe["zema"]
