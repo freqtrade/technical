@@ -33,6 +33,7 @@ import technical.indicators as ti
         (ti.sma, [10]),
         (ti.stc, []),
         (ti.td_sequential, []),
+        (ti.dema, [10]),
         (ti.tema, [10]),
         # (ti.tv_hma, []),
         (ti.tv_wma, []),
@@ -42,7 +43,6 @@ import technical.indicators as ti
         (ti.vwma, [10]),
         (ti.vwmacd, []),
         (ti.williams_percent, []),
-        (ti.zema, [10]),
     ],
 )
 def test_indicators_generic_interface(function, args, testdata_1m_btc):
