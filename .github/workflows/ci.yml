@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-20.04, ubuntu-22.04, macos-latest ]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -107,7 +107,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -132,19 +132,7 @@ jobs:
     - name: Installation (uses freqtrade dependencies)
       run: |
         cp -r ./freqtrade_tmp/build_helpers .
-        # mkdir build_helpers/
-        # TODO: Update this to not download 3 files while only needing 1.
-        # Invoke-WebRequest -Outfile build_helpers/install_windows.ps1 https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/install_windows.ps1
 
-        # if ( ${{ matrix.python-version }} -eq "3.8" ) {
-        #   Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp38-cp38-win_amd64.whl
-        # }
-        # if ( ${{ matrix.python-version }} -eq "3.8" ) {
-        #   Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp39-cp39-win_amd64.whl
-        # }
-        # if ( ${{ matrix.python-version }} -eq "3.10" ) {
-        #   Invoke-WebRequest -Outfile build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/TA_Lib-0.4.25-cp310-cp310-win_amd64.whl
-        # }
         ./build_helpers/install_windows.ps1
 
 
@@ -197,7 +185,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4.7.0
       with:
-        python-version: 3.8
+        python-version: 3.11
 
     - name: Extract branch name
       shell: bash
