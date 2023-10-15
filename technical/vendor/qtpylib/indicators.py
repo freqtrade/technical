@@ -23,7 +23,6 @@ import numpy as np
 import pandas as pd
 from pandas.core.base import PandasObject
 
-
 # =============================================
 warnings.simplefilter(action="ignore", category=RuntimeWarning)
 
