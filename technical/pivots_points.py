@@ -1,23 +1,19 @@
-import freqtrade.vendor.qtpylib.indicators as qtpylib
-import pandas as pd
-
 """
 Indicators for Freqtrade
 author@: Gerald Lonlas
 """
 
+import numpy as np
+import pandas as pd
 
 def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFrame:
     """
     Pivots Points
-
-    https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/
-
     Formula:
-    Pivot = (Previous High + Previous Low + Previous Close)/3
+    Pivot = (Previous High + Previous Low + Previous Close) / 3
 
-    Resistance #1 = (2 x Pivot) - Previous Low
-    Support #1 = (2 x Pivot) - Previous High
+    Resistance #1 = (2 * Pivot) - Previous Low
+    Support #1 = (2 * Pivot) - Previous High
 
     Resistance #2 = (Pivot - Support #1) + Resistance #1
     Support #2 = Pivot - (Resistance #1 - Support #1)
@@ -32,34 +28,21 @@ def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFr
     :return: dataframe
     """
 
-    data = {}
+    typical_price = (dataframe['high'] + dataframe['low'] + dataframe['close']) / 3
+    data = {"pivot": typical_price}
 
-    low = qtpylib.rolling_mean(
-        series=pd.Series(index=dataframe.index, data=dataframe["low"]), window=timeperiod
-    )
+    for i in range(1, levels + 1):
+        data[f"r{i}"] = 2 * data["pivot"] - dataframe['low']
+        data[f"s{i}"] = 2 * data["pivot"] - dataframe['high']
 
-    high = qtpylib.rolling_mean(
-        series=pd.Series(index=dataframe.index, data=dataframe["high"]), window=timeperiod
-    )
-
-    # Pivot
-    data["pivot"] = qtpylib.rolling_mean(series=qtpylib.typical_price(dataframe), window=timeperiod)
-
-    # Resistance #1
-    data["r1"] = (2 * data["pivot"]) - low
-
-    # Resistance #2
-    data["s1"] = (2 * data["pivot"]) - high
-
-    # Calculate Resistances and Supports >1
     for i in range(2, levels + 1):
-        prev_support = data["s" + str(i - 1)]
-        prev_resistance = data["r" + str(i - 1)]
+        prev_support = data[f"s{i - 1}"]
+        prev_resistance = data[f"r{i - 1}"]
 
-        # Resitance
-        data["r" + str(i)] = (data["pivot"] - prev_support) + prev_resistance
+        data[f"r{i}"] = (data["pivot"] - prev_support) + prev_resistance
+        data[f"s{i}"] = data["pivot"] - (prev_resistance - prev_support)
 
-        # Support
-        data["s" + str(i)] = data["pivot"] - (prev_resistance - prev_support)
+    return pd.DataFrame(data)
 
-    return pd.DataFrame(index=dataframe.index, data=data)
+
+
