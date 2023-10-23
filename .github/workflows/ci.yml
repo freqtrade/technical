@@ -81,7 +81,7 @@ jobs:
 
     - name: Run Ruff
       run: |
-        ruff check --format=github .
+        ruff check --output-format=github .
 
     - name: Sort imports (isort)
       run: |
@@ -142,7 +142,7 @@ jobs:
 
     - name: Run Ruff
       run: |
-        ruff check --format=github technical tests
+        ruff check --output-format=github technical tests
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
