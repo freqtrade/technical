@@ -105,7 +105,7 @@ def resampled_merge(original: DataFrame, resampled: DataFrame, fill_na=True):
     dataframe = dataframe.drop(f"resample_{resampled_int}_date_merge", axis=1)
 
     if fill_na:
-        dataframe.fillna(method="ffill", inplace=True)
+        dataframe = dataframe.ffill()
 
     return dataframe
 
