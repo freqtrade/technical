@@ -29,7 +29,7 @@ def ticker_history_to_dataframe(ticker: list) -> DataFrame:
     cols = ["date", "open", "high", "low", "close", "volume"]
     frame = DataFrame(ticker, columns=cols)
 
-    frame["date"] = to_datetime(frame["date"], unit="ms", utc=True, infer_datetime_format=True)
+    frame["date"] = to_datetime(frame["date"], unit="ms", utc=True)
 
     # group by index and aggregate results to eliminate duplicate ticks
     frame = frame.groupby(by="date", as_index=False, sort=True).agg(
