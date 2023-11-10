@@ -665,7 +665,6 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     plot( vfima , title="EMA of vfi", color=orange)
     plot( vfi, title="vfi", color=green,linewidth=2)
     """
-    from math import log
 
     import talib as ta
     from numpy import where
@@ -678,7 +677,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df = dataframe
     # Add hlc3 and populate inter to the dataframe
     df["hlc"] = ((df["high"] + df["low"] + df["close"]) / 3).astype(float)
-    df["inter"] = df["hlc"].map(log) - df["hlc"].shift(+1).map(log)
+    df["inter"] = df["hlc"].map(math.log) - df["hlc"].shift(+1).map(math.log)
     df["vinter"] = df["inter"].rolling(30).std(ddof=0)
     df["cutoff"] = coef * df["vinter"] * df["close"]
     # Vave is to be calculated on volume of the past bar
