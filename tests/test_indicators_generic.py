@@ -48,7 +48,7 @@ import technical.indicators as ti
 def test_indicators_generic_interface(function, args, testdata_1m_btc):
     assert 13680 == len(testdata_1m_btc)
     # Ensure all builtin indicators have the same interface
-    res = function(testdata_1m_btc.iloc[-1000:], *args)
+    res = function(testdata_1m_btc.iloc[-1000:].copy(), *args)
     if isinstance(res, tuple):
         assert len(res[0]) == 1000
         assert len(res[1]) == 1000
