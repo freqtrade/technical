@@ -90,7 +90,7 @@ jobs:
     - uses: psf/black@stable
       if: startsWith(matrix.os, 'ubuntu')
       with:
-        args: ". --check"
+        options: ". --check"
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
