@@ -40,6 +40,11 @@ def dema(dataframe, period, field="close"):
     return ta.DEMA(dataframe, timeperiod=period, price=field)
 
 
+# Compatibility alias for Zema
+# https://github.com/freqtrade/technical/pull/356 for details.
+zema = dema
+
+
 # EMA                  Exponential Moving Average
 def ema(dataframe: DataFrame, period: int, field="close") -> Series:
     """
