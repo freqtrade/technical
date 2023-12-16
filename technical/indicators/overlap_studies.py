@@ -40,9 +40,17 @@ def dema(dataframe, period, field="close"):
     return ta.DEMA(dataframe, timeperiod=period, price=field)
 
 
-# Compatibility alias for Zema
-# https://github.com/freqtrade/technical/pull/356 for details.
-zema = dema
+def zema(dataframe, period, field="close"):
+    """
+    Compatibility alias for Zema
+    https://github.com/freqtrade/technical/pull/356 for details.
+    Please migrate to dema instead.
+    Raises a Future warning - will be removed in a future version.
+    """
+    import warnings
+    warnings.warn("zema is deprecated, use dema instead", FutureWarning)
+
+    return dema(dataframe, period, field)
 
 
 # EMA                  Exponential Moving Average
