@@ -48,6 +48,7 @@ def zema(dataframe, period, field="close"):
     Raises a Future warning - will be removed in a future version.
     """
     import warnings
+
     warnings.warn("zema is deprecated, use dema instead", FutureWarning)
 
     return dema(dataframe, period, field)
