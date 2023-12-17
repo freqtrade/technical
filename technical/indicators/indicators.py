@@ -959,10 +959,8 @@ def RMI(dataframe, *, length=20, mom=5):
     import talib.abstract as ta
 
     df = dataframe.copy()
-    df["maxup"] = (df["close"] - df["close"].shift(mom)).clip(lower=0)
-    df["maxdown"] = (df["close"].shift(mom) - df["close"]).clip(lower=0)
-
-    df.fillna(0, inplace=True)
+    df["maxup"] = (df["close"] - df["close"].shift(mom)).clip(lower=0).fillna(0)
+    df["maxdown"] = (df["close"].shift(mom) - df["close"]).clip(lower=0).fillna(0)
 
     df["emaInc"] = ta.EMA(df, price="maxup", timeperiod=length)
     df["emaDec"] = ta.EMA(df, price="maxdown", timeperiod=length)
@@ -1004,7 +1002,9 @@ def VIDYA(dataframe, length=9, select=True):
         df["k"] = abs(df["chandeMO"]) / 100
     else:
         df["k"] = df["close"].rolling(length).std()
-    df.fillna(0.0, inplace=True)
+
+    cols = ["momm", "m1", "m2", "sm1", "sm2", "chandeMO", "k"]
+    df.loc[:, cols] = df.loc[:, cols].fillna(0.0)
 
     df["VIDYA"] = 0.0
     for i in range(length, len(df)):
@@ -1211,7 +1211,8 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     # Remove basic and final bands from the columns
     df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb"], inplace=True, axis=1)
 
-    df.fillna(0, inplace=True)
+    cols = [pm, pmx, atr, mavalue]
+    df.loc[:, cols] = df.loc[:, cols].fillna(0.0)
 
     return df
 
