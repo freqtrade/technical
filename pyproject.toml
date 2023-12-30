@@ -1,3 +1,59 @@
+[build-system]
+requires = ["setuptools >= 46.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "technical"
+dynamic = ["version"]
+authors = [
+  {name = "Freqtrade Team"},
+  {name = "Freqtrade Team", email = "freqtrade@protonmail.com"},
+]
+description = "Technical Indicators for Financial Analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "GPLv3"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Intended Audience :: Science/Research",
+]
+
+dependencies = [
+  "TA-lib",
+  "pandas",
+]
+[project.optional-dependencies]
+tests = [
+  "pytest",
+  "pytest-cov",
+  "pytest-mock",
+  "pytest-random-order"
+]
+
+
+[project.urls]
+Homepage = "https://github.com/freqtrade/technical"
+"Bug Tracker" = "https://github.com/freqtrade/technical/issues"
+
+[tool.setuptools]
+include-package-data = false
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = [ "." ]
+exclude = [
+  "tests*",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "technical.__version__"}
+
 [tool.black]
 line-length = 100
 exclude = '''
@@ -22,9 +78,6 @@ exclude = '''
 [tool.isort]
 line_length = 100
 
-[build-system]
-requires = ["setuptools >= 46.4.0", "wheel"]
-build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 line-length = 100
@@ -37,3 +90,8 @@ extend-select = [
   # "TCH",  # flake8-type-checking
   # "PTH",  # flake8-use-pathlib
 ]
+
+
+[tool.flake8]
+max-line-length = 100
+extend-ignore = "E203"
