@@ -199,8 +199,8 @@ jobs:
 
     - name: Build distribution
       run: |
-        pip install -U setuptools wheel
-        python setup.py sdist bdist_wheel
+        pip install -U build
+        python -m build --sdist --wheel
 
     - name: Publish to PyPI (Test)
       uses: pypa/gh-action-pypi-publish@v1.8.11
