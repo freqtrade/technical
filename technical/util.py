@@ -1,6 +1,7 @@
 """
     defines utility functions to be used
 """
+
 from pandas import DataFrame, DatetimeIndex, merge, to_datetime, to_timedelta
 
 TICKER_INTERVAL_MINUTES = {
