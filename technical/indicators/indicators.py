@@ -2,6 +2,7 @@
 This file contains a collection of common indicators,
 which are based on third party or custom libraries
 """
+
 import math
 
 import numpy as np
@@ -1188,22 +1189,28 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
                 df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
                 and df[mavalue].iat[i] <= df["final_ub"].iat[i]
             )
-            else df["final_lb"].iat[i]
-            if (
-                df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
-                and df[mavalue].iat[i] > df["final_ub"].iat[i]
+            else (
+                df["final_lb"].iat[i]
+                if (
+                    df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
+                    and df[mavalue].iat[i] > df["final_ub"].iat[i]
+                )
+                else (
+                    df["final_lb"].iat[i]
+                    if (
+                        df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
+                        and df[mavalue].iat[i] >= df["final_lb"].iat[i]
+                    )
+                    else (
+                        df["final_ub"].iat[i]
+                        if (
+                            df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
+                            and df[mavalue].iat[i] < df["final_lb"].iat[i]
+                        )
+                        else 0.00
+                    )
+                )
             )
-            else df["final_lb"].iat[i]
-            if (
-                df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
-                and df[mavalue].iat[i] >= df["final_lb"].iat[i]
-            )
-            else df["final_ub"].iat[i]
-            if (
-                df[pm].iat[i - 1] == df["final_lb"].iat[i - 1]
-                and df[mavalue].iat[i] < df["final_lb"].iat[i]
-            )
-            else 0.00
         )
 
     # Mark the trend direction up/down

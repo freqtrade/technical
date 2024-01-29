@@ -1,6 +1,7 @@
 """
 Volatility indicator functions
 """
+
 import numpy as np
 import pandas as pd
 from numpy.core.records import ndarray
