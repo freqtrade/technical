@@ -861,7 +861,7 @@ def td_sequential(dataframe):
     df["tdc"] = df["tds_a"] - df["tdb_a"]
     df["tdc"] = df.apply((lambda x: x["tdb_b"] % 9 if x["tdb_b"] > 9 else x["tdc"]), axis=1)
     df["tdc"] = df.apply((lambda x: (x["tds_b"] % 9) * -1 if x["tds_b"] > 9 else x["tdc"]), axis=1)
-    dataframe.loc[:, 'TD_count'] = df['tdc']
+    dataframe.loc[:, "TD_count"] = df["tdc"]
     return dataframe
 
 
@@ -939,8 +939,12 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
 
     import talib.abstract as ta
 
-    dataframe["fastMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], fastperiod) / ta.EMA(dataframe["volume"], fastperiod)
-    dataframe["slowMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], slowperiod) / ta.EMA(dataframe["volume"], slowperiod)
+    dataframe["fastMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], fastperiod) / ta.EMA(
+        dataframe["volume"], fastperiod
+    )
+    dataframe["slowMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], slowperiod) / ta.EMA(
+        dataframe["volume"], slowperiod
+    )
     dataframe["vwmacd"] = dataframe["fastMA"] - dataframe["slowMA"]
     dataframe["signal"] = ta.EMA(dataframe["vwmacd"], signalperiod)
     dataframe["hist"] = dataframe["vwmacd"] - dataframe["signal"]
