@@ -1142,7 +1142,8 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
         masrc = (df["high"] + df["low"] + df["close"] + df["open"]) / 4
     if MAtype == 1:
         df[mavalue] = ta.EMA(masrc, timeperiod=length)
-    elif MAtype == 2:
+    elif MAtype in (2, 9):
+        # Compatibility for ZEMA (https://github.com/freqtrade/technical/pull/356 for details)
         df[mavalue] = ta.DEMA(masrc, timeperiod=length)
     elif MAtype == 3:
         df[mavalue] = ta.T3(masrc, timeperiod=length)
@@ -1156,6 +1157,8 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
         df[mavalue] = ta.WMA(df, timeperiod=length)
     elif MAtype == 8:
         df[mavalue] = vwma(df, length)
+    else:
+        raise ValueError(f"MAtype {MAtype} not supported.")
     # Compute basic upper and lower bands
     df["basic_ub"] = df[mavalue] + (multiplier * df[atr])
     df["basic_lb"] = df[mavalue] - (multiplier * df[atr])
