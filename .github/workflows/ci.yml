@@ -193,9 +193,10 @@ jobs:
         python-version: 3.11
 
     - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
+      id: extract-branch
+      run: |
+        echo "GITHUB_REF='${GITHUB_REF}'"
+        echo "branch=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
 
     - name: Build distribution
       run: |
