@@ -81,6 +81,8 @@ line_length = 100
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
 extend-select = [
   "TID",    # flake8-tidy-imports
   # "EXE",  # flake8-executable
