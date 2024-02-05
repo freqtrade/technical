@@ -836,10 +836,8 @@ def td_sequential(dataframe):
 
 
     :param dataframe: dataframe
-    :return: TD Sequential:values -9 to +9
-    """
-    """
-    TD Sequential
+    :return: Dataframe with additional column TD_count
+            content: TD Sequential:values -9 to +9
     """
 
     # Copy DF
@@ -863,8 +861,8 @@ def td_sequential(dataframe):
     df["tdc"] = df["tds_a"] - df["tdb_a"]
     df["tdc"] = df.apply((lambda x: x["tdb_b"] % 9 if x["tdb_b"] > 9 else x["tdc"]), axis=1)
     df["tdc"] = df.apply((lambda x: (x["tds_b"] % 9) * -1 if x["tds_b"] > 9 else x["tdc"]), axis=1)
-
-    return DataFrame(index=df.index, data={"TD_count": df["tdc"]})
+    dataframe.loc[:, 'TD_count'] = df['tdc']
+    return dataframe
 
 
 def TKE(dataframe, *, length=14, emaperiod=5):
