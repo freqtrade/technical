@@ -1,51 +1,52 @@
 import pytest
+from pandas import DataFrame
 
 import technical.indicators as ti
 
 
 @pytest.mark.parametrize(
-    "function, args",
+    "function,args,new_column_names",
     [
-        (ti.atr_percent, []),
-        (ti.atr, []),
-        (ti.bollinger_bands, []),
-        (ti.chaikin_money_flow, []),
-        (ti.MADR, []),
-        (ti.PMAX, []),
-        (ti.RMI, []),
-        (ti.SSLChannels, []),
-        (ti.TKE, []),
-        (ti.VIDYA, []),
-        (ti.atr_percent, []),
-        (ti.bollinger_bands, []),
-        (ti.chaikin_money_flow, []),
-        (ti.chopiness, []),
-        (ti.cmf, []),
-        (ti.ema, [10]),
-        (ti.fibonacci_retracements, []),
-        (ti.hull_moving_average, [10]),
-        (ti.ichimoku, []),
-        (ti.laguerre, []),
-        (ti.madrid_sqz, []),
-        (ti.mmar, []),
-        (ti.osc, []),
-        # (ti.return_on_investment, []),
-        (ti.sma, [10]),
-        (ti.stc, []),
-        (ti.td_sequential, []),
-        (ti.dema, [10]),
-        (ti.tema, [10]),
-        # (ti.tv_hma, []),
-        (ti.tv_wma, []),
-        (ti.vfi, []),
-        (ti.vpci, []),
-        (ti.vpcii, []),
-        (ti.vwma, [10]),
-        (ti.vwmacd, []),
-        (ti.williams_percent, []),
+        (ti.atr_percent, [], []),
+        (ti.atr, [], []),
+        (ti.bollinger_bands, [], []),
+        (ti.chaikin_money_flow, [], []),
+        (ti.MADR, [], []),
+        (ti.PMAX, [], ['ATR_10', 'pm_10_3_12_1', 'pmX_10_3_12_1']),
+        (ti.RMI, [], []),
+        (ti.SSLChannels, [], []),
+        (ti.TKE, [], []),
+        (ti.VIDYA, [], []),
+        (ti.atr_percent, [], []),
+        (ti.bollinger_bands, [], []),
+        (ti.chaikin_money_flow, [], []),
+        (ti.chopiness, [], []),
+        (ti.cmf, [], []),
+        (ti.ema, [10], []),
+        (ti.fibonacci_retracements, [], []),
+        (ti.hull_moving_average, [10], []),
+        (ti.ichimoku, [], []),
+        (ti.laguerre, [], []),
+        (ti.madrid_sqz, [], []),
+        (ti.mmar, [], []),
+        (ti.osc, [], []),
+        # (ti.return_on_investment, [], []),
+        (ti.sma, [10], []),
+        (ti.stc, [], []),
+        (ti.td_sequential, [], []),
+        (ti.dema, [10], []),
+        (ti.tema, [10], []),
+        # (ti.tv_hma, [], []),
+        (ti.tv_wma, [], []),
+        (ti.vfi, [], []),
+        (ti.vpci, [], []),
+        (ti.vpcii, [], []),
+        (ti.vwma, [10], []),
+        (ti.vwmacd, [], []),
+        (ti.williams_percent, [], []),
     ],
 )
-def test_indicators_generic_interface(function, args, testdata_1m_btc):
+def test_indicators_generic_interface(function, args, new_column_names, testdata_1m_btc):
     assert 13680 == len(testdata_1m_btc)
     # Ensure all builtin indicators have the same interface
     res = function(testdata_1m_btc.iloc[-1000:].copy(), *args)
@@ -57,3 +58,7 @@ def test_indicators_generic_interface(function, args, testdata_1m_btc):
     else:
         # Result is dataframe
         assert len(res) == 1000
+        assert isinstance(res, DataFrame)
+        if (len(new_column_names) > 0):
+            assert len(res.columns) == len(new_column_names) + 6
+            assert all([x in res.columns for x in new_column_names])
