@@ -1114,7 +1114,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
 
     Returns :
         df : Pandas DataFrame with new columns added for
-            True Range (TR), ATR (ATR_$period)
+            ATR (ATR_$period)
             PMAX (pm_$period_$multiplier_$length_$Matypeint)
             PMAX Direction (pmX_$period_$multiplier_$length_$Matypeint)
     """
@@ -1219,9 +1219,9 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     # Mark the trend direction up/down
     df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), "down", "up"), np.NaN)
     # Remove basic and final bands from the columns
-    df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb"], inplace=True, axis=1)
+    df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb", mavalue], inplace=True, axis=1)
 
-    cols = [pm, pmx, atr, mavalue]
+    cols = [pm, pmx, atr]
     df.loc[:, cols] = df.loc[:, cols].fillna(0.0)
 
     return df
