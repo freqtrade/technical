@@ -55,4 +55,5 @@ def test_indicators_generic_interface(function, args, testdata_1m_btc):
     elif isinstance(res, dict):
         assert len(res["tenkan_sen"]) == 1000
     else:
+        # Result is dataframe
         assert len(res) == 1000
