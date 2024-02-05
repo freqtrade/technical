@@ -41,7 +41,7 @@ import technical.indicators as ti
         (ti.vpci, [], 'series', None),
         (ti.vpcii, [], 'series', None),
         (ti.vwma, [10], 'series', None),
-        (ti.vwmacd, [], 'df', ['', '', '']),
+        (ti.vwmacd, [], 'df', ["vwmacd", "signal", "hist"]),
         (ti.williams_percent, [], 'series', None),
     ],
 )

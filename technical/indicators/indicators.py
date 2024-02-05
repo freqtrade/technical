@@ -931,18 +931,21 @@ def vwmacd(dataframe, *, fastperiod=12, slowperiod=26, signalperiod=9):
         dataframe['vwmacd'] = vwmacd['vwmacd']
         dataframe['vwmacdsignal'] = vwmacd['signal']
         dataframe['vwmacdhist'] = vwmacd['hist']
+        # simplified:
+        dataframe = vwmacd(dataframe)
+    :returns: dataframe with new columns for vwmacd, signal and hist
+
     """
 
     import talib.abstract as ta
 
-    df = dataframe.copy()
-    df["fastMA"] = ta.EMA(df["volume"] * df["close"], fastperiod) / ta.EMA(df["volume"], fastperiod)
-    df["slowMA"] = ta.EMA(df["volume"] * df["close"], slowperiod) / ta.EMA(df["volume"], slowperiod)
-    df["vwmacd"] = df["fastMA"] - df["slowMA"]
-    df["signal"] = ta.EMA(df["vwmacd"], signalperiod)
-    df["hist"] = df["vwmacd"] - df["signal"]
-
-    return df[["vwmacd", "signal", "hist"]]
+    dataframe["fastMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], fastperiod) / ta.EMA(dataframe["volume"], fastperiod)
+    dataframe["slowMA"] = ta.EMA(dataframe["volume"] * dataframe["close"], slowperiod) / ta.EMA(dataframe["volume"], slowperiod)
+    dataframe["vwmacd"] = dataframe["fastMA"] - dataframe["slowMA"]
+    dataframe["signal"] = ta.EMA(dataframe["vwmacd"], signalperiod)
+    dataframe["hist"] = dataframe["vwmacd"] - dataframe["signal"]
+    dataframe = dataframe.drop(["fastMA", "slowMA"], axis=1)
+    return dataframe
 
 
 def RMI(dataframe, *, length=20, mom=5):
