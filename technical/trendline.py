@@ -5,127 +5,86 @@ https://github.com/dysonance/Trendy
 """
 
 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 def gentrends(dataframe, field="close", window=1 / 3.0, charts=False):
-    """
-    Returns a Pandas dataframe with support and resistance lines.
-
-    :param dataframe: incomming data matrix
-    :param field: for which column would you like to generate the trendline
-    :param window: How long the trendlines should be. If window < 1, then it
-                   will be taken as a percentage of the size of the data
-    :param charts: Boolean value saying whether to print chart to screen
-    """
-
-    x = dataframe[field]
-
-    import numpy as np
-    import pandas as pd
-
-    x = np.array(x)
+    x = np.array(dataframe[field])
 
     if window < 1:
         window = int(window * len(x))
 
-    max1 = np.where(x == max(x))[0][0]  # find the index of the abs max
-    min1 = np.where(x == min(x))[0][0]  # find the index of the abs min
+    max1_idx = np.argmax(x)
+    min1_idx = np.argmin(x)
 
-    # First the max
-    if max1 + window >= len(x):
-        max2 = max(x[0 : (max1 - window)])
+    max1 = x[max1_idx]
+    min1 = x[min1_idx]
+
+    if max1_idx + window >= len(x):
+        max2 = np.max(x[0 : (max1_idx - window)])
     else:
-        max2 = max(x[(max1 + window) :])
+        max2 = np.max(x[(max1_idx + window) :])
 
-    # Now the min
-    if min1 - window <= 0:
-        min2 = min(x[(min1 + window) :])
+    if min1_idx - window <= 0:
+        min2 = np.min(x[(min1_idx + window) :])
     else:
-        min2 = min(x[0 : (min1 - window)])
+        min2 = np.min(x[0 : (min1_idx - window)])
 
-    # Now find the indices of the secondary extrema
-    max2 = np.where(x == max2)[0][0]  # find the index of the 2nd max
-    min2 = np.where(x == min2)[0][0]  # find the index of the 2nd min
+    max2_idx = np.where(x == max2)[0][0]
+    min2_idx = np.where(x == min2)[0][0]
 
-    # Create & extend the lines
-    maxslope = (x[max1] - x[max2]) / (max1 - max2)  # slope between max points
-    minslope = (x[min1] - x[min2]) / (min1 - min2)  # slope between min points
-    a_max = x[max1] - (maxslope * max1)  # y-intercept for max trendline
-    a_min = x[min1] - (minslope * min1)  # y-intercept for min trendline
-    b_max = x[max1] + (maxslope * (len(x) - max1))  # extend to last data pt
-    b_min = x[min1] + (minslope * (len(x) - min1))  # extend to last data point
-    maxline = np.linspace(a_max, b_max, len(x))  # Y values between max's
-    minline = np.linspace(a_min, b_min, len(x))  # Y values between min's
+    maxslope = (max1 - max2) / (max1_idx - max2_idx)
+    minslope = (min1 - min2) / (min1_idx - min2_idx)
+    a_max = max1 - (maxslope * max1_idx)
+    a_min = min1 - (minslope * min1_idx)
+    b_max = max1 + (maxslope * (len(x) - max1_idx))
+    b_min = min1 + (minslope * (len(x) - min1_idx))
+    maxline = a_max + np.arange(len(x)) * maxslope
+    minline = a_min + np.arange(len(x)) * minslope
 
-    # OUTPUT
-    trends = np.transpose(np.array((x, maxline, minline)))
     trends = pd.DataFrame(
-        trends, index=np.arange(0, len(x)), columns=["Data", "Max Line", "Min Line"]
+        {"Data": x, "Max Line": maxline, "Min Line": minline}
     )
 
     if charts:
-        from matplotlib.pyplot import close, grid, plot, savefig
-
-        plot(trends)
-        grid()
+        plt.plot(trends)
+        plt.grid()
 
         if isinstance(charts, str):
-            savefig(f"{charts}.png")
+            plt.savefig(f"{charts}.png")
         else:
-            savefig(f"{x[0]}_{x[len(x) - 1]}.png")
-        close()
+            plt.savefig(f"{x[0]}_{x[-1]}.png")
+
+    plt.close()
 
     return trends
 
-
 def segtrends(dataframe, field="close", segments=2, charts=False):
-    """
-    Turn minitrends to iterative process more easily adaptable to
-    implementation in simple trading systems; allows backtesting functionality.
+    x = np.array(dataframe[field])
 
-    :param dataframe: incomming data matrix
-    :param field: for which column would you like to generate the trendline
-    :param segments: Number of  Trend line segments to generate
-    :param charts: Boolean value saying whether to print chart to screen
-    """
-
-    x = dataframe[field]
-    import numpy as np
-
-    y = np.array(x)
-
-    # Implement trendlines
     segments = int(segments)
-    maxima = np.ones(segments)
-    minima = np.ones(segments)
-    segsize = int(len(y) / segments)
-    for i in range(1, segments + 1):
-        ind2 = i * segsize
-        ind1 = ind2 - segsize
-        maxima[i - 1] = max(y[ind1:ind2])
-        minima[i - 1] = min(y[ind1:ind2])
+    segsize = len(x) // segments
+    maxima = np.array([np.max(x[i:i+segsize]) for i in range(0, len(x), segsize)])
+    minima = np.array([np.min(x[i:i+segsize]) for i in range(0, len(x), segsize)])
 
-    # Find the indexes of these maxima in the data
-    x_maxima = np.ones(segments)
-    x_minima = np.ones(segments)
-    for i in range(0, segments):
-        x_maxima[i] = np.where(y == maxima[i])[0][0]
-        x_minima[i] = np.where(y == minima[i])[0][0]
+    x_maxima = np.array([np.argmax(x[i:i+segsize]) + i for i in range(0, len(x), segsize)])
+    x_minima = np.array([np.argmin(x[i:i+segsize]) + i for i in range(0, len(x), segsize)])
 
     if charts:
-        import matplotlib.pyplot as plt
+        plt.plot(x)
+        plt.grid()
 
-        plt.plot(y)
-        plt.grid(True)
-
-    for i in range(0, segments - 1):
+    for i in range(segments - 1):
         maxslope = (maxima[i + 1] - maxima[i]) / (x_maxima[i + 1] - x_maxima[i])
         a_max = maxima[i] - (maxslope * x_maxima[i])
-        b_max = maxima[i] + (maxslope * (len(y) - x_maxima[i]))
-        maxline = np.linspace(a_max, b_max, len(y))
+        b_max = maxima[i] + (maxslope * (len(x) - x_maxima[i]))
+        maxline = a_max + np.arange(len(x)) * maxslope
 
         minslope = (minima[i + 1] - minima[i]) / (x_minima[i + 1] - x_minima[i])
         a_min = minima[i] - (minslope * x_minima[i])
-        b_min = minima[i] + (minslope * (len(y) - x_minima[i]))
-        minline = np.linspace(a_min, b_min, len(y))
+        b_min = minima[i] + (minslope * (len(x) - x_minima[i]))
+        minline = a_min + np.arange(len(x)) * minslope
 
         if charts:
             plt.plot(maxline, "g")
@@ -134,12 +93,8 @@ def segtrends(dataframe, field="close", segments=2, charts=False):
     if charts:
         plt.show()
 
-    import pandas as pd
-
-    # OUTPUT
-    #    return x_maxima, maxima, x_minima, minima
-    trends = np.transpose(np.array((x, maxline, minline)))
     trends = pd.DataFrame(
-        trends, index=np.arange(0, len(x)), columns=["Data", "Max Line", "Min Line"]
+        {"Data": x, "Max Line": maxline, "Min Line": minline}
     )
+
     return trends
