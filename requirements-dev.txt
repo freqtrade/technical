@@ -6,4 +6,4 @@ pytest-mock==3.12.0
 pytest-random-order==1.1.1
 ruff==0.3.2
 isort==5.13.2
-black==24.2.0
+black==24.3.0
