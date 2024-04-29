@@ -12,8 +12,9 @@ on:
   schedule:
     - cron:  '0 5 * * 4'
 
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: "${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}"
   cancel-in-progress: true
 
 jobs:
@@ -22,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ "ubuntu-20.04", "ubuntu-22.04", "macos-latest", "macos-13" ]
+        os: [ "ubuntu-20.04", "ubuntu-22.04", "macos-12", "macos-13" ]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
