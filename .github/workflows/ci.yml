@@ -42,7 +42,7 @@ jobs:
       id: cache
       with:
         path: ~/dependencies/
-        key: ${{ runner.os }}-dependencies
+        key: ${{ matrix.os }}-dependencies
 
     - name: pip cache (linux)
       uses: actions/cache@v4
