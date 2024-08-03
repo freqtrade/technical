@@ -102,6 +102,6 @@ So in the above example:
 ### Contributions
 
 We will happily add your custom indicators to this repo!
-Just clone this repository and implement your favorite indicator to use with Freqtrade.
+Just clone this repository and implement your favorite indicator to use with Freqtrade and create a Pull Request.
 
 Have fun!
