@@ -1,6 +1,7 @@
 # Technical
 
-[![Technical CI](https://github.com/freqtrade/technical/actions/workflows/ci.yml/badge.svg)](https://github.com/freqtrade/technical/actions/workflows/ci.yml)
+![Technical CI](https://github.com/freqtrade/technical/actions/workflows/ci.yml/badge.svg)
+![Documentation CI](https://github.com/freqtrade/technical/actions/workflows/deploy-docs.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/technical)](https://pypi.org/project/technical/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
