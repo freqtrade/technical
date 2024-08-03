@@ -4,6 +4,7 @@ on:
   push:
     branches: ["gh-pages"]
   workflow_dispatch:
+  workflow_call:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -27,6 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: gh-pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

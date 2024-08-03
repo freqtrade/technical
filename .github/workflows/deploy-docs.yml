@@ -50,3 +50,6 @@ jobs:
         run: |
           mike deploy ${{ github.ref_name }} stable --push --update-aliases
 
+      - name: Deploy to GHA
+        uses: ./.github/workflows/deploy-to-gha.yml
+
