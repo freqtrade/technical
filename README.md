@@ -77,7 +77,7 @@ To get the latest version, install directly from github:
 pip install git+https://github.com/freqtrade/technical
 ```
 
-and than import the required packages
+and then import the required packages
 
 ```python
 from technical.indicators import accumulation_distribution, ...
