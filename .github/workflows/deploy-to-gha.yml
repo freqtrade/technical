@@ -1,8 +1,8 @@
 name: Deploy Documentation
 
 on:
-  push:
-    branches: ["gh-pages"]
+  # push:
+  #   branches: ["gh-pages"]
   workflow_dispatch:
   workflow_call:
 
