@@ -87,6 +87,10 @@ jobs:
       run: |
         ruff check --output-format=github .
 
+    - name: Run Codespell
+      run: |
+        codespell
+
     - name: Sort imports (isort)
       run: |
         isort --check .
