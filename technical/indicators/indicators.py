@@ -704,7 +704,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df["vfima"] = ta.EMA(df["vfi"], signalLength)
     df["vfi_hist"] = df["vfi"] - df["vfima"]
 
-    # clean up columns used vfi calculation but not needed for strat
+    # clean up columns used vfi calculation but not needed for strategy
     df.drop("hlc", axis=1, inplace=True)
     df.drop("inter", axis=1, inplace=True)
     df.drop("vinter", axis=1, inplace=True)
