@@ -2,7 +2,7 @@
 
 [![Technical CI](https://github.com/freqtrade/technical/actions/workflows/ci.yml/badge.svg)](https://github.com/freqtrade/technical/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/technical)](https://pypi.org/project/technical/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Technical is a companion project for Freqtrade.
 It includes technical indicators, as well as helpful utilities (e.g. timeframe resampling) aimed to assist in strategy development for Freqtrade.
