@@ -4,11 +4,13 @@
 [![PyPI](https://img.shields.io/pypi/v/technical)](https://pypi.org/project/technical/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This is a collection of technical indicators collected or developed for Freqtrade as well as utilities such as timeframe resampling.
+Technical is a companion project for Freqtrade.
+It includes technical indicators, as well as helpful utilities (e.g. timeframe resampling) aimed to assist in strategy development for Freqtrade.
 
 ## What does it do for you
 
-We basically provide you with easy to use indicators, collected from all over github and custom methods. Over time we plan to provide a simple API wrapper around TA-Lib, PyTi and others, as we find them. So you have one place, to find 100s of indicators.
+Technical provides easy to use indicators, collected from all over github, as well as custom methods.
+Over time we plan to provide a simple API wrapper around TA-Lib, PyTi and others, as we find them. So you have one place, to find 100s of indicators.
 
 ### Custom indicators
 
