@@ -62,6 +62,3 @@ markdown_extensions:
 extra:
   version:
     provider: mike
-plugins:
-  - mike:
-      deploy_prefix: 'technical'
