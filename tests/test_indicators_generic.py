@@ -25,7 +25,7 @@ import technical.indicators as ti
         (ti.fibonacci_retracements, [], "series", None),
         (ti.hull_moving_average, [10], "series", None),
         (ti.ichimoku, [], "dict", None),
-        (ti.laguerre, [], "list", None),
+        (ti.laguerre, [], "series", None),
         (ti.madrid_sqz, [], "tuple", None),
         (ti.mmar, [], "tuple", None),
         (ti.osc, [], "series", None),
@@ -56,11 +56,6 @@ def test_indicators_generic_interface(
         assert isinstance(res, tuple)
         assert len(res[0]) == 1000
         assert len(res[1]) == 1000
-    elif responsetype == "list":
-        # only laguerre is this
-        # TODO: This should be changed!
-        assert isinstance(res, list)
-        assert len(res) == 1000
     elif responsetype == "dict":
         assert isinstance(res, dict)
         assert len(res["tenkan_sen"]) == 1000

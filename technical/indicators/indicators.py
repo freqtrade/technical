@@ -95,7 +95,7 @@ def ichimoku(
 #
 # Laguerre RSI
 #
-def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
+def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool) -> Series:
     """
     laguerre RSI
     Author Creslin
@@ -179,7 +179,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=bool):
         else:
             lrsi_l.append(0)
 
-    return lrsi_l
+    return Series(lrsi_l)
 
 
 ########################################
