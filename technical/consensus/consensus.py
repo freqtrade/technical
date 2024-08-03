@@ -118,9 +118,9 @@ class Consensus:
         dataframe = self.dataframe
         dataframe[name] = ta.RSI(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] < 30)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < 30), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 70)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > 70), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_stoch(self, prefix="stoch", impact_buy=1, impact_sell=1):
         """
@@ -137,9 +137,9 @@ class Consensus:
         dataframe[f"{name}_fastd"] = stoch_fast["fastd"]
         dataframe[f"{name}_fastk"] = stoch_fast["fastk"]
 
-        dataframe.loc[((dataframe[f"{name}_fastk"] < 20)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[f"{name}_fastk"] < 20), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[f"{name}_fastk"] > 80), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_stoch_rsi(
         self, period=14, smoothd=3, smoothk=3, prefix="stoch_rsi", impact_buy=1, impact_sell=1
@@ -170,9 +170,9 @@ class Consensus:
         # The fastd below is not used
         dataframe[f"{name}_fastd"] = dataframe[f"{name}_fastk"].rolling(smoothd).mean()
 
-        dataframe.loc[((dataframe[f"{name}_fastk"] < 20)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[f"{name}_fastk"] < 20), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[f"{name}_fastk"] > 80)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[f"{name}_fastk"] > 80), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_macd_cross_over(self, prefix="macd_crossover", impact_buy=2, impact_sell=2):
         """
@@ -191,11 +191,11 @@ class Consensus:
 
         dataframe.loc[
             (crossed_above(dataframe["macdsignal"], dataframe["macd"])), f"sell_{prefix}"
-        ] = (1 * impact_sell)
+        ] = 1 * impact_sell
 
         dataframe.loc[
             (crossed_above(dataframe["macd"], dataframe["macdsignal"])), f"buy_{prefix}"
-        ] = (1 * impact_buy)
+        ] = 1 * impact_buy
 
         return dataframe
 
@@ -243,9 +243,9 @@ class Consensus:
         name = f"{prefix}_{field}_{period}"
         dataframe[name] = hull_moving_average(dataframe, period, field)
 
-        dataframe.loc[((dataframe[name] > dataframe[field])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] > dataframe[field]), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] < dataframe[field])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] < dataframe[field]), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_vwma(self, period=9, prefix="vwma", impact_buy=1, impact_sell=1):
         """
@@ -262,9 +262,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = vwma(dataframe, period)
 
-        dataframe.loc[((dataframe[name] > dataframe["close"])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] > dataframe["close"]), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] < dataframe["close"])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] < dataframe["close"]), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_tema(self, period, field="close", prefix="tema", impact_buy=1, impact_sell=1):
         """
@@ -279,9 +279,9 @@ class Consensus:
         name = f"{prefix}_{field}_{period}"
         dataframe[name] = ta.TEMA(dataframe, timeperiod=period, field=field)
 
-        dataframe.loc[((dataframe[name] < dataframe[field])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < dataframe[field]), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > dataframe[field])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > dataframe[field]), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_ema(self, period, field="close", prefix="ema", impact_buy=1, impact_sell=1):
         """
@@ -296,9 +296,9 @@ class Consensus:
         name = f"{prefix}_{field}_{period}"
         dataframe[name] = ta.EMA(dataframe, timeperiod=period, field=field)
 
-        dataframe.loc[((dataframe[name] < dataframe[field])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < dataframe[field]), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > dataframe[field])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > dataframe[field]), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_sma(self, period, field="close", prefix="sma", impact_buy=1, impact_sell=1):
         """
@@ -313,9 +313,9 @@ class Consensus:
         dataframe = self.dataframe
         dataframe[name] = ta.SMA(dataframe, timeperiod=period, field=field)
 
-        dataframe.loc[((dataframe[name] < dataframe[field])), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < dataframe[field]), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > dataframe[field])), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > dataframe[field]), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_laguerre(self, prefix="lag", impact_buy=1, impact_sell=1):
         """
@@ -332,9 +332,9 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = laguerre(dataframe)
 
-        dataframe.loc[((dataframe[name] < 0.1)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < 0.1), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 0.9)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > 0.9), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_osc(self, period=12, prefix="osc", impact_buy=1, impact_sell=1):
         """
@@ -351,9 +351,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = osc(dataframe, period)
 
-        dataframe.loc[((dataframe[name] < 0.3)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < 0.3), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 0.8)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > 0.8), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_cmf(self, period=12, prefix="cmf", impact_buy=1, impact_sell=1):
         """
@@ -370,9 +370,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = cmf(dataframe, period)
 
-        dataframe.loc[((dataframe[name] > 0.5)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] > 0.5), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] < -0.5)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] < -0.5), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_cci(
         self, period=20, prefix="cci", impact_buy=1, impact_sell=1, sell_signal=100, buy_signal=-100
@@ -390,9 +390,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = ta.CCI(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] < buy_signal)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < buy_signal), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > sell_signal)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > sell_signal), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_consensus(
         self,
@@ -433,17 +433,17 @@ class Consensus:
         dataframe[f"{name}_sell"] = result["sell"]
 
         if average:
-            dataframe.loc[((dataframe[f"{name}_buy"] > buy_score)), f"buy_{name}"] = 1 * impact_buy
+            dataframe.loc[(dataframe[f"{name}_buy"] > buy_score), f"buy_{name}"] = 1 * impact_buy
 
-            dataframe.loc[((dataframe[f"{name}_sell"] >= sell_score)), f"sell_{name}"] = (
+            dataframe.loc[(dataframe[f"{name}_sell"] >= sell_score), f"sell_{name}"] = (
                 1 * impact_sell
             )
         else:
-            dataframe.loc[((dataframe[f"{name}_buy"] > buy_score)), f"buy_{name}"] = (
+            dataframe.loc[(dataframe[f"{name}_buy"] > buy_score), f"buy_{name}"] = (
                 consensus.buy_weights * impact_buy
             )
 
-            dataframe.loc[((dataframe[f"{name}_sell"] >= sell_score)), f"sell_{name}"] = (
+            dataframe.loc[(dataframe[f"{name}_sell"] >= sell_score), f"sell_{name}"] = (
                 consensus.sell_weights * impact_sell
             )
 
@@ -460,9 +460,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = ta.CMO(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] < -50)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < -50), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 50)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > 50), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_ichimoku(self, prefix="ichimoku", impact_buy=1, impact_sell=1):
         """
@@ -516,9 +516,9 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = ta.ULTOSC(dataframe)
 
-        dataframe.loc[((dataframe[name] < 30)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < 30), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > 70)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > 70), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_williams(self, prefix="williams", impact_buy=1, impact_sell=1):
         """
@@ -535,9 +535,9 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = williams_percent(dataframe)
 
-        dataframe.loc[((dataframe[name] < -80)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] < -80), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] > -20)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] > -20), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_momentum(self, period=20, prefix="momentum", impact_buy=1, impact_sell=1):
         """
@@ -553,9 +553,9 @@ class Consensus:
         name = f"{prefix}_{period}"
         dataframe[name] = ta.MOM(dataframe, timeperiod=period)
 
-        dataframe.loc[((dataframe[name] > 100)), f"buy_{name}"] = 1 * impact_buy
+        dataframe.loc[(dataframe[name] > 100), f"buy_{name}"] = 1 * impact_buy
 
-        dataframe.loc[((dataframe[name] < 100)), f"sell_{name}"] = 1 * impact_sell
+        dataframe.loc[(dataframe[name] < 100), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_adx(
         self, period=14, prefix="adx", trend_line=25, use_di=True, impact_buy=1, impact_sell=1
@@ -587,9 +587,7 @@ class Consensus:
                     & (dataframe[f"{name}_plus_di"] > dataframe[f"{name}_minus_di"])
                 ),
                 f"buy_{name}",
-            ] = (
-                1 * impact_buy
-            )
+            ] = 1 * impact_buy
 
             dataframe.loc[
                 (
@@ -597,13 +595,11 @@ class Consensus:
                     & (dataframe[f"{name}_plus_di"] < dataframe[f"{name}_minus_di"])
                 ),
                 f"sell_{name}",
-            ] = (
-                1 * impact_sell
-            )
+            ] = 1 * impact_sell
         else:
-            dataframe.loc[((dataframe[name] > trend_line)), f"buy_{name}"] = 1 * impact_buy
+            dataframe.loc[(dataframe[name] > trend_line), f"buy_{name}"] = 1 * impact_buy
 
-            dataframe.loc[((dataframe[name] > trend_line)), f"sell_{name}"] = 1 * impact_sell
+            dataframe.loc[(dataframe[name] > trend_line), f"sell_{name}"] = 1 * impact_sell
 
     def evaluate_ao(self, prefix="ao", impact_buy=1, impact_sell=1):
         """
@@ -619,11 +615,11 @@ class Consensus:
         name = f"{prefix}"
         dataframe[name] = awesome_oscillator(dataframe)
 
-        dataframe.loc[((dataframe[name] > (dataframe[name].shift(1) + 0.05))), f"buy_{name}"] = (
+        dataframe.loc[(dataframe[name] > (dataframe[name].shift(1) + 0.05)), f"buy_{name}"] = (
             1 * impact_buy
         )
 
-        dataframe.loc[((dataframe[name] < (dataframe[name].shift(1) - 0.05))), f"sell_{name}"] = (
+        dataframe.loc[(dataframe[name] < (dataframe[name].shift(1) - 0.05)), f"sell_{name}"] = (
             1 * impact_sell
         )
 
@@ -651,9 +647,7 @@ class Consensus:
                 & (dataframe[f"{name}_bulls"] > dataframe[f"{name}_bulls"].shift(1))
             ),
             f"buy_{name}",
-        ] = (
-            1 * impact_buy
-        )
+        ] = 1 * impact_buy
 
         dataframe.loc[
             (
@@ -661,6 +655,4 @@ class Consensus:
                 & (dataframe[f"{name}_bears"] > dataframe[f"{name}_bears"].shift(1))
             ),
             f"sell_{name}",
-        ] = (
-            1 * impact_sell
-        )
+        ] = 1 * impact_sell

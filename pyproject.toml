@@ -81,6 +81,13 @@ line_length = 100
 
 [tool.ruff]
 line-length = 100
+extend-exclude = [
+  "tests*",
+  "vendor",
+  "technical/__init__.py",
+  "technical/__version__.py",
+  "technical/technical.py",
+]
 
 [tool.ruff.lint]
 extend-select = [

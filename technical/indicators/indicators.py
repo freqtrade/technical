@@ -847,10 +847,10 @@ def td_sequential(dataframe):
     cond1 = df["close"] > df["close"].shift(4)
     cond2 = df["close"] < df["close"].shift(4)
 
-    df["cond_tdb_a"] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
-    df["cond_tds_a"] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 == 0).cumsum()
-    df["cond_tdb_b"] = (df.groupby((((cond1)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
-    df["cond_tds_b"] = (df.groupby((((cond2)[condv])).cumsum()).cumcount() % 10 != 0).cumsum()
+    df["cond_tdb_a"] = (df.groupby(((cond1)[condv]).cumsum()).cumcount() % 10 == 0).cumsum()
+    df["cond_tds_a"] = (df.groupby(((cond2)[condv]).cumsum()).cumcount() % 10 == 0).cumsum()
+    df["cond_tdb_b"] = (df.groupby(((cond1)[condv]).cumsum()).cumcount() % 10 != 0).cumsum()
+    df["cond_tds_b"] = (df.groupby(((cond2)[condv]).cumsum()).cumcount() % 10 != 0).cumsum()
 
     df["tdb_a"] = df.groupby(df["cond_tdb_a"]).cumcount()
     df["tds_a"] = df.groupby(df["cond_tds_a"]).cumcount()

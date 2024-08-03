@@ -87,6 +87,10 @@ jobs:
       run: |
         ruff check --output-format=github .
 
+    - name: Run Ruff format check
+      run: |
+        ruff format --check
+
     - name: Run Codespell
       run: |
         codespell
@@ -94,11 +98,6 @@ jobs:
     - name: Sort imports (isort)
       run: |
         isort --check .
-
-    - uses: psf/black@stable
-      if: startsWith(matrix.os, 'ubuntu')
-      with:
-        options: ". --check"
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1

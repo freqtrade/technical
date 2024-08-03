@@ -1,5 +1,5 @@
 """
-    defines utility functions to be used
+defines utility functions to be used
 """
 
 from pandas import DataFrame, DatetimeIndex, merge, to_datetime, to_timedelta
