@@ -56,7 +56,7 @@ def pivots_points(dataframe: pd.DataFrame, timeperiod=30, levels=3) -> pd.DataFr
         prev_support = data["s" + str(i - 1)]
         prev_resistance = data["r" + str(i - 1)]
 
-        # Resitance
+        # Resistance
         data["r" + str(i)] = (data["pivot"] - prev_support) + prev_resistance
 
         # Support

@@ -9,7 +9,7 @@ def gentrends(dataframe, field="close", window=1 / 3.0, charts=False):
     """
     Returns a Pandas dataframe with support and resistance lines.
 
-    :param dataframe: incomming data matrix
+    :param dataframe: incoming data matrix
     :param field: for which column would you like to generate the trendline
     :param window: How long the trendlines should be. If window < 1, then it
                    will be taken as a percentage of the size of the data
@@ -81,7 +81,7 @@ def segtrends(dataframe, field="close", segments=2, charts=False):
     Turn minitrends to iterative process more easily adaptable to
     implementation in simple trading systems; allows backtesting functionality.
 
-    :param dataframe: incomming data matrix
+    :param dataframe: incoming data matrix
     :param field: for which column would you like to generate the trendline
     :param segments: Number of  Trend line segments to generate
     :param charts: Boolean value saying whether to print chart to screen

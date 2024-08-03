@@ -54,7 +54,7 @@ The following indicators are available and have been 'wrapped' to be used on a d
 * [cmo](https://www.investopedia.com/terms/c/chandemomentumoscillator.asp) - dataframe, period, field
 * [cci](https://www.investopedia.com/terms/c/commoditychannelindex.asp) - dataframe, period
 * williams percent
-* momentum oscilator
+* momentum oscillator
 * hull moving average
 * ultimate oscillator
 * sma

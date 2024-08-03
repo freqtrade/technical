@@ -39,7 +39,7 @@ def heikinashi(bars):
         },
     )
 
-    # usefull little helpers
+    # useful little helpers
     result["flat_bottom"] = np.vectorize(_flat_bottom)(
         result["close"], result["low"], result["open"], result["high"]
     )

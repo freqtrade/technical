@@ -71,7 +71,7 @@ def resample_to_interval(dataframe: DataFrame, interval):
 
 def resampled_merge(original: DataFrame, resampled: DataFrame, fill_na=True):
     """
-    Merges a resampled dataset back into the orignal data set.
+    Merges a resampled dataset back into the original data set.
     Resampled candle will match OHLC only if full timespan is available in original dataframe.
 
     :param original: the original non resampled dataset

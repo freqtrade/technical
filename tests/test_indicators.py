@@ -42,7 +42,7 @@ def test_chaikin_money_flow(testdata_1m_btc):
 
     result = chaikin_money_flow(testdata_1m_btc, 14)
 
-    # drop nan, they are exspected, based on the period
+    # drop nan, they are expected, based on the period
     result = result[~numpy.isnan(result)]
 
     assert result.min() >= -1

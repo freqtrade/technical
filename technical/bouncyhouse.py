@@ -63,13 +63,13 @@ def bounce(dataframe: DataFrame, level):
 
 def touches(dataframe: DataFrame, level):
     """
-    :param dataframe: our incomming dataframe
+    :param dataframe: our incoming dataframe
     :param level: where do we want to calculate the touches
     returns all the touches of the dataframe on the given level
 
     :returns
      1 if it touches and closes above
-     0 if it does'nt touch
+     0 if it doesn't touch
     -1 if it touches and closes below
     """
 

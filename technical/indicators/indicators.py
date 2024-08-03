@@ -464,7 +464,7 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
     https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/
 
     :param datafame:
-    :param lenght: min 14 - default 34
+    :param length: min 14 - default 34
     :param src: default close
     :param ref: default 13
     :param sqzLen: default 5
@@ -627,7 +627,7 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     :param coef:  - price coef  - 0.2 default
     :param vcoef: - volume coef  - 2.5 default
     :param signalLength: - 5 default
-    :param smoothVFI:  bool - False detault
+    :param smoothVFI:  bool - False default
     :return: vfi, vfima, vfi_hist
     """
 
