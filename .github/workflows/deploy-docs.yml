@@ -50,6 +50,10 @@ jobs:
         run: |
           mike deploy ${{ github.ref_name }} stable --push --update-aliases
 
+      - name: Show mike versions
+        run: |
+          mike list
+
   deploy-to-gha:
     needs: build-docs
     permissions:
