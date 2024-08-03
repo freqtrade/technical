@@ -7,17 +7,11 @@ For generic questions, please use the [discord server](https://discord.gg/p7nuUN
 
 ## Releases
 
-### pypi
+Bump the `__version__`  naming in `technical/__init__.py` and create a new release on github with a matching tag.
 
-To create a pypi release, please run the following commands:
+!!! Note
+    Version numbers must follow allowed versions from PEP0440 to avoid failures pushing to pypi.
 
-Additional requirement: `wheel`, `twine` (for uploading), account on pypi with proper permissions.
+### Pypi
 
-``` bash
-python setup.py sdist
-
-# For production:
-twine upload dist/*
-```
-
-Please don't push non-releases to the productive / real pypi instance.
+Pypi releases happen automatically on a new release through github actions.
