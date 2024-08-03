@@ -1,0 +1,63 @@
+site_name: Technical
+site_url: !ENV [READTHEDOCS_CANONICAL_URL, 'https://technical.freqtrade.io/']
+site_description: Technical is a companion library for Freqtrade, providing a collection of technical analysis indicators and utilities.
+repo_url: https://github.com/freqtrade/technical
+edit_uri: edit/main/docs/
+use_directory_urls: True
+nav:
+    - Home: index.md
+    - General usage: general-usage.md
+    - Contributors Guide: developer.md
+
+theme:
+  name: material
+  logo: "images/logo.png"
+  favicon: "images/logo.png"
+  # custom_dir: "docs/overrides"
+  features:
+    - content.code.annotate
+    - search.share
+    - content.code.copy
+    - navigation.top
+    - navigation.footer
+  palette:
+    - scheme: default
+      primary: "blue grey"
+      accent: "tear"
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: "blue grey"
+      accent: "tear"
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+markdown_extensions:
+  - attr_list
+  - admonition
+  - footnotes
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.pathconverter
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      base_path: docs
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - mdx_truly_sane_lists
+plugins:
+  - mike:
+      deploy_prefix: 'technical'
