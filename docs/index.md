@@ -5,7 +5,6 @@
 [![PyPI](https://img.shields.io/pypi/v/technical)](https://pypi.org/project/technical/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-
 Technical is a companion project for Freqtrade.
 It includes technical indicators, as well as helpful utilities (e.g. timeframe resampling) aimed to assist in strategy development for Freqtrade.
 
@@ -19,17 +18,17 @@ Over time we plan to provide a simple API wrapper around TA-Lib, PyTi and others
 * Consensus - an indicator which is based on a consensus model, across several indicators
 you can easily customize these. It is based on the [TradingView](https://www.tradingview.com/symbols/BTCUSD/technicals/)
 buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Consensus
-* [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
-* [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/)
-* [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/)
+* [vfi](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/) - a modified version of On-Balance Volume (OBV) created by Markos Katsanos that gives better interpretation of current market trend.
+* [mmar](https://www.tradingview.com/script/1JKqmEKy-Madrid-Moving-Average-Ribbon/) - an indicator that uses multiple MAs of different length to categorize the market trend into 4 different categories
+* [madrid_sqz](https://www.tradingview.com/script/9bUUSzM3-Madrid-Trend-Squeeze/) - an indicator that uses multiple MAs to categorize the market trend into 6 different categories and to spot a squeeze
 * [stc](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp)
 * [ichimoku cloud](http://stockcharts.com/school/doku.php?id=chart_school:trading_strategies:ichimoku_cloud)
-* volume weighted moving average
-* laguerre
+* [volume weighted moving average](https://trendspider.com/learning-center/what-is-the-volume-weighted-moving-average-vwma/) - a variation of the Simple Moving Average (SMA) that taking into account both price and volume
+* [laguerre](https://www.tradingview.com/script/iUl3zTql-Ehlers-Laguerre-Relative-Strength-Index-CC/) - an indicator developed by John Ehlers as a way to minimize both the noise and lag of the regular RSI
 * [vpci](https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/)
-* [trendlines](https://en.wikipedia.org/wiki/Trend_line_(technical_analysis)), 2 different algorithms to calculate trendlines
-* fibonacci retracements
-* pivots points
+* [trendlines](https://en.wikipedia.org/wiki/Trend_line_(technical_analysis)) - 2 different algorithms to calculate trendlines
+* [fibonacci_retracements](https://www.investopedia.com/terms/f/fibonacciretracement.asp) - an indicator showing the fibonacci level which each candle exceeds
+* [pivots points](https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/)
 * [TKE Indicator](https://www.tradingview.com/script/Pcbvo0zG/) - Arithmetical mean of 7 oscilators
 * [Volume Weighted MACD](https://www.tradingview.com/script/wVe6AfGA) - Volume Weighted MACD indicator
 * [RMI](https://www.marketvolume.com/technicalanalysis/relativemomentumindex.asp) - Relative Momentum indicator
