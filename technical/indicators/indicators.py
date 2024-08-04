@@ -291,27 +291,27 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
 
     # Get MAs, also last MA in own column to pass to def later
     df["ma05"] = ma(df[src], 5)
-    df["ma05l"] = df["ma05"].shift(+1)
+    df["ma05l"] = df["ma05"].shift()
     df["ma10"] = ma(df[src], 10)
-    df["ma10l"] = df["ma10"].shift(+1)
+    df["ma10l"] = df["ma10"].shift()
     df["ma20"] = ma(df[src], 20)
-    df["ma20l"] = df["ma20"].shift(+1)
+    df["ma20l"] = df["ma20"].shift()
     df["ma30"] = ma(df[src], 30)
-    df["ma30l"] = df["ma30"].shift(+1)
+    df["ma30l"] = df["ma30"].shift()
     df["ma40"] = ma(df[src], 40)
-    df["ma40l"] = df["ma40"].shift(+1)
+    df["ma40l"] = df["ma40"].shift()
     df["ma50"] = ma(df[src], 50)
-    df["ma50l"] = df["ma50"].shift(+1)
+    df["ma50l"] = df["ma50"].shift()
     df["ma60"] = ma(df[src], 60)
-    df["ma60l"] = df["ma60"].shift(+1)
+    df["ma60l"] = df["ma60"].shift()
     df["ma70"] = ma(df[src], 70)
-    df["ma70l"] = df["ma70"].shift(+1)
+    df["ma70l"] = df["ma70"].shift()
     df["ma80"] = ma(df[src], 80)
-    df["ma80l"] = df["ma80"].shift(+1)
+    df["ma80l"] = df["ma80"].shift()
     df["ma90"] = ma(df[src], 90)
-    df["ma90l"] = df["ma90"].shift(+1)
+    df["ma90l"] = df["ma90"].shift()
     df["ma100"] = ma(df[src], 100)
-    df["ma100l"] = df["ma100"].shift(+1)
+    df["ma100l"] = df["ma100"].shift()
 
     """ logic for LeadMA
     : change(ma05)>=0 and ma05>ma100 ? lime    +2
@@ -346,32 +346,32 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
     df["leadMA"] = df.apply(leadMAc, axis=1)
 
     """   Logic for MAs
-    : change(ma)>=0 and ma05>ma100 ? lime
-    : change(ma)<0  and ma05>ma100 ? maroon
-    : change(ma)<=0 and ma05<ma100 ? red
-    : change(ma)>=0 and ma05<ma100 ? green
+    : change(ma)>=0 and ma>ma100 ? lime
+    : change(ma)<0  and ma>ma100 ? maroon
+    : change(ma)<=0 and ma<ma100 ? red
+    : change(ma)>=0 and ma<ma100 ? green
     : gray
     """
 
     def maColor(x, ma):
         col_label = "_".join([ma, "c"])
-        col_lable_l = "".join([ma, "l"])
+        col_label_1 = "".join([ma, "l"])
 
-        if (x[ma] - x[col_lable_l]) >= 0 and (x[ma] > x["ma100"]):
+        if (x[ma] - x[col_label_1]) >= 0 and (x[ma] > x["ma100"]):
             # Lime: Uptrend.Long trading
             x[col_label] = "lime"
             return x[col_label]
-        elif (x[ma] - x[col_lable_l]) < 0 and (x[ma] > x["ma100"]):
+        elif (x[ma] - x[col_label_1]) < 0 and (x[ma] > x["ma100"]):
             # Maroon : Short Reentry (sell the peak) or uptrend reversal warning
             x[col_label] = "maroon"
             return x[col_label]
 
-        elif (x[ma] - x[col_lable_l]) <= 0 and (x[ma] < x["ma100"]):
+        elif (x[ma] - x[col_label_1]) <= 0 and (x[ma] < x["ma100"]):
             # Red : Downtrend. Short trading
             x[col_label] = "red"
             return x[col_label]
 
-        elif (x[ma] - x[col_lable_l]) >= 0 and (x[ma] < x["ma100"]):
+        elif (x[ma] - x[col_label_1]) >= 0 and (x[ma] < x["ma100"]):
             # Green: Reentry(buy the dip) or downtrend reversal warning
             x[col_label] = "green"
             return x[col_label]
@@ -380,7 +380,6 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
             x[col_label] = "grey"
             return x[col_label]
 
-    df["ma05_c"] = df.apply(maColor, ma="ma05", axis=1)
     df["ma10_c"] = df.apply(maColor, ma="ma10", axis=1)
     df["ma20_c"] = df.apply(maColor, ma="ma20", axis=1)
     df["ma30_c"] = df.apply(maColor, ma="ma30", axis=1)
@@ -399,10 +398,9 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
             df[
                 [
                     "date",
-                    "leadMA",
                     "ma05",
                     "ma05l",
-                    "ma05_c",
+                    "leadMA",
                     "ma10",
                     "ma10l",
                     "ma10_c",
@@ -417,7 +415,6 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
                     "ma90l",
                     "ma90_c",
                     "ma100",
-                    "leadMA",
                 ]
             ].tail(200)
         )
