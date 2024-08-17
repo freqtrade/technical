@@ -984,10 +984,10 @@ def VIDYA(dataframe, length=9, select=True):
     by averaging the price values of the periods, over which it is calculated.
     In the process, some extra value (weight) is added to the average prices,
     as it is done during calculations of all weighted indicators, such as EMA , LWMA, and SMMA.
-    But during the VIDIYA indicator's calculation, every period's price
+    But during the VIDYA indicator's calculation, every period's price
     receives a weight increment adapted to the current market's volatility .
 
-    select: True = CMO, False= StDev as volatility index
+    select: True = CMO, False= StdDev as volatility index
     usage:
       dataframe['VIDYA'] = VIDYA(dataframe)
     """
@@ -1021,7 +1021,7 @@ def VIDYA(dataframe, length=9, select=True):
 
 def MADR(dataframe, length=21, stds=2):
     """
-    Moving Averae Deviation RAte just like bollinger bands ...
+    Moving Average Deviation Rate, similar to bollinger bands
     Source: https://tradingview.com/script/25KCgL9H/
     Author: tarantula3535
 
@@ -1029,12 +1029,12 @@ def MADR(dataframe, length=21, stds=2):
 
     Simple moving average deviation rate and standard deviation.
 
-    The bollinger band is momentum value standard devition.
-    Bat the bollinger band is not normal distribution to close price.
+    The bollinger band is momentum value standard deviation.
+    But the bollinger band is not normal distribution to close price.
     Moving average deviation rate is normal distribution.
 
-    This indicator is draw Moving average deviation rate and fill area 2σ standard devition.
-    If it exceeds 2σ, it is a trading opportunity.
+    This indicator will define upper and lower bounds based of stds-σ standard deviation of rate column.
+    If it exceeds stds-σ, it is a trading opportunity.
 
     """
 
