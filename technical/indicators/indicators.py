@@ -1033,7 +1033,7 @@ def MADR(dataframe, length=21, stds=2):
     But the bollinger band is not normal distribution to close price.
     Moving average deviation rate is normal distribution.
 
-    This indicator will define upper and lower boundaries based of stds-σ standard deviation.
+    This indicator will define upper and lower bounds based of stds-σ standard deviation of rate column.
     If it exceeds stds-σ, it is a trading opportunity.
 
     """
