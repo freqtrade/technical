@@ -1019,7 +1019,7 @@ def VIDYA(dataframe, length=9, select=True):
     return df["VIDYA"]
 
 
-def MADR(dataframe, length=21, stds=2, matype="sma"):
+def MADR(dataframe, length=21, stds_dist=2, matype="sma"):
     """
     Moving Averae Deviation RAte just like bollinger bands ...
     Source: https://tradingview.com/script/25KCgL9H/
@@ -1056,24 +1056,24 @@ def MADR(dataframe, length=21, stds=2, matype="sma"):
     """
 
     if matype.lower() == "sma":
-        ma = ta.SMA(df, timeperiod=length)
+        ma_close = ta.SMA(df, timeperiod=length)
     elif matype.lower() == "ema":
-        ma = ta.EMA(df, timeperiod=length)
+        ma_close = ta.EMA(df, timeperiod=length)
     else:
-        ma = ta.SMA(df, timeperiod=length)
+        ma_close = ta.SMA(df, timeperiod=length)
 
-    df["rate"] = ((df["close"] / ma) * 100) - 100
+    df["rate"] = ((df["close"] / ma_close) * 100) - 100
 
     if matype.lower() == "sma":
-        df["stdcenter"] = ta.SMA(df.rate, timeperiod=(length * stds))
+        df["stdcenter"] = ta.SMA(df.rate, timeperiod=(length * stds_dist))
     elif matype.lower() == "ema":
-        df["stdcenter"] = ta.EMA(df.rate, timeperiod=(length * stds))
+        df["stdcenter"] = ta.EMA(df.rate, timeperiod=(length * stds_dist))
     else:
-        df["stdcenter"] = ta.SMA(df.rate, timeperiod=(length * stds))
+        df["stdcenter"] = ta.SMA(df.rate, timeperiod=(length * stds_dist))
 
-    std = ta.STDDEV(df.rate, timeperiod=(length * stds))
-    df["plusdev"] = df["stdcenter"] + (std * stds)
-    df["minusdev"] = df["stdcenter"] - (std * stds)
+    std = ta.STDDEV(df.rate, timeperiod=(length * stds_dist))
+    df["plusdev"] = df["stdcenter"] + (std * stds_dist)
+    df["minusdev"] = df["stdcenter"] - (std * stds_dist)
     # return stdcenter , plusdev , minusdev, rate
     return df
 
