@@ -1061,7 +1061,7 @@ def MADR(dataframe, length=21, stds=2, matype="sma"):
         ma = ta.EMA(df, timeperiod=length)
     else:
         ma = ta.SMA(df, timeperiod=length)
-    
+
     df["rate"] = ((df["close"] / ma) * 100) - 100
 
     if matype.lower() == "sma":
@@ -1070,7 +1070,7 @@ def MADR(dataframe, length=21, stds=2, matype="sma"):
         df["stdcenter"] = ta.EMA(df.rate, timeperiod=(length * stds))
     else:
         df["stdcenter"] = ta.SMA(df.rate, timeperiod=(length * stds))
-    
+
     std = ta.STDDEV(df.rate, timeperiod=(length * stds))
     df["plusdev"] = df["stdcenter"] + (std * stds)
     df["minusdev"] = df["stdcenter"] - (std * stds)
