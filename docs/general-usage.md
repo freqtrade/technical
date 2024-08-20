@@ -46,9 +46,8 @@ def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame
     
     # The resulting dataframe will have 5 resampled columns in addition to the regular columns,
     # following the template resample_<interval_in_minutes>_<orig_column_name>.
-    # So in the above example:
+    # So in the above example, the column names would be:
     # ['resample_240_open', 'resample_240_high', 'resample_240_low','resample_240_close', 'resample_240_cmf']
 
     return dataframe
 ```
-
