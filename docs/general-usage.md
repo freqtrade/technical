@@ -51,3 +51,4 @@ def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame
 
     return dataframe
 ```
+
