@@ -3,16 +3,13 @@
     <url>
          <loc>https://technical.freqtrade.io/main/</loc>
          <lastmod>2024-09-02</lastmod>
-         <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://technical.freqtrade.io/main/developer/</loc>
          <lastmod>2024-09-02</lastmod>
-         <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://technical.freqtrade.io/main/general-usage/</loc>
          <lastmod>2024-09-02</lastmod>
-         <changefreq>daily</changefreq>
     </url>
 </urlset>
