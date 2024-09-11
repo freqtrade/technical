@@ -1299,6 +1299,8 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
 def tv_alma(dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int = 0, field="close") -> DataFrame:
     """
     Source: Tradingview "Arnaud Legoux Moving Average"
+    Links:  https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma
+            https://www.tradingview.com/support/solutions/43000594683/
     Pinescript Author: Arnaud Legoux and Dimitrios Douzis-Loukas
     Description:    Gaussian distribution that is shifted with 
                     a calculated offset in order for 
