@@ -105,4 +105,6 @@ So in the above example:
 We will happily add your custom indicators to this repo!
 Just clone this repository and implement your favorite indicator to use with Freqtrade and create a Pull Request.
 
+Please run both `ruff check .` and `ruff format .` before creating a PR to avoid unnecessary failures in CI.
+
 Have fun!
