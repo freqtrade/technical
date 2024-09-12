@@ -37,6 +37,7 @@ import technical.indicators as ti
         (ti.tema, [10], "series", None),
         # (ti.tv_hma, [], 'series', None),
         (ti.tv_wma, [], "df", ["tv_wma"]),
+        (ti.tv_alma, [], "series", None),
         (ti.vfi, [], "tuple", None),
         (ti.vpci, [], "series", None),
         (ti.vpcii, [], "series", None),

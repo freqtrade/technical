@@ -1345,4 +1345,4 @@ def tv_alma(
     weights /= weights.sum()  # Normalize the weights
 
     alma = np.convolve(dataframe[field], weights[::-1], mode="valid")
-    return np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan)
+    return Series(np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan))
