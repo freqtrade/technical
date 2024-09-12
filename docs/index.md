@@ -36,6 +36,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [MADR](https://www.tradingview.com/script/25KCgL9H/) - Moving Average Deviation Rate
 * [SSL](https://www.tradingview.com/script/xzIoaIJC-SSL-channel/) - SSL Channel
 * [PMAX](https://www.tradingview.com/script/sU9molfV/) - PMAX indicator
+* [ALMA](https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma) - Arnaud Legoux Moving Average
 
 ### Utilities
 
