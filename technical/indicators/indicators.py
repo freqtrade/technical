@@ -1296,16 +1296,19 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
 
     return dataframe
 
-def tv_alma(dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int = 0, field="close") -> DataFrame:
+
+def tv_alma(
+    dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int = 0, field="close"
+) -> DataFrame:
     """
     Source: Tradingview "Arnaud Legoux Moving Average"
     Links:  https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma
             https://www.tradingview.com/support/solutions/43000594683/
     Pinescript Author: Arnaud Legoux and Dimitrios Douzis-Loukas
-    Description:    Gaussian distribution that is shifted with 
-                    a calculated offset in order for 
-                    the average to be biased towards 
-                    more recent days, instead of more 
+    Description:    Gaussian distribution that is shifted with
+                    a calculated offset in order for
+                    the average to be biased towards
+                    more recent days, instead of more
                     evenly centered on the window.
 
     Args :
@@ -1341,5 +1344,5 @@ def tv_alma(dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int =
     weights = np.exp(-np.power(indices - m, 2) / (2 * np.power(s, 2)))
     weights /= weights.sum()  # Normalize the weights
 
-    alma = np.convolve(dataframe[field], weights[::-1], mode='valid')
-    return np.pad(alma, (length - 1, 0), mode='constant', constant_values=np.nan)
+    alma = np.convolve(dataframe[field], weights[::-1], mode="valid")
+    return np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan)
