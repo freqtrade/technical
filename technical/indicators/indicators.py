@@ -1295,3 +1295,54 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     dataframe.drop("h", inplace=True, axis=1)
 
     return dataframe
+
+
+def tv_alma(
+    dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int = 0, field="close"
+) -> DataFrame:
+    """
+    Source: Tradingview "Arnaud Legoux Moving Average"
+    Links:  https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma
+            https://www.tradingview.com/support/solutions/43000594683/
+    Pinescript Author: Arnaud Legoux and Dimitrios Douzis-Loukas
+    Description:    Gaussian distribution that is shifted with
+                    a calculated offset in order for
+                    the average to be biased towards
+                    more recent days, instead of more
+                    evenly centered on the window.
+
+    Args :
+        dataframe : Pandas Dataframe
+        length  : ALMA windowframe
+        offset  : Shift
+        sigma   : Gaussian Smoothing
+        field   : Field to use for the calculation
+
+    Returns :
+        dataframe : Series of ALMA values
+    """
+
+    """ This is simple computation way, just for reference """
+    # sigma = sigma or 1e-10
+    # m = offset * (length - 1)
+    # s = length / sigma
+    # norm = 0.0
+    # sum = 0.0
+    # for i in range(length - 1):
+    #     weight = np.exp(-1 * np.power(i - m, 2) / (2 * np.power(s, 2)))
+    #     norm += weight
+    #     sum += dataframe[field].shift(length - i - 1) * weight
+    # return sum / norm
+
+    """ Vectorized method """
+    sigma = sigma or 1e-10
+
+    m = offset * (length - 1)
+    s = length / sigma
+
+    indices = np.arange(length)
+    weights = np.exp(-np.power(indices - m, 2) / (2 * np.power(s, 2)))
+    weights /= weights.sum()  # Normalize the weights
+
+    alma = np.convolve(dataframe[field], weights[::-1], mode="valid")
+    return np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan)
