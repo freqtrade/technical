@@ -1,5 +1,5 @@
 import pytest
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, set_option
 
 import technical.indicators as ti
 
@@ -47,26 +47,39 @@ import technical.indicators as ti
     ],
 )
 def test_indicators_generic_interface(
-    function, args, responsetype, new_column_names, testdata_1m_btc
+    function, args, responsetype, new_column_names, testdata_1m_btc, snapshot
 ):
     assert 13680 == len(testdata_1m_btc)
     # Ensure all builtin indicators have the same interface
-    res = function(testdata_1m_btc.iloc[-1000:].copy(), *args)
+    input_df = testdata_1m_btc.iloc[-1000:].copy()
+    res = function(input_df, *args)
 
+    final_result = None
     if responsetype == "tuple":
         assert isinstance(res, tuple)
         assert len(res[0]) == 1000
         assert len(res[1]) == 1000
+        final_result = input_df
+        for i, x in enumerate(res):
+            final_result.loc[:, f"{function.__name__}_{i}"] = x
+
     elif responsetype == "dict":
         assert isinstance(res, dict)
         assert len(res["tenkan_sen"]) == 1000
+        final_result = input_df
+
+        for k, v in res.items():
+            final_result.loc[:, f"{function.__name__}_{k}"] = v
     elif responsetype == "series":
         assert isinstance(res, Series)
         assert len(res) == 1000
+        final_result = input_df
+        final_result.loc[:, function.__name__] = res
     elif responsetype == "df":
         # Result is dataframe
         assert isinstance(res, DataFrame)
         assert len(res) == 1000
+        final_result = res
         if len(new_column_names) > 0:
             assert len(res.columns) == len(new_column_names) + 6
             default_columns = ["date", "open", "high", "low", "close", "volume"]
@@ -76,3 +89,11 @@ def test_indicators_generic_interface(
             assert all([x in res.columns for x in new_column_names])
     else:
         assert False
+
+    # Ensure full output is serialized
+    # can probably be removed once https://github.com/syrupy-project/syrupy/issues/887
+    # is implemented
+    set_option("display.max_rows", 2000)
+    assert isinstance(final_result, DataFrame)
+    assert len(final_result) == 1000
+    assert snapshot == final_result
