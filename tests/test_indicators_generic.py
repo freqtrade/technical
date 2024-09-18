@@ -95,5 +95,5 @@ def test_indicators_generic_interface(
     # is implemented
     assert isinstance(final_result, DataFrame)
     assert len(final_result) == 1000
-    csv_string = final_result.to_csv(index=False, float_format="%.10f")
+    csv_string = final_result.to_csv(index=False, float_format="%.10g")
     assert snapshot == csv_string
