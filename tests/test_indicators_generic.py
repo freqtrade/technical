@@ -93,7 +93,7 @@ def test_indicators_generic_interface(
     # Ensure full output is serialized
     # can probably be removed once https://github.com/syrupy-project/syrupy/issues/887
     # is implemented
-    set_option("display.max_rows", 2000)
     assert isinstance(final_result, DataFrame)
     assert len(final_result) == 1000
-    assert snapshot == final_result
+    csv_string = final_result.to_csv(index=False)
+    assert snapshot == csv_string
