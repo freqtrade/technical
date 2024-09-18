@@ -41,8 +41,8 @@ def bollinger_bands(
         ma = ta.SMA(df[field], period)
 
     std = df[field].rolling(period).std()
-    upper = ma + std * stdv
-    lower = ma - std * stdv
+    upper = ma + (std * stdv)
+    lower = ma - (std * stdv)
 
     df[f"{colum_prefix}_lower"] = lower
     df[f"{colum_prefix}_middle"] = ma
