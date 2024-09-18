@@ -1,5 +1,5 @@
 import pytest
-from pandas import DataFrame, Series, set_option
+from pandas import DataFrame, Series
 
 import technical.indicators as ti
 
@@ -95,5 +95,5 @@ def test_indicators_generic_interface(
     # is implemented
     assert isinstance(final_result, DataFrame)
     assert len(final_result) == 1000
-    csv_string = final_result.to_csv(index=False)
+    csv_string = final_result.to_csv(index=False, float_format="%.10f")
     assert snapshot == csv_string
