@@ -1,5 +1,5 @@
 import pytest
-from pandas import DataFrame, Series, set_option
+from pandas import DataFrame, Series
 
 import technical.indicators as ti
 
