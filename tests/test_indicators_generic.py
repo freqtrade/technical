@@ -1,5 +1,5 @@
 import pytest
-from pandas import DataFrame, Series, set_option
+from pandas import DataFrame, Series
 
 import technical.indicators as ti
 
@@ -93,7 +93,7 @@ def test_indicators_generic_interface(
     # Ensure full output is serialized
     # can probably be removed once https://github.com/syrupy-project/syrupy/issues/887
     # is implemented
-    set_option("display.max_rows", 2000)
     assert isinstance(final_result, DataFrame)
     assert len(final_result) == 1000
-    assert snapshot == final_result
+    csv_string = final_result.to_csv(index=False, float_format="%.10g")
+    assert snapshot == csv_string
