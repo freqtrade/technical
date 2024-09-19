@@ -1247,7 +1247,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     return df
 
 
-def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
+def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> Series:
     """
     Source: Tradingview "Moving Average Weighted"
     Pinescript Author: Unknown
@@ -1258,8 +1258,13 @@ def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
         field : Field to use for the calculation
 
     Returns :
-        dataframe : Pandas DataFrame with new columns 'tv_wma'
+        series : Pandas Series
     """
+
+    if isinstance(dataframe, Series):
+        data = dataframe
+    else:
+        data = dataframe[field]
 
     norm = 0
     sum = 0
@@ -1267,13 +1272,13 @@ def tv_wma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
     for i in range(1, length - 1):
         weight = (length - i) * length
         norm = norm + weight
-        sum = sum + dataframe[field].shift(i) * weight
+        sum = sum + data.shift(i) * weight
 
-    dataframe["tv_wma"] = sum / norm
-    return dataframe
+    tv_wma = sum / norm if (norm != 0) else 0
+    return tv_wma
 
 
-def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
+def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> Series:
     """
     Source: Tradingview "Hull Moving Average"
     Pinescript Author: Unknown
@@ -1284,17 +1289,19 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> DataFrame:
         field : Field to use for the calculation
 
     Returns :
-        dataframe : Pandas DataFrame with new columns 'tv_hma'
+        series : Pandas Series
     """
 
-    dataframe["h"] = 2 * tv_wma(dataframe, math.floor(length / 2), field) - tv_wma(
-        dataframe, length, field=field
-    )
+    if isinstance(dataframe, Series):
+        data = dataframe
+    else:
+        data = dataframe[field]
 
-    dataframe["tv_hma"] = tv_wma(dataframe, math.floor(math.sqrt(length)), field="h")
-    dataframe.drop("h", inplace=True, axis=1)
+    h = 2 * tv_wma(data, math.floor(length / 2)) - tv_wma(data, length)
 
-    return dataframe
+    tv_hma = tv_wma(h, math.floor(math.sqrt(length)))
+
+    return tv_hma
 
 
 def tv_alma(
