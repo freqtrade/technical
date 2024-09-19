@@ -2,6 +2,7 @@
 Overlap studies
 """
 
+import talib.abstract as ta
 from numpy.core.records import ndarray
 from pandas import DataFrame, Series
 
@@ -18,19 +19,36 @@ def bollinger_bands(
     stdv: int = 2,
     field: str = "close",
     colum_prefix: str = "bb",
+    ma_type: str = "sma",
 ) -> DataFrame:
     """
-    Bollinger bands, using SMA.
-    Modifies original dataframe and returns dataframe with the following 3 columns
+    Bollinger bands, using Moving Average.
+    Copying original dataframe and returns dataframe with the following 3 columns
         <column_prefix>_lower, <column_prefix>_middle, and <column_prefix>_upper,
     """
-    rolling_mean = dataframe[field].rolling(window=period).mean()
-    rolling_std = dataframe[field].rolling(window=period).std(ddof=0)
-    dataframe[f"{colum_prefix}_lower"] = rolling_mean - (rolling_std * stdv)
-    dataframe[f"{colum_prefix}_middle"] = rolling_mean
-    dataframe[f"{colum_prefix}_upper"] = rolling_mean + (rolling_std * stdv)
 
-    return dataframe
+    df = dataframe.copy()
+
+    if ma_type.lower() == "sma":
+        ma = ta.SMA(df[field], period)
+    elif ma_type.lower() == "ema":
+        ma = ta.EMA(df[field], period)
+    elif ma_type.lower() == "dema":
+        ma = ta.DEMA(df[field], period)
+    elif ma_type.lower() == "tema":
+        ma = ta.TEMA(df[field], period)
+    else:
+        ma = ta.SMA(df[field], period)
+
+    std = df[field].rolling(period).std()
+    upper = ma + (std * stdv)
+    lower = ma - (std * stdv)
+
+    df[f"{colum_prefix}_lower"] = lower
+    df[f"{colum_prefix}_middle"] = ma
+    df[f"{colum_prefix}_upper"] = upper
+
+    return df
 
 
 # DEMA                 Double Exponential Moving Average
