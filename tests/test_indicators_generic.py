@@ -35,7 +35,7 @@ import technical.indicators as ti
         (ti.td_sequential, [], "df", ["TD_count"]),
         (ti.dema, [10], "series", None),
         (ti.tema, [10], "series", None),
-        (ti.tv_hma, [10], 'series', None),
+        (ti.tv_hma, [10], "series", None),
         (ti.tv_wma, [10], "series", None),
         (ti.tv_alma, [], "series", None),
         (ti.vfi, [], "tuple", None),
