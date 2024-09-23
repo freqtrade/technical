@@ -1380,7 +1380,7 @@ def tv_trama(dataframe, length: int = 99, field="close"):
     hh_or_ll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
 
     tc = np.zeros(df_len)
-    tc[1:] = np.nan_to_num(ta.SMA(hh_or_ll.astype(float), length) ** 2)
+    tc[:-1] = np.nan_to_num(ta.SMA(hh_or_ll.astype(float), length) ** 2)
 
     ama = np.zeros(df_len)
     ama[0] = dataframe[field][0]
