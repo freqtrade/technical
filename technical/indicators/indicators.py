@@ -1364,7 +1364,7 @@ def tv_trama(dataframe, length: int = 99, field="close"):
 
     Args :
         dataframe : Pandas Dataframe
-        timeperiod : TRAMA length
+        timeperiod : Period of the indicator
         source : Field to use for the calculation
 
     Returns :
