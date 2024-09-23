@@ -1354,6 +1354,7 @@ def tv_alma(
     alma = np.convolve(dataframe[field], weights[::-1], mode="valid")
     return Series(np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan))
 
+
 def tv_trama(dataframe, length: int = 99, field="close"):
     """
     Name : Tradingview "Trend Regularity Adaptive Moving Average"
