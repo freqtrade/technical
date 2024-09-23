@@ -1372,7 +1372,7 @@ def tv_trama(dataframe, length: int = 99, field="close"):
     """
 
     import talib.abstract as ta
-    
+
     df_len = len(dataframe)
 
     hh = ta.MAX(dataframe["high"], length)
