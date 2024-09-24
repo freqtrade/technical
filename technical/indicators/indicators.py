@@ -1355,7 +1355,7 @@ def tv_alma(
     return Series(np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan))
 
 
-def tv_trama(dataframe, length: int = 99, field="close"):
+def tv_trama(dataframe: DataFrame, length: int = 99, field="close") -> DataFrame:
     """
     Name : Tradingview "Trend Regularity Adaptive Moving Average"
     Pinescript Author : LuxAlgo
