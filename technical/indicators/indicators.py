@@ -1306,7 +1306,7 @@ def tv_hma(dataframe: DataFrame, length: int = 9, field="close") -> Series:
 
 def tv_alma(
     dataframe: DataFrame, length: int = 8, offset: int = 0, sigma: int = 0, field="close"
-) -> DataFrame:
+) -> Series:
     """
     Source: Tradingview "Arnaud Legoux Moving Average"
     Links:  https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma
@@ -1326,7 +1326,7 @@ def tv_alma(
         field   : Field to use for the calculation
 
     Returns :
-        dataframe : Series of ALMA values
+        series : Series of ALMA values
     """
 
     """ This is simple computation way, just for reference """
