@@ -1353,3 +1353,38 @@ def tv_alma(
 
     alma = np.convolve(dataframe[field], weights[::-1], mode="valid")
     return Series(np.pad(alma, (length - 1, 0), mode="constant", constant_values=np.nan))
+
+
+def tv_trama(dataframe: DataFrame, length: int = 99, field="close") -> Series:
+    """
+    Name : Tradingview "Trend Regularity Adaptive Moving Average"
+    Pinescript Author : LuxAlgo
+    Link :
+        tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo/
+
+    Args :
+        dataframe : Pandas Dataframe
+        length : Period of the indicator
+        field : Field to use for the calculation
+
+    Returns :
+        series : 'TRAMA' values
+    """
+
+    import talib.abstract as ta
+
+    df_len = len(dataframe)
+
+    hh = ta.MAX(dataframe["high"], length)
+    ll = ta.MIN(dataframe["low"], length)
+    hh_or_ll = np.where(np.diff(hh) > 0, 1, 0) + np.where(np.diff(ll) < 0, 1, 0)
+
+    tc = np.zeros(df_len)
+    tc[:-1] = np.nan_to_num(ta.SMA(hh_or_ll.astype(float), length) ** 2)
+
+    ama = np.zeros(df_len)
+    ama[0] = dataframe[field].iloc[0]
+    for i in range(1, df_len):
+        ama[i] = ama[i - 1] + tc[i - 1] * (dataframe[field].iloc[i] - ama[i - 1])
+
+    return Series(ama)
