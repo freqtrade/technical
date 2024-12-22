@@ -186,15 +186,9 @@ jobs:
           details: Technical CI
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-  deploy:
+  build:
     needs: [ test, test_windows ]
     runs-on: ubuntu-22.04
-    if: (github.event_name == 'push' || github.event_name == 'release') && github.repository == 'freqtrade/technical'
-    environment:
-      name: release
-      url: https://pypi.org/p/technical
-    permissions:
-      id-token: write
     steps:
     - uses: actions/checkout@v4
 
@@ -214,15 +208,60 @@ jobs:
         pip install -U build
         python -m build --sdist --wheel
 
+    - name: Upload artifacts 📦
+      uses: actions/upload-artifact@v4
+      with:
+        name: technical
+        path: |
+          dist
+        retention-days: 10
+
+  deploy-test-pypi:
+    if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
+    needs: [ build ]
+    runs-on: ubuntu-22.04
+    environment:
+      name: pypi-test
+      url: https://test.pypi.org/p/technical
+    permissions:
+      id-token: write
+
+    steps:
+
+    - name: Download artifact  📦
+      uses: actions/download-artifact@v4
+      with:
+        name: technical
+        path: dist
+        merge-multiple: true
+
     - name: Publish to PyPI (Test)
       uses: pypa/gh-action-pypi-publish@v1.12.3
       if: (github.event_name == 'release')
       with:
         repository-url: https://test.pypi.org/legacy/
 
+  deploy-pypi:
+    if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
+    needs: [ build ]
+    runs-on: ubuntu-22.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/technical
+    permissions:
+      id-token: write
+
+    steps:
+
+    - name: Download artifact  📦
+      uses: actions/download-artifact@v4
+      with:
+        name: technical
+        path: dist
+        merge-multiple: true
+
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.12.3
-      if: (github.event_name == 'release')
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
