@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  test:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -110,7 +110,7 @@ jobs:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
 
-  build_windows:
+  test_windows:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -147,7 +147,6 @@ jobs:
 
         ./build_helpers/install_windows.ps1
 
-
     - name: Tests
       run: |
         pytest --random-order --cov=technical --cov-config=.coveragerc tests
@@ -166,7 +165,7 @@ jobs:
 
   # Notify on discord only once - when CI completes (and after deploy) in case it's successfull
   notify-complete:
-    needs: [ build, build_windows ]
+    needs: [ test, test_windows ]
     runs-on: ubuntu-latest
     # Discord notification can't handle schedule events
     if: (github.event_name != 'schedule')
@@ -188,7 +187,7 @@ jobs:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   deploy:
-    needs: [ build, build_windows ]
+    needs: [ test, test_windows ]
     runs-on: ubuntu-22.04
     if: (github.event_name == 'push' || github.event_name == 'release') && github.repository == 'freqtrade/technical'
     environment:
