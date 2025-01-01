@@ -51,7 +51,7 @@ def heikinashi(bars):
     )
     result["candle"] = np.vectorize(_candle_type)(result["open"], result["close"])
     result["reversal"] = np.vectorize(_reversal)(
-        result["candle"], shift(result["candle"], 1, cval=np.NAN)
+        result["candle"], shift(result["candle"], 1, cval=np.nan)
     )
 
     result["lower_wick"] = np.vectorize(_wick_length)(

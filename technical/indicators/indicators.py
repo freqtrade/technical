@@ -1110,7 +1110,7 @@ def SSLChannels(dataframe, length=10, mode="sma"):
         ma_high = ta.EMA(df["high"], length)
         ma_low = ta.EMA(df["low"], length)
 
-    df["hlv"] = np.where(df["close"] > ma_high, 1, np.where(df["close"] < ma_low, -1, np.NAN))
+    df["hlv"] = np.where(df["close"] > ma_high, 1, np.where(df["close"] < ma_low, -1, np.nan))
     df["hlv"] = df["hlv"].ffill()
 
     df["sslDown"] = np.where(df["hlv"] < 0, ma_high, ma_low)
@@ -1237,7 +1237,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
         )
 
     # Mark the trend direction up/down
-    df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), "down", "up"), np.NaN)
+    df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), "down", "up"), np.nan)
     # Remove basic and final bands from the columns
     df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb", mavalue], inplace=True, axis=1)
 
