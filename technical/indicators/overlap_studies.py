@@ -3,7 +3,7 @@ Overlap studies
 """
 
 import talib.abstract as ta
-from numpy.core.records import ndarray
+from numpy import ndarray
 from pandas import DataFrame, Series
 
 ########################################

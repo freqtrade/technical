@@ -4,7 +4,7 @@ Volatility indicator functions
 
 import numpy as np
 import pandas as pd
-from numpy.core.records import ndarray
+from numpy import ndarray
 
 from technical.vendor.qtpylib.indicators import atr  # noqa: F401
 

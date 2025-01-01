@@ -6,7 +6,7 @@ which are based on third party or custom libraries
 import math
 
 import numpy as np
-from numpy.core.records import ndarray
+from numpy import ndarray
 from pandas import DataFrame, Series
 
 from .overlap_studies import sma, vwma
