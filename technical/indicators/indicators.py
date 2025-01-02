@@ -1237,7 +1237,11 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
         )
 
     # Mark the trend direction up/down
-    df[pmx] = np.where((df[pm] > 0.00), np.where((df[mavalue] < df[pm]), "down", "up"), np.nan)
+    df[pmx] = np.where(
+        df[pm] > 0.00,
+        np.where(df[mavalue] < df[pm], "down", "up"),
+        "nan",
+    )
     # Remove basic and final bands from the columns
     df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb", mavalue], inplace=True, axis=1)
 
