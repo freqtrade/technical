@@ -468,7 +468,7 @@
 <h1 id="general-usage">General Usage<a class="headerlink" href="#general-usage" title="Permanent link">&para;</a></h1>
 <p>After installation, technical can be imported and used in your code.</p>
 <p>We recommend to import freqtrade.indicators as ftt to avoid conflicts with other libraries, and to help determining where indicator calculations came from.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">technical.indicators</span> <span class="k">as</span> <span class="nn">ftt</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">technical.indicators</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ftt</span>
 
 <span class="c1"># The indicator calculations can now be used as follows:</span>
 
@@ -483,13 +483,13 @@ Depending on the indicator, additional parameters may be required.</p>
 <h2 id="resample-to-interval">Resample to interval<a class="headerlink" href="#resample-to-interval" title="Permanent link">&para;</a></h2>
 <p>The helper methods <code>resample_to_interval</code> and <code>resampled_merge</code> are used to resample a dataframe to a higher timeframe and merge the resampled dataframe back into the original dataframe.
 This is an alternative approach to using informative pairs and reduces the amount of data needed from the exchange (you don't need to download 4h candles in the below example).</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
-<span class="kn">from</span> <span class="nn">technical.util</span> <span class="kn">import</span> <span class="n">resample_to_interval</span><span class="p">,</span> <span class="n">resampled_merge</span>
-<span class="kn">import</span> <span class="nn">technical.indicators</span> <span class="k">as</span> <span class="nn">ftt</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">technical.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample_to_interval</span><span class="p">,</span> <span class="n">resampled_merge</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">technical.indicators</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ftt</span>
 
 <span class="n">timeframe</span> <span class="o">=</span> <span class="s1">&#39;1h&#39;</span>
 
-<span class="k">def</span> <span class="nf">populate_indicators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">populate_indicators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 
     <span class="c1"># Resampling to 4h:</span>
     <span class="n">dataframe_long</span> <span class="o">=</span> <span class="n">resample_to_interval</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>  <span class="c1"># 240 = 4 * 60 = 4h</span>

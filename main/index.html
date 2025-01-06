@@ -585,8 +585,8 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/freqtrade/technical
 </code></pre></div>
 <p>and then import the required packages</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">technical.indicators</span> <span class="kn">import</span> <span class="n">accumulation_distribution</span><span class="p">,</span> <span class="o">...</span>
-<span class="kn">from</span> <span class="nn">technical.util</span> <span class="kn">import</span> <span class="n">resample_to_interval</span><span class="p">,</span> <span class="n">resampled_merge</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">technical.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">accumulation_distribution</span><span class="p">,</span> <span class="o">...</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">technical.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample_to_interval</span><span class="p">,</span> <span class="n">resampled_merge</span>
 
 <span class="c1"># Assuming 1h dataframe -resampling to 4h:</span>
 <span class="n">dataframe_long</span> <span class="o">=</span> <span class="n">resample_to_interval</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>  <span class="c1"># 240 = 4 * 60 = 4h</span>
