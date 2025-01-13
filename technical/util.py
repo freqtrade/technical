@@ -90,7 +90,7 @@ def resampled_merge(original: DataFrame, resampled: DataFrame, fill_na=True):
         )
     else:
         raise ValueError(
-            "Tried to merge a faster timeframe to a slower timeframe." "Upsampling is not possible."
+            "Tried to merge a faster timeframe to a slower timeframe. Upsampling is not possible."
         )
 
     # rename all the columns to the correct interval
