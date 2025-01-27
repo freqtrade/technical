@@ -236,7 +236,7 @@ jobs:
         merge-multiple: true
 
     - name: Publish to PyPI (Test)
-      uses: pypa/gh-action-pypi-publish@v1.12.3
+      uses: pypa/gh-action-pypi-publish@v1.12.4
       if: (github.event_name == 'release')
       with:
         repository-url: https://test.pypi.org/legacy/
@@ -261,7 +261,7 @@ jobs:
         merge-multiple: true
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.12.3
+      uses: pypa/gh-action-pypi-publish@v1.12.4
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@v1
