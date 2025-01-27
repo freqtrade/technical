@@ -77,7 +77,7 @@ class Consensus:
         dataframe = self.dataframe
         scores = dataframe.filter(regex="^(buy|sell)_.*").fillna(0)
 
-        # computes a score between 0 and 100. The closer to 100 the more aggrement
+        # computes a score between 0 and 100. The closer to 100 the more agreement
         dataframe.loc[:, f"{prefix}_score_sell"] = (
             scores.filter(regex="^(sell)_.*").sum(axis=1) / self.sell_weights * 100
         )
