@@ -9,4 +9,4 @@ syrupy==4.8.1
 
 ruff==0.9.3
 isort==5.13.2
-codespell==2.4.0
+codespell==2.4.1
