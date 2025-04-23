@@ -177,7 +177,7 @@ jobs:
     steps:
     - name: Check user permission
       id: check
-      uses: scherermichael-oss/action-has-permission@1.0.6
+      uses: scherermichael-oss/action-has-permission@136e061bfe093832d87f090dd768e14e27a740d3 # 1.0.6
       with:
         required-permission: write
       env:
