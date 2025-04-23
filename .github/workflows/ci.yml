@@ -17,6 +17,9 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}"
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test:
 
@@ -107,9 +110,9 @@ jobs:
       uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112 #v1.0.4
       if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: error
-          details: Technical CI failed on ${{ matrix.os }}
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        severity: error
+        details: Technical CI failed on ${{ matrix.os }}
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
 
   test_windows:
@@ -164,9 +167,9 @@ jobs:
       uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112 #v1.0.4
       if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: error
-          details: Technical CI failed on ${{ matrix.os }}
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        severity: error
+        details: Technical CI failed on ${{ matrix.os }}
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   # Notify on discord only once - when CI completes (and after deploy) in case it's successfull
   notify-complete:
@@ -196,6 +199,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
 
     - name: Set up Python
       uses: actions/setup-python@v5.1.1
