@@ -27,7 +27,10 @@ jobs:
     strategy:
       matrix:
         os: [ "ubuntu-22.04", "ubuntu-24.04", "macos-13", "macos-14", "macos-15" ]
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        exclude:
+        - os: macos-13
+          python-version: "3.13"
 
     steps:
     - uses: actions/checkout@v4
@@ -116,7 +119,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - uses: actions/checkout@v4
