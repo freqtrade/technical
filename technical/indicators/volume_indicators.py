@@ -15,7 +15,7 @@ Volume indicators
 
 # Other Volume Indicator Functions
 def chaikin_money_flow(dataframe, period=21):
-    mfm = (dataframe["close"] - dataframe["low"]) - (dataframe["high"] - dataframe["close"]) / (
+    mfm = ((dataframe["close"] - dataframe["low"]) - (dataframe["high"] - dataframe["close"])) / (
         dataframe["high"] - dataframe["low"]
     )
     mfv = mfm * dataframe["volume"]
