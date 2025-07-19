@@ -11,7 +11,7 @@ on:
 
 jobs:
   zizmor:
-    name: zizmor latest via PyPI
+    name: Run zizmor 🌈
     runs-on: ubuntu-latest
     permissions:
       security-events: write
