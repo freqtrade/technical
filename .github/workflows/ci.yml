@@ -63,24 +63,9 @@ jobs:
         path: ~/Library/Caches/pip
         key: test-${{ matrix.os }}-${{ matrix.python-version }}-pip
 
-    - name: TA binary *nix
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        wget https://github.com/freqtrade/freqtrade/raw/develop/build_helpers/ta-lib-0.4.0-src.tar.gz
-        tar zxvf ta-lib-0.4.0-src.tar.gz
-        cd ta-lib
-        ./configure --prefix ${HOME}/dependencies/
-        make
-        which sudo && sudo make install || make bigip_software_install
-        cd ..
-        rm -rf ta-lib/
-
     - name: Installation - *nix
       run: |
         python -m pip install --upgrade pip
-        export LD_LIBRARY_PATH=${HOME}/dependencies/lib:$LD_LIBRARY_PATH
-        export TA_LIBRARY_PATH=${HOME}/dependencies/lib
-        export TA_INCLUDE_PATH=${HOME}/dependencies/include
         pip install -r requirements-dev.txt
         pip install -e .
 
@@ -138,25 +123,19 @@ jobs:
         path: ~\AppData\Local\pip\Cache
         key: ${{ matrix.os }}-${{ matrix.python-version }}-pip
 
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-        repository: freqtrade/freqtrade
-        path: './freqtrade_tmp'
-
-    - name: Installation (uses freqtrade dependencies)
+    - name: Installation
       run: |
-        cp -r ./freqtrade_tmp/build_helpers .
-
-        ./build_helpers/install_windows.ps1
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
 
     - name: Tests
       run: |
-        pytest --random-order --cov=technical --cov-config=.coveragerc tests
+        pytest --random-order
 
     - name: Run Ruff
       run: |
-        ruff check --output-format=github technical tests
+        ruff check --output-format=github .
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
