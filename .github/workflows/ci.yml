@@ -108,6 +108,7 @@ jobs:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   build:
+    name: Build Python 🐍 distribution 📦
     needs: [ test ]
     runs-on: ubuntu-22.04
     steps:
@@ -150,6 +151,7 @@ jobs:
         retention-days: 10
 
   deploy-test-pypi:
+    name: "Publish Python 🐍 distribution 📦 to TestPyPI"
     if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
     needs: [ build ]
     runs-on: ubuntu-22.04
@@ -175,6 +177,7 @@ jobs:
         repository-url: https://test.pypi.org/legacy/
 
   deploy-pypi:
+    name: "Publish Python 🐍 distribution 📦 to PyPI"
     if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
     needs: [ build ]
     runs-on: ubuntu-22.04
