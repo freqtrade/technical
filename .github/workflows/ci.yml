@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   test:
-
+    name: Tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
