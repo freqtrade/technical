@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ "ubuntu-22.04", "ubuntu-24.04", "macos-13", "macos-14", "macos-15" ]
+        os: [ "ubuntu-22.04", "ubuntu-24.04", "macos-13", "macos-14", "macos-15", "windows-2022", "windows-2025" ]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
         exclude:
         - os: macos-13
@@ -42,32 +42,19 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Cache_dependencies
-      uses: actions/cache@v4
-      id: cache
+    - name: Install uv
+      uses: astral-sh/setup-uv@4959332f0f014c5280e7eac8b70c90cb574c9f9b # v6.6.0
       with:
-        path: ~/dependencies/
-        key: ${{ matrix.os }}-dependencies
-
-    - name: pip cache (linux)
-      uses: actions/cache@v4
-      if: startsWith(matrix.os, 'ubuntu')
-      with:
-        path: ~/.cache/pip
-        key: test-${{ matrix.os }}-${{ matrix.python-version }}-pip
-
-    - name: pip cache (macOS)
-      uses: actions/cache@v4
-      if: startsWith(matrix.os, 'macOS')
-      with:
-        path: ~/Library/Caches/pip
-        key: test-${{ matrix.os }}-${{ matrix.python-version }}-pip
+        activate-environment: true
+        enable-cache: true
+        python-version: ${{ matrix.python-version }}
+        cache-dependency-glob: "requirements**.txt"
+        cache-suffix: "${{ matrix.python-version }}"
 
     - name: Installation - *nix
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-dev.txt
-        pip install -e .
+        uv pip install -r requirements-dev.txt
+        uv pip install -e .
 
     - name: Tests
       run: |
@@ -97,57 +84,9 @@ jobs:
         details: Technical CI failed on ${{ matrix.os }}
         webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-
-  test_windows:
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ "windows-2022", "windows-2025" ]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
-
-    steps:
-    - uses: actions/checkout@v5
-      with:
-        persist-credentials: false
-
-    - name: Set up Python
-      uses: actions/setup-python@v5.1.1
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Pip cache (Windows)
-      uses: actions/cache@v4
-      if: startsWith(runner.os, 'Windows')
-      with:
-        path: ~\AppData\Local\pip\Cache
-        key: ${{ matrix.os }}-${{ matrix.python-version }}-pip
-
-    - name: Installation
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-dev.txt
-        pip install -e .
-
-    - name: Tests
-      run: |
-        pytest --random-order
-
-    - name: Run Ruff
-      run: |
-        ruff check --output-format=github .
-
-    - name: Discord notification
-      uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
-      if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
-      with:
-        severity: error
-        details: Technical CI failed on ${{ matrix.os }}
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
   # Notify on discord only once - when CI completes (and after deploy) in case it's successfull
   notify-complete:
-    needs: [ test, test_windows ]
+    needs: [ test ]
     runs-on: ubuntu-latest
     # Discord notification can't handle schedule events
     if: (github.event_name != 'schedule')
@@ -169,7 +108,7 @@ jobs:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   build:
-    needs: [ test, test_windows ]
+    needs: [ test ]
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v5
