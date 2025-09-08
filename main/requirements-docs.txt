@@ -1,4 +1,4 @@
-markdown==3.8.2
+markdown==3.9
 mkdocs==1.6.1
 mkdocs-material==9.6.18
 mdx_truly_sane_lists==1.3
