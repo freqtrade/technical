@@ -1,7 +1,7 @@
 -r requirements.txt
 
 pytest==8.4.2
-pytest-cov==6.3.0
+pytest-cov==7.0.0
 pytest-mock==3.15.0
 pytest-random-order==1.2.0
 # Pytest snapshots
