@@ -7,6 +7,6 @@ pytest-random-order==1.2.0
 # Pytest snapshots
 syrupy==5.0.0
 
-ruff==0.13.2
+ruff==0.13.3
 isort==6.0.1
 codespell==2.4.1
