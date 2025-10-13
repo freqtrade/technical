@@ -8,5 +8,5 @@ pytest-random-order==1.2.0
 syrupy==5.0.0
 
 ruff==0.13.3
-isort==6.1.0
+isort==7.0.0
 codespell==2.4.1
