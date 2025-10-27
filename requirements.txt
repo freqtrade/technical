@@ -1,4 +1,4 @@
-TA-Lib==0.6.7
+TA-Lib==0.6.8
 pandas==2.3.3
 numpy==2.2.6
 # matplotlib
