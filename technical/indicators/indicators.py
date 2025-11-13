@@ -1011,7 +1011,7 @@ def VIDYA(dataframe, length=9, select=True):
 
     df["VIDYA"] = 0.0
     for i in range(length, len(df)):
-        df["VIDYA"].iat[i] = (
+        df.at[df.index[i], "VIDYA"] = (
             alpha * df["k"].iat[i] * df["close"].iat[i]
             + (1 - alpha * df["k"].iat[i]) * df["VIDYA"].iat[i - 1]
         )
@@ -1186,7 +1186,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     df["final_ub"] = 0.00
     df["final_lb"] = 0.00
     for i in range(period, len(df)):
-        df["final_ub"].iat[i] = (
+        df.at[df.index[i], "final_ub"] = (
             df["basic_ub"].iat[i]
             if (
                 df["basic_ub"].iat[i] < df["final_ub"].iat[i - 1]
@@ -1194,7 +1194,8 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
             )
             else df["final_ub"].iat[i - 1]
         )
-        df["final_lb"].iat[i] = (
+
+        df.at[df.index[i], "final_lb"] = (
             df["basic_lb"].iat[i]
             if (
                 df["basic_lb"].iat[i] > df["final_lb"].iat[i - 1]
@@ -1206,7 +1207,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noq
     # Set the Pmax value
     df[pm] = 0.00
     for i in range(period, len(df)):
-        df[pm].iat[i] = (
+        df.at[df.index[i], pm] = (
             df["final_ub"].iat[i]
             if (
                 df[pm].iat[i - 1] == df["final_ub"].iat[i - 1]
