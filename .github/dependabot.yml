@@ -3,7 +3,7 @@ updates:
 - package-ecosystem: pip
   directory: "/"
   cooldown:
-    default-days: 4
+    default-days: 7
   schedule:
     interval: weekly
   open-pull-requests-limit: 10
@@ -18,7 +18,7 @@ updates:
 - package-ecosystem: "github-actions"
   directory: "/"
   cooldown:
-    default-days: 4
+    default-days: 7
   schedule:
     interval: "weekly"
   open-pull-requests-limit: 10
