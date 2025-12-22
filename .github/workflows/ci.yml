@@ -161,7 +161,7 @@ jobs:
     steps:
 
     - name: Download artifact  📦
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: technical
         path: dist
@@ -187,7 +187,7 @@ jobs:
     steps:
 
     - name: Download artifact  📦
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: technical
         path: dist
