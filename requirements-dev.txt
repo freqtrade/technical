@@ -10,3 +10,5 @@ syrupy==5.0.0
 ruff==0.14.9
 isort==7.0.0
 codespell==2.4.1
+
+pip-audit==2.10.0
