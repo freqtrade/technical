@@ -81,7 +81,7 @@ jobs:
         details: Technical CI failed on ${{ matrix.os }}
         webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-  # Notify on discord only once - when CI completes (and after deploy) in case it's successfull
+  # Notify on discord only once - when CI completes (and after deploy) in case it's successful
   notify-complete:
     needs: [ test ]
     runs-on: ubuntu-latest
@@ -90,15 +90,16 @@ jobs:
     steps:
     - name: Check user permission
       id: check
-      uses: scherermichael-oss/action-has-permission@136e061bfe093832d87f090dd768e14e27a740d3 # 1.0.6
+      continue-on-error: true
+      uses: prince-chrismc/check-actor-permissions-action@d504e74ba31658f4cdf4fcfeb509d4c09736d88e # v3.0.2
       with:
-        required-permission: write
+        permission: "write"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Discord notification
       uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
-      if: always() && steps.check.outputs.has-permission && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+      if: steps.check.outputs.permitted == 'true' && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
           severity: info
           details: Technical CI
