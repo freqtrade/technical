@@ -4,5 +4,6 @@ from .indicators import *
 from .momentum import *
 from .overlap_studies import *
 from .price_transform import *
+from .supertrend import *
 from .volatility import *
 from .volume_indicators import *

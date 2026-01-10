@@ -44,6 +44,7 @@ import technical.indicators as ti
         (ti.vwma, [10], "series", None),
         (ti.vwmacd, [], "df", ["vwmacd", "signal", "hist"]),
         (ti.williams_percent, [], "series", None),
+        (ti.supertrend, [], "tuple", None),
     ],
 )
 def test_indicators_generic_interface(
