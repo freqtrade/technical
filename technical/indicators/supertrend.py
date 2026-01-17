@@ -1,6 +1,6 @@
 import numpy as np
 import talib.abstract as ta
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 
 def supertrend(dataframe: DataFrame, multiplier: int = 10, period: int = 3) -> DataFrame:
@@ -16,58 +16,44 @@ def supertrend(dataframe: DataFrame, multiplier: int = 10, period: int = 3) -> D
         `dataframe['ST'], dataframe['STX'] = supertrend(dataframe)`
     """
     df = dataframe.copy()
+    high = df["high"].values
+    low = df["low"].values
+    close = df["close"].values
+    length = len(df)
 
-    df["TR"] = ta.TRANGE(df)
-    df["ATR"] = ta.SMA(df["TR"], period)
+    # TR and ATR
+    tr = ta.TRANGE(df["high"], df["low"], df["close"])
+    atr = Series(tr).rolling(period).mean().to_numpy()
 
-    st = "ST_" + str(period) + "_" + str(multiplier)
-    stx = "STX_" + str(period) + "_" + str(multiplier)
+    # basic upper / lower bands
+    basic_ub = (high + low) / 2 + multiplier * atr
+    basic_lb = (high + low) / 2 - multiplier * atr
 
-    # Compute basic upper and lower bands
-    df["basic_ub"] = (df["high"] + df["low"]) / 2 + multiplier * df["ATR"]
-    df["basic_lb"] = (df["high"] + df["low"]) / 2 - multiplier * df["ATR"]
+    # final upper / lower bands
+    final_ub = np.zeros(length)
+    final_lb = np.zeros(length)
 
-    # Compute final upper and lower bands
-    df["final_ub"] = 0.00
-    df["final_lb"] = 0.00
-    for i in range(period, len(df)):
-        df["final_ub"].iat[i] = (
-            df["basic_ub"].iat[i]
-            if df["basic_ub"].iat[i] < df["final_ub"].iat[i - 1]
-            or df["close"].iat[i - 1] > df["final_ub"].iat[i - 1]
-            else df["final_ub"].iat[i - 1]
+    for i in range(period, length):
+        final_ub[i] = (
+            basic_ub[i]
+            if basic_ub[i] < final_ub[i - 1] or close[i - 1] > final_ub[i - 1]
+            else final_ub[i - 1]
         )
-        df["final_lb"].iat[i] = (
-            df["basic_lb"].iat[i]
-            if df["basic_lb"].iat[i] > df["final_lb"].iat[i - 1]
-            or df["close"].iat[i - 1] < df["final_lb"].iat[i - 1]
-            else df["final_lb"].iat[i - 1]
+        final_lb[i] = (
+            basic_lb[i]
+            if basic_lb[i] > final_lb[i - 1] or close[i - 1] < final_lb[i - 1]
+            else final_lb[i - 1]
         )
 
-    # Set the supertrend value
-    df[st] = 0.00
-    for i in range(period, len(df)):
-        df[st].iat[i] = (
-            df["final_ub"].iat[i]
-            if df[st].iat[i - 1] == df["final_ub"].iat[i - 1]
-            and df["close"].iat[i] <= df["final_ub"].iat[i]
-            else df["final_lb"].iat[i]
-            if df[st].iat[i - 1] == df["final_ub"].iat[i - 1]
-            and df["close"].iat[i] > df["final_ub"].iat[i]
-            else df["final_lb"].iat[i]
-            if df[st].iat[i - 1] == df["final_lb"].iat[i - 1]
-            and df["close"].iat[i] >= df["final_lb"].iat[i]
-            else df["final_ub"].iat[i]
-            if df[st].iat[i - 1] == df["final_lb"].iat[i - 1]
-            and df["close"].iat[i] < df["final_lb"].iat[i]
-            else 0.00
-        )
-    # Mark the trend direction up/down
-    df[stx] = np.where((df[st] > 0.00), np.where((df["close"] < df[st]), "down", "up"), None)
+    # ST calculation
+    st = np.zeros(length)
+    for i in range(period, length):
+        if st[i - 1] == final_ub[i - 1]:
+            st[i] = final_ub[i] if close[i] <= final_ub[i] else final_lb[i]
+        elif st[i - 1] == final_lb[i - 1]:
+            st[i] = final_lb[i] if close[i] >= final_lb[i] else final_ub[i]
 
-    # Remove basic and final bands from the columns
-    df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb"], inplace=True, axis=1)
+    # STX direction
+    stx = np.where(st > 0, np.where(close < st, "down", "up"), None)
 
-    df.fillna(0, inplace=True)
-
-    return df[st], df[stx]
+    return st, stx
