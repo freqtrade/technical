@@ -3,13 +3,13 @@ import talib.abstract as ta
 from pandas import DataFrame, Series
 
 
-def supertrend(dataframe: DataFrame, multiplier: int = 10, period: int = 3) -> DataFrame:
+def supertrend(dataframe: DataFrame, period: int = 10, multiplier: int = 3) -> DataFrame:
     """
     Calculate SuperTrend indicator
 
     :param dataframe: dataframe containing 'date', 'open', 'high', 'low', 'close', 'volume' columns
-    :param multiplier: multiplier for ATR
     :param period: period for ATR calculation
+    :param multiplier: multiplier for ATR
     :return: Tuple of two series, SuperTrend value and SuperTrend direction
 
     Usage:
