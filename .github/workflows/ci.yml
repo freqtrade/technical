@@ -83,6 +83,7 @@ jobs:
 
   # Notify on discord only once - when CI completes (and after deploy) in case it's successful
   notify-complete:
+    name: Notify Discord on CI completion
     needs: [ test ]
     runs-on: ubuntu-latest
     # Discord notification can't handle schedule events
