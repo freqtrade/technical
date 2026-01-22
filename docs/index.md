@@ -37,6 +37,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [SSL](https://www.tradingview.com/script/xzIoaIJC-SSL-channel/) - SSL Channel
 * [PMAX](https://www.tradingview.com/script/sU9molfV/) - PMAX indicator
 * [ALMA](https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma) - Arnaud Legoux Moving Average
+* [Supertrend](https://www.investopedia.com/supertrend-indicator-7976167) - A trend following indicator
 
 ### Utilities
 
