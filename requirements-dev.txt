@@ -8,7 +8,7 @@ pytest-random-order==1.2.0
 syrupy==5.1.0
 
 ruff==0.15.2
-isort==8.0.0
+isort==8.0.1
 codespell==2.4.1
 
 pip-audit==2.10.0
