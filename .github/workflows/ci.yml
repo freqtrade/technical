@@ -92,7 +92,7 @@ jobs:
 
     - name: Discord notification
       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
-      if: steps.check.outputs.permitted == 'true' && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+      if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }} # zizmor: ignore[secrets-outside-env] Intentionally not using environment variable.
           color: '#0000ff'  # blue
