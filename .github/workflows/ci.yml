@@ -74,12 +74,12 @@ jobs:
         isort --check .
 
     - name: Discord notification
-      uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
+      uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
       if: failure() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-        severity: error
-        details: Technical CI failed on ${{ matrix.os }}
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }} # zizmor: ignore[secrets-outside-env] Intentionally not using environment variable.
+          color: '#ff0000'  # red
+          title: Technical CI failed on ${{ matrix.os }}
 
   # Notify on discord only once - when CI completes (and after deploy) in case it's successful
   notify-complete:
@@ -99,12 +99,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Discord notification
-      uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
+      uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
       if: steps.check.outputs.permitted == 'true' && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: info
-          details: Technical CI
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }} # zizmor: ignore[secrets-outside-env] Intentionally not using environment variable.
+          color: '#0000ff'  # blue
+          title: Technical CI
 
   build:
     name: Build Python 🐍 distribution 📦
@@ -205,9 +205,9 @@ jobs:
       uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
 
     - name: Discord notification
-      uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f #v2.2.1
+      uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
       if: always() && ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
       with:
-          severity: info
-          details: Technical CI Deploy
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }} # zizmor: ignore[secrets-outside-env] Intentionally not using environment variable.
+          color: '#00ff00'  # green
+          title: Technical CI Deploy
