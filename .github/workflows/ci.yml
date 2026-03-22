@@ -89,14 +89,6 @@ jobs:
     # Discord notification can't handle schedule events
     if: (github.event_name != 'schedule')
     steps:
-    - name: Check user permission
-      id: check
-      continue-on-error: true
-      uses: prince-chrismc/check-actor-permissions-action@d504e74ba31658f4cdf4fcfeb509d4c09736d88e # v3.0.2
-      with:
-        permission: "write"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Discord notification
       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1.16.0
