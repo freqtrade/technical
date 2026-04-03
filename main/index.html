@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="images/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -380,17 +380,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#contributions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contributions
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -540,17 +529,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#contributions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contributions
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -639,29 +617,27 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 <p>We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but also super boring work.</p>
 <h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
 <p>to use the library, please install it with pip</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>technical
-</code></pre></div>
+<p><code>bash
+pip install technical</code></p>
 <p>To get the latest version, install directly from github:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/freqtrade/technical
-</code></pre></div>
+<p><code>bash
+pip install git+https://github.com/freqtrade/technical</code></p>
 <p>and then import the required packages</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">technical.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">accumulation_distribution</span><span class="p">,</span> <span class="o">...</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">technical.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample_to_interval</span><span class="p">,</span> <span class="n">resampled_merge</span>
-
-<span class="c1"># Assuming 1h dataframe -resampling to 4h:</span>
-<span class="n">dataframe_long</span> <span class="o">=</span> <span class="n">resample_to_interval</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>  <span class="c1"># 240 = 4 * 60 = 4h</span>
-
-<span class="n">dataframe_long</span><span class="p">[</span><span class="s1">&#39;rsi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">RSI</span><span class="p">(</span><span class="n">dataframe_long</span><span class="p">)</span>
-<span class="c1"># Combine the 2 dataframes</span>
-<span class="n">dataframe</span> <span class="o">=</span> <span class="n">resampled_merge</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">dataframe_long</span><span class="p">,</span> <span class="n">fill_na</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The resulting dataframe will have 5 resampled columns in addition to the regular columns,</span>
-<span class="sd">following the template resample_&lt;interval_in_minutes&gt;_&lt;orig_column_name&gt;.</span>
-<span class="sd">So in the above example:</span>
-<span class="sd">[&#39;resample_240_open&#39;, &#39;resample_240_high&#39;, &#39;resample_240_low&#39;,&#39;resample_240_close&#39;, &#39;resample_240_rsi&#39;]</span>
-<span class="sd">&quot;&quot;&quot;</span>
-</code></pre></div>
+<p>```python
+from technical.indicators import accumulation_distribution, ...
+from technical.util import resample_to_interval, resampled_merge</p>
+<h1 id="assuming-1h-dataframe-resampling-to-4h">Assuming 1h dataframe -resampling to 4h:<a class="headerlink" href="#assuming-1h-dataframe-resampling-to-4h" title="Permanent link">&para;</a></h1>
+<p>dataframe_long = resample_to_interval(dataframe, 240)  # 240 = 4 * 60 = 4h</p>
+<p>dataframe_long['rsi'] = ta.RSI(dataframe_long)</p>
+<h1 id="combine-the-2-dataframes">Combine the 2 dataframes<a class="headerlink" href="#combine-the-2-dataframes" title="Permanent link">&para;</a></h1>
+<p>dataframe = resampled_merge(dataframe, dataframe_long, fill_na=True)</p>
+<p>"""
+The resulting dataframe will have 5 resampled columns in addition to the regular columns,
+following the template resample_<interval_in_minutes>_<orig_column_name>.
+So in the above example:
+['resample_240_open', 'resample_240_high', 'resample_240_low','resample_240_close', 'resample_240_rsi']
+"""</p>
+<p>```</p>
 <h3 id="contributions">Contributions<a class="headerlink" href="#contributions" title="Permanent link">&para;</a></h3>
 <p>We will happily add your custom indicators to this repo!
 Just clone this repository and implement your favorite indicator to use with Freqtrade and create a Pull Request.</p>
