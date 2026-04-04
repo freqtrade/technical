@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://technical.freqtrade.io/1.6.0/</loc>
+         <lastmod>2026-04-04</lastmod>
+    </url>
+    <url>
+         <loc>https://technical.freqtrade.io/1.6.0/developer/</loc>
+         <lastmod>2026-04-04</lastmod>
+    </url>
+    <url>
+         <loc>https://technical.freqtrade.io/1.6.0/general-usage/</loc>
+         <lastmod>2026-04-04</lastmod>
+    </url>
+</urlset>
