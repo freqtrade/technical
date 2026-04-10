@@ -82,3 +82,17 @@ def test_return_on_investment():
         assert (dataframe["roi"] >= 0).all()
         assert (dataframe.loc[dataframe["buy"] == 1, "roi"] == 0).all()
         assert numpy.allclose(numpy.array(dataframe["roi"]), roi)
+
+
+def test_rma(testdata_1m_btc):
+    from technical.indicators import rma
+
+    result = testdata_1m_btc.copy()
+    result["rma"] = rma(testdata_1m_btc, 14)
+
+    # RMA should produce non-null values after the warmup period
+    assert result["rma"].dropna().shape[0] > 0
+    # RMA should be positive for BTC price data
+    assert (result["rma"].dropna() > 0).all()
+    # RMA should be smooth - less volatile than raw prices
+    assert result["rma"].dropna().std() < result["close"].dropna().std()

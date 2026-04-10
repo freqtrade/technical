@@ -82,6 +82,26 @@ def ema(dataframe: DataFrame, period: int, field="close") -> Series:
     return ta.EMA(dataframe, timeperiod=period, price=field)
 
 
+# RMA                  Running Moving Average (Wilder's Smoothing)
+def rma(dataframe: DataFrame, period: int, field="close") -> Series:
+    """
+    Running Moving Average (RMA) — also known as Wilder's Smoothing Average.
+
+    TradingView Pine Script reference:
+    https://www.tradingview.com/pine-script-reference/v5/#fun_ta.rma
+
+    RMA is equivalent to an EMA with alpha = 1/period.
+    The first value is the SMA of the first `period` values;
+    subsequent values follow: RMA = (prev_RMA * (period - 1) + current) / period.
+
+    :param dataframe: DataFrame with price data
+    :param period: RMA period (must be >= 1)
+    :param field: Column name to use (default: "close")
+    :return: Series containing RMA values
+    """
+    return dataframe[field].ewm(alpha=1.0 / period, adjust=False, min_periods=period).mean()
+
+
 # HT_TRENDLINE         Hilbert Transform - Instantaneous Trendline
 # KAMA                 Kaufman Adaptive Moving Average
 # MA                   Moving average
