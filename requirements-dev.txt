@@ -5,7 +5,7 @@ pytest-cov==7.1.0
 pytest-mock==3.15.1
 pytest-random-order==1.2.0
 # Pytest snapshots
-syrupy==5.1.0
+syrupy==5.2.0
 
 ruff==0.15.12
 isort==8.0.1
