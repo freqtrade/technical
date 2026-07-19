@@ -3,7 +3,7 @@ Overlap studies
 """
 
 import talib.abstract as ta
-from numpy import ndarray
+from numpy import nan, ndarray
 from pandas import DataFrame, Series
 
 ########################################
@@ -80,6 +80,43 @@ def ema(dataframe: DataFrame, period: int, field="close") -> Series:
     import talib.abstract as ta
 
     return ta.EMA(dataframe, timeperiod=period, price=field)
+
+
+# RMA                  Running Moving Average (Wilder's Smoothing)
+def rma(dataframe: DataFrame, period: int, field="close") -> Series:
+    """
+    Running Moving Average (RMA) — also known as Wilder's Smoothing Average.
+
+    TradingView Pine Script reference:
+    https://www.tradingview.com/pine-script-reference/v5/#fun_ta.rma
+
+    Equivalent to the following pine script:
+
+        pine_rma(src, length) =>
+            alpha = 1/length
+            sum = 0.0
+            sum := na(sum[1]) ? ta.sma(src, length) : alpha * src + (1 - alpha) * nz(sum[1])
+
+    The first value is the SMA of the first `period` values;
+    subsequent values follow: RMA = (prev_RMA * (period - 1) + current) / period.
+
+    :param dataframe: DataFrame with price data
+    :param period: RMA period (must be >= 1)
+    :param field: Column name to use (default: "close")
+    :return: Series containing RMA values
+    """
+    series = dataframe[field].astype("float64")
+
+    if len(series) < period:
+        return Series(nan, index=series.index, name=field)
+
+    # ewm(adjust=False) would seed the recursion with the first value - seed it with the
+    # SMA of the first `period` values instead, and blank the warmup ahead of it.
+    seeded = series.copy()
+    seeded.iloc[: period - 1] = nan
+    seeded.iloc[period - 1] = series.iloc[:period].mean()
+
+    return seeded.ewm(alpha=1.0 / period, adjust=False).mean()
 
 
 # HT_TRENDLINE         Hilbert Transform - Instantaneous Trendline

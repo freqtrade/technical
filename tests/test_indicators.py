@@ -82,3 +82,31 @@ def test_return_on_investment():
         assert (dataframe["roi"] >= 0).all()
         assert (dataframe.loc[dataframe["buy"] == 1, "roi"] == 0).all()
         assert numpy.allclose(numpy.array(dataframe["roi"]), roi)
+
+
+def test_rma():
+    from pandas import DataFrame
+
+    from technical.indicators import rma
+
+    close = numpy.array([6, -1, 5, 4, 12, 5, 11, 10, 3, 13], dtype=float)
+    dataframe = DataFrame({"high": close})
+
+    # Seeded with the SMA of the first 5 values, then (prev * 4 + current) / 5.
+    expected = [numpy.nan] * 4 + [5.2, 5.16, 6.328, 7.0624, 6.249920, 7.599936]
+
+    result = rma(dataframe, 5, field="high")
+
+    assert numpy.allclose(result, expected, equal_nan=True)
+    # Warmup is period - 1 candles, matching talib's lookback for a period-length seed
+    assert result.isna().sum() == 4
+
+
+def test_rma_short_dataframe():
+    from pandas import DataFrame
+
+    from technical.indicators import rma
+
+    dataframe = DataFrame({"close": numpy.array([1.0, 2.0, 3.0])})
+
+    assert rma(dataframe, 5).isna().all()
