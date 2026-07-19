@@ -84,15 +84,29 @@ def test_return_on_investment():
         assert numpy.allclose(numpy.array(dataframe["roi"]), roi)
 
 
-def test_rma(testdata_1m_btc):
+def test_rma():
+    from pandas import DataFrame
+
     from technical.indicators import rma
 
-    result = testdata_1m_btc.copy()
-    result["rma"] = rma(testdata_1m_btc, 14)
+    close = numpy.array([6, -1, 5, 4, 12, 5, 11, 10, 3, 13], dtype=float)
+    dataframe = DataFrame({"high": close})
 
-    # RMA should produce non-null values after the warmup period
-    assert result["rma"].dropna().shape[0] > 0
-    # RMA should be positive for BTC price data
-    assert (result["rma"].dropna() > 0).all()
-    # RMA should be smooth - less volatile than raw prices
-    assert result["rma"].dropna().std() < result["close"].dropna().std()
+    # Seeded with the SMA of the first 5 values, then (prev * 4 + current) / 5.
+    expected = [numpy.nan] * 4 + [5.2, 5.16, 6.328, 7.0624, 6.249920, 7.599936]
+
+    result = rma(dataframe, 5, field="high")
+
+    assert numpy.allclose(result, expected, equal_nan=True)
+    # Warmup is period - 1 candles, matching talib's lookback for a period-length seed
+    assert result.isna().sum() == 4
+
+
+def test_rma_short_dataframe():
+    from pandas import DataFrame
+
+    from technical.indicators import rma
+
+    dataframe = DataFrame({"close": numpy.array([1.0, 2.0, 3.0])})
+
+    assert rma(dataframe, 5).isna().all()
