@@ -3,7 +3,7 @@ Overlap studies
 """
 
 import talib.abstract as ta
-from numpy import ndarray
+from numpy import nan, ndarray
 from pandas import DataFrame, Series
 
 ########################################
@@ -90,7 +90,13 @@ def rma(dataframe: DataFrame, period: int, field="close") -> Series:
     TradingView Pine Script reference:
     https://www.tradingview.com/pine-script-reference/v5/#fun_ta.rma
 
-    RMA is equivalent to an EMA with alpha = 1/period.
+    Equivalent to the following pine script:
+
+        pine_rma(src, length) =>
+            alpha = 1/length
+            sum = 0.0
+            sum := na(sum[1]) ? ta.sma(src, length) : alpha * src + (1 - alpha) * nz(sum[1])
+
     The first value is the SMA of the first `period` values;
     subsequent values follow: RMA = (prev_RMA * (period - 1) + current) / period.
 
@@ -99,7 +105,18 @@ def rma(dataframe: DataFrame, period: int, field="close") -> Series:
     :param field: Column name to use (default: "close")
     :return: Series containing RMA values
     """
-    return dataframe[field].ewm(alpha=1.0 / period, adjust=False, min_periods=period).mean()
+    series = dataframe[field].astype("float64")
+
+    if len(series) < period:
+        return Series(nan, index=series.index, name=field)
+
+    # ewm(adjust=False) would seed the recursion with the first value - seed it with the
+    # SMA of the first `period` values instead, and blank the warmup ahead of it.
+    seeded = series.copy()
+    seeded.iloc[: period - 1] = nan
+    seeded.iloc[period - 1] = series.iloc[:period].mean()
+
+    return seeded.ewm(alpha=1.0 / period, adjust=False).mean()
 
 
 # HT_TRENDLINE         Hilbert Transform - Instantaneous Trendline
