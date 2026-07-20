@@ -57,6 +57,21 @@ def test_fibonacci_retracements(testdata_1m_btc):
     assert result.min() < 1.0e-8
     assert result.max() > 1.0 - 1.0e-8
 
+    # Rolling window - no lookahead bias
+    window = 60
+    result = fibonacci_retracements(testdata_1m_btc, window=window)
+
+    # The first `window - 1` candles cannot be calculated
+    assert result.iloc[: window - 1].isna().all()
+    assert result.iloc[window - 1 :].notna().all()
+
+    assert result.min() < 1.0e-8
+    assert result.max() > 1.0 - 1.0e-8
+
+    # Result must not change when future candles are added
+    partial = fibonacci_retracements(testdata_1m_btc.iloc[:500], window=window)
+    assert numpy.allclose(partial.iloc[window - 1 :], result.iloc[window - 1 : 500])
+
 
 def test_return_on_investment():
     from pandas import DataFrame

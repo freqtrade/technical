@@ -781,12 +781,26 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def fibonacci_retracements(df, field="close") -> DataFrame:
+def fibonacci_retracements(df, field="close", window: int = 0) -> DataFrame:
+    """
+    Fibonacci retracement levels as a step indicator.
+
+    :param df: dataframe containing the price data
+    :param field: column to base the retracements on
+    :param window: rolling lookback (in candles) used to determine the high/low.
+        Defaults to 0, which uses the whole dataframe - this introduces a
+        lookahead bias and should not be used for backtesting.
+    :return: series with the fibonacci level each candle exceeds
+    """
     # Common Fibonacci replacement thresholds:
     # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
     thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
 
-    window_min, window_max = df[field].min(), df[field].max()
+    if window:
+        window_min = df[field].rolling(window=window, min_periods=window).min()
+        window_max = df[field].rolling(window=window, min_periods=window).max()
+    else:
+        window_min, window_max = df[field].min(), df[field].max()
     # fib_levels = [window_min + t * (window_max - window_min) for t in thresholds]
 
     # Scale data to match to thresholds
@@ -795,7 +809,7 @@ def fibonacci_retracements(df, field="close") -> DataFrame:
 
     # Otherwise, we return a step indicator showing the fibonacci level
     # which each candle exceeds
-    return data.apply(lambda x: max(t for t in thresholds if x >= t))
+    return data.apply(lambda x: max(t for t in thresholds if x >= t) if not np.isnan(x) else np.nan)
 
 
 def return_on_investment(dataframe, decimals=2) -> DataFrame:
