@@ -792,9 +792,9 @@ def fibonacci_retracements(df, field="close", window: int = 0) -> DataFrame:
         lookahead bias and should not be used for backtesting.
     :return: series with the fibonacci level each candle exceeds
     """
-    # Common Fibonacci replacement thresholds:
-    # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
-    thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
+    # Common Fibonacci replacement thresholds (ascending):
+    # 0.0, F_n / F_{n+3}, F_n / F_{n+2}, 0.5, F_n / F_{n+1}, sqrt(F_n / F_{n+1}), 1.0
+    thresholds = np.array([0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0])
 
     if window:
         window_min = df[field].rolling(window=window, min_periods=window).min()
@@ -808,8 +808,13 @@ def fibonacci_retracements(df, field="close", window: int = 0) -> DataFrame:
     data = (df[field] - window_min) / (window_max - window_min)
 
     # Otherwise, we return a step indicator showing the fibonacci level
-    # which each candle exceeds
-    return data.apply(lambda x: max(t for t in thresholds if x >= t) if not np.isnan(x) else np.nan)
+    # which each candle exceeds.
+    # data is scaled to [0, 1], so searchsorted always yields a valid threshold.
+    values = data.to_numpy()
+    idx = np.searchsorted(thresholds, values, side="right") - 1
+    steps = np.where(np.isnan(values), np.nan, thresholds[idx.clip(0)])
+
+    return Series(steps, index=data.index, name=data.name)
 
 
 def return_on_investment(dataframe, decimals=2) -> DataFrame:
