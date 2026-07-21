@@ -781,12 +781,28 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def fibonacci_retracements(df, field="close") -> DataFrame:
-    # Common Fibonacci replacement thresholds:
-    # 1.0, sqrt(F_n / F_{n+1}), F_n / F_{n+1}, 0.5, F_n / F_{n+2}, F_n / F_{n+3}, 0.0
-    thresholds = [1.0, 0.786, 0.618, 0.5, 0.382, 0.236, 0.0]
+def fibonacci_retracements(df, field="close", window: int = 120) -> DataFrame:
+    """
+    Fibonacci retracement levels as a step indicator.
 
-    window_min, window_max = df[field].min(), df[field].max()
+    :param df: dataframe containing the price data
+    :param field: column to base the retracements on
+    :param window: rolling lookback (in candles) used to determine the high/low,
+        defaults to 120. The first `window - 1` candles will be NaN.
+        Use `window=0` to determine the high/low from the whole dataframe (the
+        behaviour prior to this parameter being introduced) - this has a lookahead
+        bias and must not be used for backtesting.
+    :return: series with the fibonacci level each candle exceeds
+    """
+    # Common Fibonacci replacement thresholds (ascending):
+    # 0.0, F_n / F_{n+3}, F_n / F_{n+2}, 0.5, F_n / F_{n+1}, sqrt(F_n / F_{n+1}), 1.0
+    thresholds = np.array([0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0])
+
+    if window:
+        window_min = df[field].rolling(window=window, min_periods=window).min()
+        window_max = df[field].rolling(window=window, min_periods=window).max()
+    else:
+        window_min, window_max = df[field].min(), df[field].max()
     # fib_levels = [window_min + t * (window_max - window_min) for t in thresholds]
 
     # Scale data to match to thresholds
@@ -794,8 +810,13 @@ def fibonacci_retracements(df, field="close") -> DataFrame:
     data = (df[field] - window_min) / (window_max - window_min)
 
     # Otherwise, we return a step indicator showing the fibonacci level
-    # which each candle exceeds
-    return data.apply(lambda x: max(t for t in thresholds if x >= t))
+    # which each candle exceeds.
+    # data is scaled to [0, 1], so searchsorted always yields a valid threshold.
+    values = data.to_numpy()
+    idx = np.searchsorted(thresholds, values, side="right") - 1
+    steps = np.where(np.isnan(values), np.nan, thresholds[idx.clip(0)])
+
+    return Series(steps, index=data.index, name=data.name)
 
 
 def return_on_investment(dataframe, decimals=2) -> DataFrame:

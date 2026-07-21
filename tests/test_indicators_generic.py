@@ -23,6 +23,7 @@ import technical.indicators as ti
         (ti.cmf, [], "series", None),
         (ti.ema, [10], "series", None),
         (ti.fibonacci_retracements, [], "series", None),
+        (ti.fibonacci_retracements, ["close", 15], "series", None),
         (ti.hull_moving_average, [10], "series", None),
         (ti.ichimoku, [], "dict", None),
         (ti.laguerre, [], "series", None),
