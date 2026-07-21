@@ -781,15 +781,17 @@ def vpci(dataframe, period_short=5, period_long=20):
     return vpci
 
 
-def fibonacci_retracements(df, field="close", window: int = 0) -> DataFrame:
+def fibonacci_retracements(df, field="close", window: int = 120) -> DataFrame:
     """
     Fibonacci retracement levels as a step indicator.
 
     :param df: dataframe containing the price data
     :param field: column to base the retracements on
-    :param window: rolling lookback (in candles) used to determine the high/low.
-        Defaults to 0, which uses the whole dataframe - this introduces a
-        lookahead bias and should not be used for backtesting.
+    :param window: rolling lookback (in candles) used to determine the high/low,
+        defaults to 120. The first `window - 1` candles will be NaN.
+        Use `window=0` to determine the high/low from the whole dataframe (the
+        behaviour prior to this parameter being introduced) - this has a lookahead
+        bias and must not be used for backtesting.
     :return: series with the fibonacci level each candle exceeds
     """
     # Common Fibonacci replacement thresholds (ascending):

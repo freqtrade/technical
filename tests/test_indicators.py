@@ -52,8 +52,10 @@ def test_chaikin_money_flow(testdata_1m_btc):
 def test_fibonacci_retracements(testdata_1m_btc):
     from technical.indicators import fibonacci_retracements
 
-    result = fibonacci_retracements(testdata_1m_btc)
+    # window=0 uses the whole dataframe (lookahead bias)
+    result = fibonacci_retracements(testdata_1m_btc, window=0)
 
+    assert result.notna().all()
     assert result.min() < 1.0e-8
     assert result.max() > 1.0 - 1.0e-8
 
@@ -71,6 +73,10 @@ def test_fibonacci_retracements(testdata_1m_btc):
     # Result must not change when future candles are added
     partial = fibonacci_retracements(testdata_1m_btc.iloc[:500], window=window)
     assert numpy.allclose(partial.iloc[window - 1 :], result.iloc[window - 1 : 500])
+
+    # The default is a rolling window
+    default = fibonacci_retracements(testdata_1m_btc)
+    assert default.equals(fibonacci_retracements(testdata_1m_btc, window=120))
 
 
 def test_return_on_investment():

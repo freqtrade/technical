@@ -27,7 +27,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [laguerre](https://www.tradingview.com/script/iUl3zTql-Ehlers-Laguerre-Relative-Strength-Index-CC/) - an indicator developed by John Ehlers as a way to minimize both the noise and lag of the regular RSI
 * [vpci](https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/)
 * [trendlines](https://en.wikipedia.org/wiki/Trend_line_(technical_analysis)) - 2 different algorithms to calculate trendlines
-* [fibonacci_retracements](https://www.investopedia.com/terms/f/fibonacciretracement.asp) - an indicator showing the fibonacci level which each candle exceeds. Use the `window` parameter for a rolling lookback (without lookahead bias)
+* [fibonacci_retracements](https://www.investopedia.com/terms/f/fibonacciretracement.asp) - an indicator showing the fibonacci level which each candle exceeds. Uses a rolling `window` of 120 candles (by default) to determine the high/low
 * [pivots points](https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/)
 * [TKE Indicator](https://www.tradingview.com/script/Pcbvo0zG/) - Arithmetical mean of 7 oscilators
 * [Volume Weighted MACD](https://www.tradingview.com/script/wVe6AfGA) - Volume Weighted MACD indicator
