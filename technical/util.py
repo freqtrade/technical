@@ -128,7 +128,7 @@ def compute_interval(dataframe: DataFrame, exchange_interval=False):
         if len(converted) > 0:
             return converted
         else:
-            raise Exception(
+            raise ValueError(
                 f"sorry, your interval of {res_interval} is not "
                 f"supported in {TICKER_INTERVAL_MINUTES}"
             )

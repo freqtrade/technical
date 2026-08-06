@@ -353,9 +353,9 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
     : gray
     """
 
-    def maColor(x, ma):
-        col_label = "_".join([ma, "c"])
-        col_label_1 = "".join([ma, "l"])
+    def maColor(x, ma: str):
+        col_label = f"{ma}_c"
+        col_label_1 = f"{ma}l"
 
         if (x[ma] - x[col_label_1]) >= 0 and (x[ma] > x["ma100"]):
             # Lime: Uptrend.Long trading
