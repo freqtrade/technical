@@ -184,7 +184,7 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=False) -> Series:
 #
 # Madrid Functions
 #
-def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
+def mmar(dataframe, matype="EMA", src="close", debug=False):
     """
     Madrid Moving Average Ribbon
 
@@ -1122,7 +1122,7 @@ def SSLChannels(dataframe, length=10, mode="sma"):
     return df["sslDown"], df["sslUp"]
 
 
-def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):  # noqa: C901
+def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
     """
     Function to compute PMAX
     Source: https://www.tradingview.com/script/sU9molfV/

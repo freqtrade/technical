@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from numpy import ndarray
 
-from technical.vendor.qtpylib.indicators import atr  # noqa: F401
+from technical.vendor.qtpylib.indicators import atr
 
 ########################################
 #
