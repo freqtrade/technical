@@ -9,7 +9,7 @@ import technical.indicators as ftt
 
 # The indicator calculations can now be used as follows:
 
-dataframe['cmf'] = ftt.chaikin_money_flow(dataframe)
+dataframe["cmf"] = ftt.chaikin_money_flow(dataframe)
 ```
 
 ## Indicator functions
@@ -32,18 +32,18 @@ from pandas import DataFrame
 from technical.util import resample_to_interval, resampled_merge
 import technical.indicators as ftt
 
-timeframe = '1h'
+timeframe = "1h"
+
 
 def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
     # Resampling to 4h:
     dataframe_long = resample_to_interval(dataframe, 240)  # 240 = 4 * 60 = 4h
 
-    dataframe_long['cmf'] = ftt.chaikin_money_flow(dataframe_long)
+    dataframe_long["cmf"] = ftt.chaikin_money_flow(dataframe_long)
     # Combine the 2 dataframes
     dataframe = resampled_merge(dataframe, dataframe_long, fill_na=True)
 
-    
     # The resulting dataframe will have 5 resampled columns in addition to the regular columns,
     # following the template resample_<interval_in_minutes>_<orig_column_name>.
     # So in the above example, the column names would be:
