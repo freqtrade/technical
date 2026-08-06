@@ -17,8 +17,6 @@ import technical.indicators as ti
         (ti.SSLChannels, [], "tuple", None),
         (ti.TKE, [], "tuple", None),
         (ti.VIDYA, [], "series", None),
-        (ti.atr_percent, [], "series", None),
-        (ti.chaikin_money_flow, [], "series", None),
         (ti.chopiness, [], "series", None),
         (ti.cmf, [], "series", None),
         (ti.ema, [10], "series", None),
