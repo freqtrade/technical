@@ -89,7 +89,7 @@ def test_indicators_generic_interface(
             cols = set(res.columns)
             assert cols == set(new_column_names + default_columns)
             # assert set()
-            assert all([x in res.columns for x in new_column_names])
+            assert all(x in res.columns for x in new_column_names)
     else:
         assert False
 
