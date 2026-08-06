@@ -106,7 +106,7 @@ def segtrends(dataframe, field="close", segments=2, charts=False):
     # Find the indexes of these maxima in the data
     x_maxima = np.ones(segments)
     x_minima = np.ones(segments)
-    for i in range(0, segments):
+    for i in range(segments):
         x_maxima[i] = np.where(y == maxima[i])[0][0]
         x_minima[i] = np.where(y == minima[i])[0][0]
 
@@ -116,7 +116,7 @@ def segtrends(dataframe, field="close", segments=2, charts=False):
         plt.plot(y)
         plt.grid(True)
 
-    for i in range(0, segments - 1):
+    for i in range(segments - 1):
         maxslope = (maxima[i + 1] - maxima[i]) / (x_maxima[i + 1] - x_maxima[i])
         a_max = maxima[i] - (maxslope * x_maxima[i])
         b_max = maxima[i] + (maxslope * (len(y) - x_maxima[i]))

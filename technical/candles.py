@@ -23,7 +23,7 @@ def heikinashi(bars):
     bars.loc[:, "ha_close"] = bars.loc[:, ["open", "high", "low", "close"]].mean(axis=1)
 
     ha_open = [(bars.open[0] + bars.close[0]) / 2]
-    [ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(0, len(bars) - 1)]
+    [ha_open.append((ha_open[x] + bars.ha_close[x]) / 2) for x in range(len(bars) - 1)]
     bars["ha_open"] = ha_open
 
     bars.loc[:, "ha_high"] = bars.loc[:, ["high", "ha_open", "ha_close"]].max(axis=1)
