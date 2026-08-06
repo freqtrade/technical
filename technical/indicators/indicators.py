@@ -550,10 +550,9 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
     df["sqz_sma_c"] = df.apply(sqz_sma_c, axis=1)
 
     def sqz_rma_c(x):
-        if x["sqz_rma"] >= 0 and x["sqz_cma"] < x["sqz_rma"]:
-            x["sqz_rma_c"] = "yellow"
-            return x["sqz_rma_c"]
-        elif x["sqz_rma"] < 0 and x["sqz_cma"] > x["sqz_rma"]:
+        if (x["sqz_rma"] >= 0 and x["sqz_cma"] < x["sqz_rma"]) or (
+            x["sqz_rma"] < 0 and x["sqz_cma"] > x["sqz_rma"]
+        ):
             x["sqz_rma_c"] = "yellow"
             return x["sqz_rma_c"]
         elif x["sqz_rma"] >= 0:
