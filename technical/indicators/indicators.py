@@ -118,8 +118,6 @@ def laguerre(dataframe, gamma=0.75, smooth=1, debug=False) -> Series:
 
     df = dataframe
     g = gamma
-    smooth = smooth
-    debug = debug
     if debug:
         from pandas import set_option
 
@@ -276,10 +274,7 @@ def mmar(dataframe, matype="EMA", src="close", debug=False):  # noqa: C901
     """
     import talib as ta
 
-    matype = matype
-    src = src
     df = dataframe
-    debug = debug
 
     # Default to EMA, allow SMA if passed to def.
     if matype == "EMA" or matype == "ema":
@@ -500,23 +495,16 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
     """
     import talib as ta
 
-    len = length
-    src = src
-    ref = ref
-    sqzLen = sqzLen
-    df = datafame
-    ema = ta.EMA
-
     """ Original code logic
     ma = ema(src, len)
     closema = close - ma
     refma = ema(src, ref) - ma
     sqzma = ema(src, sqzLen) - ma
     """
-    df["sqz_ma"] = ema(df[src], len)
-    df["sqz_cma"] = df["close"] - df["sqz_ma"]
-    df["sqz_rma"] = ema(df[src], ref) - df["sqz_ma"]
-    df["sqz_sma"] = ema(df[src], sqzLen) - df["sqz_ma"]
+    datafame["sqz_ma"] = ta.EMA(datafame[src], length)
+    datafame["sqz_cma"] = datafame["close"] - datafame["sqz_ma"]
+    datafame["sqz_rma"] = ta.EMA(datafame[src], ref) - datafame["sqz_ma"]
+    datafame["sqz_sma"] = ta.EMA(datafame[src], sqzLen) - datafame["sqz_ma"]
 
     """ Original code logic
     plotcandle(0, closema, 0, closema, color=closema >= 0?aqua: fuchsia)
@@ -527,7 +515,7 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
     refma >= 0 ? green: maroon)
     """
 
-    # print(df[['sqz_cma', 'sqz_rma', 'sqz_sma']])
+    # print(datafame[['sqz_cma', 'sqz_rma', 'sqz_sma']])
 
     def sqz_cma_c(x):
         if x["sqz_cma"] >= 0:
@@ -537,7 +525,7 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
             x["sqz_cma_c"] = "fuchsia"
             return x["sqz_cma_c"]
 
-    df["sqz_cma_c"] = df.apply(sqz_cma_c, axis=1)
+    datafame["sqz_cma_c"] = datafame.apply(sqz_cma_c, axis=1)
 
     def sqz_sma_c(x):
         if x["sqz_sma"] >= 0:
@@ -547,7 +535,7 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
             x["sqz_sma_c"] = "red"
             return x["sqz_sma_c"]
 
-    df["sqz_sma_c"] = df.apply(sqz_sma_c, axis=1)
+    datafame["sqz_sma_c"] = datafame.apply(sqz_sma_c, axis=1)
 
     def sqz_rma_c(x):
         if (x["sqz_rma"] >= 0 and x["sqz_cma"] < x["sqz_rma"]) or (
@@ -562,10 +550,10 @@ def madrid_sqz(datafame, length=34, src="close", ref=13, sqzLen=5):
             x["sqz_rma_c"] = "maroon"
             return x["sqz_rma_c"]
 
-    df["sqz_rma_c"] = df.apply(sqz_rma_c, axis=1)
+    datafame["sqz_rma_c"] = datafame.apply(sqz_rma_c, axis=1)
 
-    # print(df[['sqz_cma_c', 'sqz_rma_c', 'sqz_sma_c']])
-    return df["sqz_cma_c"], df["sqz_rma_c"], df["sqz_sma_c"]
+    # print(datafame[['sqz_cma_c', 'sqz_rma_c', 'sqz_sma_c']])
+    return datafame["sqz_cma_c"], datafame["sqz_rma_c"], datafame["sqz_sma_c"]
 
 
 ########################################
@@ -666,11 +654,6 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     import talib as ta
     from numpy import where
 
-    length = length
-    coef = coef
-    vcoef = vcoef
-    signalLength = signalLength
-    smoothVFI = smoothVFI
     df = dataframe
     # Add hlc3 and populate inter to the dataframe
     df["hlc"] = ((df["high"] + df["low"] + df["close"]) / 3).astype(float)
