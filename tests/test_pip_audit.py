@@ -43,6 +43,7 @@ def test_pip_audit_no_vulnerabilities():
             capture_output=True,
             text=True,
             timeout=120,  # 2 minute timeout
+            check=True,
         )
     except subprocess.TimeoutExpired:
         pytest.fail("pip-audit command timed out after 120 seconds")
@@ -85,6 +86,7 @@ def test_pip_audit_runs_successfully():
             capture_output=True,
             text=True,
             timeout=10,
+            check=True,
         )
         assert result.returncode == 0, f"pip-audit --version failed: {result.stderr}"
         assert "pip-audit" in result.stdout.lower(), "pip-audit version output unexpected"

@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+# ruff: noqa: BLE001
+
 import warnings
 from datetime import datetime, timedelta
 
