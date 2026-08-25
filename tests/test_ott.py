@@ -1,13 +1,13 @@
 """
-test_ott_indicator_2.py
+test_ott.py
 
-Validates ott_indicator_2.ott() / get_ma() against an independent,
+Validates technical.indicators.ott() / get_ma() against an independent,
 bar-by-bar transcription of the original OTT Pine Script
 (https://tr.tradingview.com/script/zVhoDQME/) -- not against the module's
 own internals -- so a bug shared between the reference and the
 implementation is the only way these tests could give a false pass.
 
-Run with: pytest test_ott_indicator_2.py -v
+Run with: pytest tests/test_ott.py -v
 """
 
 import numpy as np
@@ -18,7 +18,7 @@ from technical.indicators import get_ma, ott
 
 # --------------------------------------------------------------------------
 # Independent reference implementation (transcribed directly from the Pine
-# source pasted by the user, not from ott_indicator_2.py)
+# source, not from technical.indicators.ott)
 # --------------------------------------------------------------------------
 
 

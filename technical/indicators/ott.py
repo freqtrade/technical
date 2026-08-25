@@ -1,12 +1,13 @@
 """
 Optimized Trend Tracker (OTT) — pandas port for freqtrade strategies (v2).
 
-Refactored from the original one-file port to reuse existing `technical` /
-TA-Lib functionality wherever a genuine equivalent already exists, instead
-of reimplementing it from scratch.
+Optimized Trend Tracker (OTT) — pandas port for freqtrade strategies.
+
+Reuses existing `technical` / TA-Lib functionality wherever a genuine
+equivalent already exists, instead of reimplementing it from scratch.
 
 REUSED AS-IS (non-recursive/windowed calculations, verified exact match
-against the Pine reference in test_ott_indicator_2.py):
+against the Pine reference in tests/test_ott.py):
     - SMA / WMA -> talib.abstract.SMA / WMA
     - TSF       -> talib.abstract.TSF ("Time Series Forecast" is the same
                     linear-regression-extrapolation math as Pine's
@@ -17,8 +18,7 @@ CHECKED, BUT *NOT* REUSED -- discrepancy found via the test suite:
       `timeperiod` bars and returns NaN until that seed is ready. Pine's
       built-in ema() is a simple recursive EMA seeded with the first price,
       with no warm-up NaN period -- equivalent to
-      `series.ewm(span=length, adjust=False).mean()`, which is what the
-      original ott_indicator.py used. The two conventions only converge
+      `series.ewm(span=length, adjust=False).mean()`. The two conventions only converge
       asymptotically, not exactly, and disagree entirely during warm-up.
       Kept as a custom `_ema` that matches Pine exactly; there's no
       opt-in to the talib version here since there's no legitimate reason
@@ -61,7 +61,7 @@ freqtrade + `technical` install).
 
 Usage inside a freqtrade IStrategy:
 
-    from ott_indicator_2 import ott
+    from technical.indicators import ott
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe = ott(dataframe, src_col="close", length=2, percent=1.4, matype="VAR")
