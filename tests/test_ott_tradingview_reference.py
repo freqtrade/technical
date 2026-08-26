@@ -8,13 +8,10 @@ the real Pine Script running on TradingView.
 import os
 
 import pandas as pd
-import pytest
 
 from technical.indicators import ott
 
-REFERENCE_CSV = os.path.join(
-    os.path.dirname(__file__), "testdata", "ott_pine_reference.csv"
-)
+REFERENCE_CSV = os.path.join(os.path.dirname(__file__), "testdata", "ott_pine_reference.csv")
 TOLERANCE = 1e-6
 MAX_CONVERGENCE_BARS = 120
 
@@ -38,7 +35,9 @@ def _check_convergence(name: str, actual: pd.Series, expected: pd.Series, tol: f
     if stabilize_at is None:
         print(f"{name}: never converges within {n} bars (max diff {diff.max():.6g})")
     else:
-        print(f"{name}: converges at bar {stabilize_at}/{n}, exact match for remaining {n - stabilize_at} bars")
+        print(
+            f"{name}: converges at bar {stabilize_at}/{n}, exact match for remaining {n - stabilize_at} bars"
+        )
     return stabilize_at
 
 
@@ -48,7 +47,9 @@ def test_ott_matches_tradingview_reference():
 
     result = ott(df, src_col="close", length=2, percent=1.4, matype="VAR")
 
-    ma_stabilize_at = _check_convergence("ott_ma vs MAvg", result["ott_ma"], pine["MAvg"], TOLERANCE)
+    ma_stabilize_at = _check_convergence(
+        "ott_ma vs MAvg", result["ott_ma"], pine["MAvg"], TOLERANCE
+    )
     ott_stabilize_at = _check_convergence("ott vs OTT", result["ott"], pine["OTT"], TOLERANCE)
     shifted_stabilize_at = _check_convergence(
         "ott_shifted2 vs OTT.shift(2)", result["ott_shifted2"], pine["OTT"].shift(2), TOLERANCE

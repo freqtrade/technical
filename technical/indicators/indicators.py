@@ -974,6 +974,7 @@ def RMI(dataframe, *, length=20, mom=5):
     df["RMI"] = np.where(df["emaDec"] == 0, 0, 100 - 100 / (1 + df["emaInc"] / df["emaDec"]))
     return df["RMI"]
 
+
 def VIDYA(dataframe, length=9, cmo_length=None, select=True):
     """
     Source: https://www.tradingview.com/script/64ynXU2e/

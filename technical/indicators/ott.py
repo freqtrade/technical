@@ -14,8 +14,9 @@ import numpy as np
 import pandas as pd
 import talib.abstract as ta
 
+from technical.vendor.qtpylib.indicators import zlema as _lib_zlema
+
 from .indicators import VIDYA as _lib_vidya
-from ..vendor.qtpylib.indicators import zlema as _lib_zlema
 
 __all__ = ["ott"]
 
@@ -140,9 +141,7 @@ def ott(
 
         mt[i] = long_stop[i] if direction[i] == 1 else short_stop[i]
         ott_raw[i] = (
-            mt[i] * (200 + percent) / 200
-            if ma_vals[i] > mt[i]
-            else mt[i] * (200 - percent) / 200
+            mt[i] * (200 + percent) / 200 if ma_vals[i] > mt[i] else mt[i] * (200 - percent) / 200
         )
 
     df["ott_ma"] = ma

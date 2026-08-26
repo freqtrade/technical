@@ -51,12 +51,14 @@ def _ref_ma(close: pd.Series, length: int, matype: str, cmo_length: int = 9) -> 
         zx = close + (close - close.shift(lag))
         return zx.ewm(span=length, adjust=False).mean()
     if matype == "TSF":
+
         def lr(x):
             idx = np.arange(len(x))
             slope, intercept = np.polyfit(idx, x, 1)
             lrc = slope * (len(x) - 1) + intercept
             lrc1 = slope * (len(x) - 2) + intercept
             return lrc + (lrc - lrc1)
+
         return close.rolling(length).apply(lr, raw=True)
     raise ValueError(matype)
 
