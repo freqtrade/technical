@@ -1,24 +1,18 @@
 """
 test_ott.py
 
-Validates technical.indicators.ott() / get_ma() against an independent,
-bar-by-bar transcription of the original OTT Pine Script
-(https://tr.tradingview.com/script/zVhoDQME/) -- not against the module's
-own internals -- so a bug shared between the reference and the
-implementation is the only way these tests could give a false pass.
-
-Run with: pytest tests/test_ott.py -v
+Tests for technical.indicators.ott().
 """
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from technical.indicators import get_ma, ott
+from technical.indicators import ott
+from technical.indicators.ott import _get_ma
 
 # --------------------------------------------------------------------------
-# Independent reference implementation (transcribed directly from the Pine
-# source, not from technical.indicators.ott)
+# Reference implementation
 # --------------------------------------------------------------------------
 
 
@@ -109,27 +103,19 @@ def pine_reference_ott(close: pd.Series, length=2, percent=1.4, matype="VAR", cm
 # --------------------------------------------------------------------------
 
 
-@pytest.fixture(scope="module")
-def ohlcv():
-    rng = np.random.default_rng(42)
-    n = 400
-    close = 100 + np.cumsum(rng.normal(0, 1, n))
-    idx = pd.date_range("2024-01-01", periods=n, freq="h")
-    return pd.DataFrame(
-        {
-            "date": idx,
-            "open": close,
-            "high": close + 0.5,
-            "low": close - 0.5,
-            "close": close,
-            "volume": 1.0,
-        }
-    )
+@pytest.fixture
+def ohlcv(testdata_1m_btc):
+    """Real market data, reused from the project's shared fixture."""
+    return testdata_1m_btc.iloc[-1000:].reset_index(drop=True)
 
 
 @pytest.fixture(scope="module")
 def trending():
-    """Deterministic V-shaped series: strong sustained downtrend, then uptrend."""
+    """
+    Synthetic (not testdata_1m_btc) on purpose: this test needs a
+    guaranteed trend reversal at a known position, which real data can't
+    promise on demand.
+    """
     down = 200 - np.arange(60) * 2.0
     up = down[-1] + np.arange(60) * 2.0
     close = np.concatenate([down, up])
@@ -202,10 +188,7 @@ def test_ott_shifted2_is_ott_shifted_by_two_bars(ohlcv):
 
 
 def test_direction_tracks_strong_trend(trending):
-    """
-    Per the indicator's own definition: in a sustained downtrend OTT should
-    sit above price; in a sustained uptrend it should sit below price.
-    """
+    """OTT sits above price in a downtrend, below price in an uptrend."""
     result = ott(trending, length=2, percent=1.4, matype="VAR")
     deep_down = result.iloc[40:59]  # well into the downtrend leg
     deep_up = result.iloc[100:119]  # well into the uptrend leg
@@ -225,7 +208,7 @@ def test_percent_band_scales_distance_from_ma(ohlcv):
 
 def test_invalid_matype_raises(ohlcv):
     with pytest.raises(ValueError):
-        get_ma(ohlcv, "close", 10, matype="NOT_A_TYPE")
+        _get_ma(ohlcv, "close", 10, matype="NOT_A_TYPE")
 
 
 def test_no_nans_after_warmup(ohlcv):
