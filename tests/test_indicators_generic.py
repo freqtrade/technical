@@ -45,6 +45,7 @@ import technical.indicators as ti
         (ti.williams_percent, [], "series", None),
         (ti.supertrend, [], "tuple", None),
         (ti.rma, [14], "series", None),
+        (ti.ott, [], "df", ["ott_ma", "ott", "ott_shifted2"]),
     ],
 )
 def test_indicators_generic_interface(

@@ -38,6 +38,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [PMAX](https://www.tradingview.com/script/sU9molfV/) - PMAX indicator
 * [ALMA](https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma) - Arnaud Legoux Moving Average
 * [Supertrend](https://www.investopedia.com/supertrend-indicator-7976167) - A trend following indicator
+* [OTT](https://tr.tradingview.com/script/zVhoDQME/) - Optimized Trend Tracker, combines a selectable moving average with a percentage-based trailing stop to track trend direction
 
 ### Utilities
 

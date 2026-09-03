@@ -975,7 +975,7 @@ def RMI(dataframe, *, length=20, mom=5):
     return df["RMI"]
 
 
-def VIDYA(dataframe, length=9, select=True):
+def VIDYA(dataframe, length=9, cmo_length=None, select=True):
     """
     Source: https://www.tradingview.com/script/64ynXU2e/
     Author: Tushar Chande
@@ -991,29 +991,34 @@ def VIDYA(dataframe, length=9, select=True):
     receives a weight increment adapted to the current market's volatility .
 
     select: True = CMO, False= StdDev as volatility index
+    cmo_length: lookback for the volatility measure (CMO or StdDev),
+        independent of `length` (the EMA/averaging period). Defaults to
+        `length` if not given.
     usage:
       dataframe['VIDYA'] = VIDYA(dataframe)
     """
     df = dataframe.copy()
+    if cmo_length is None:
+        cmo_length = length
     alpha = 2 / (length + 1)
     df["momm"] = df["close"].diff()
     df["m1"] = np.where(df["momm"] >= 0, df["momm"], 0.0)
     df["m2"] = np.where(df["momm"] >= 0, 0.0, -df["momm"])
 
-    df["sm1"] = df["m1"].rolling(length).sum()
-    df["sm2"] = df["m2"].rolling(length).sum()
+    df["sm1"] = df["m1"].rolling(cmo_length).sum()
+    df["sm2"] = df["m2"].rolling(cmo_length).sum()
 
     df["chandeMO"] = 100 * (df["sm1"] - df["sm2"]) / (df["sm1"] + df["sm2"])
     if select:
         df["k"] = abs(df["chandeMO"]) / 100
     else:
-        df["k"] = df["close"].rolling(length).std()
+        df["k"] = df["close"].rolling(cmo_length).std()
 
     cols = ["momm", "m1", "m2", "sm1", "sm2", "chandeMO", "k"]
     df.loc[:, cols] = df.loc[:, cols].fillna(0.0)
 
     df["VIDYA"] = 0.0
-    for i in range(length, len(df)):
+    for i in range(min(length, cmo_length), len(df)):
         df.at[df.index[i], "VIDYA"] = (
             alpha * df["k"].iat[i] * df["close"].iat[i]
             + (1 - alpha * df["k"].iat[i]) * df["VIDYA"].iat[i - 1]
