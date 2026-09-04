@@ -89,7 +89,7 @@ from technical.util import resample_to_interval, resampled_merge
 # Assuming 1h dataframe -resampling to 4h:
 dataframe_long = resample_to_interval(dataframe, 240)  # 240 = 4 * 60 = 4h
 
-dataframe_long['rmi'] = ftt.RMI(dataframe_long)
+dataframe_long["rmi"] = ftt.RMI(dataframe_long)
 # Combine the 2 dataframes
 dataframe = resampled_merge(dataframe, dataframe_long, fill_na=True)
 
@@ -99,7 +99,6 @@ following the template resample_<interval_in_minutes>_<orig_column_name>.
 So in the above example:
 ['resample_240_open', 'resample_240_high', 'resample_240_low','resample_240_close', 'resample_240_rmi']
 """
-
 ```
 
 ### Contributions
