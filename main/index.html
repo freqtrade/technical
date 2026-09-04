@@ -651,7 +651,7 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 <span class="c1"># Assuming 1h dataframe -resampling to 4h:</span>
 <span class="n">dataframe_long</span> <span class="o">=</span> <span class="n">resample_to_interval</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>  <span class="c1"># 240 = 4 * 60 = 4h</span>
 
-<span class="n">dataframe_long</span><span class="p">[</span><span class="s1">'rmi'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ftt</span><span class="o">.</span><span class="n">RMI</span><span class="p">(</span><span class="n">dataframe_long</span><span class="p">)</span>
+<span class="n">dataframe_long</span><span class="p">[</span><span class="s2">"rmi"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ftt</span><span class="o">.</span><span class="n">RMI</span><span class="p">(</span><span class="n">dataframe_long</span><span class="p">)</span>
 <span class="c1"># Combine the 2 dataframes</span>
 <span class="n">dataframe</span> <span class="o">=</span> <span class="n">resampled_merge</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">dataframe_long</span><span class="p">,</span> <span class="n">fill_na</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
