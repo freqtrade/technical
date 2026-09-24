@@ -1,7 +1,13 @@
 import pytest
 from pandas import DataFrame, Series
+from syrupy.extensions.single_file import SingleFileAmberSnapshotExtension
 
 import technical.indicators as ftt
+
+
+@pytest.fixture
+def snapshot(snapshot):
+    return snapshot.use_extension(SingleFileAmberSnapshotExtension)
 
 
 @pytest.mark.parametrize(
