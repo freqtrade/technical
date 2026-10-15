@@ -6,5 +6,9 @@
   "timezone": "Europe/Berlin",
   "schedule": [
     "* 0-5 * * 4"
-  ]
+  ],
+  "constraints": {
+    "python": "3.12"
+  },
+  "constraintsFiltering": "strict"
 }
