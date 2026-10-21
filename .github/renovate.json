@@ -8,7 +8,7 @@
     "* 0-5 * * 4"
   ],
   "constraints": {
-    "python": "3.12"
+    "python": "3.15.0"
   },
   "constraintsFiltering": "strict"
 }
