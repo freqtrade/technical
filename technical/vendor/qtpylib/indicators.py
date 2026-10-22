@@ -86,7 +86,7 @@ def session(df, start="17:00", end="16:00"):
 
     # globex/forex session
     if not is_same_day:
-        prev = (datetime.strptime(curr, "%Y-%m-%d") - timedelta(1)).strftime("%Y-%m-%d")  # noqa: DTZ007
+        prev = (datetime.strptime(curr, "%Y-%m-%d") - timedelta(1)).strftime("%Y-%m-%d")
 
     # slice
     if int_now >= int_start:
