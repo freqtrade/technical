@@ -97,7 +97,7 @@ jobs:
     name: Build Python 🐍 distribution 📦
     if: always()
     needs: [ test ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
     - name: Decide whether the needed jobs succeeded or failed
       uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35  # v1.3.0
@@ -141,7 +141,7 @@ jobs:
     name: "Publish Python 🐍 distribution 📦 to TestPyPI"
     if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
     needs: [ build ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     environment:
       name: pypi-test
       url: https://test.pypi.org/p/technical
@@ -167,7 +167,7 @@ jobs:
     name: "Publish Python 🐍 distribution 📦 to PyPI"
     if: (github.event_name == 'release') && github.repository == 'freqtrade/technical'
     needs: [ build ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     environment:
       name: pypi
       url: https://pypi.org/p/technical
