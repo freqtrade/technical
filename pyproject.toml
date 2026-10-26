@@ -50,6 +50,9 @@ exclude = [
   "tests*",
 ]
 
+[tool.setuptools.package-data]
+"technical.vendor.qtpylib" = ["LICENSE"]
+
 [tool.setuptools.dynamic]
 version = {attr = "technical.__version__"}
 
