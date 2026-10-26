@@ -1,3 +1,4 @@
 # Import here for easy access
-# Keep the original file in vendor to make the origin clear
+# The implementation lives in vendor/ to make its origin (qtpylib) clear.
+# It's a maintained fork - see the header of that file for details.
 from technical.vendor.qtpylib.indicators import *

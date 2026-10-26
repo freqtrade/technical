@@ -3,6 +3,12 @@
 #
 # Copyright 2016-2018 Ran Aroussi
 #
+# Modified by the freqtrade/technical contributors.
+# This file is a maintained fork of the original qtpylib indicators module,
+# which is no longer maintained upstream. It has been changed since it was
+# copied (bug fixes, compatibility with newer pandas/numpy versions and code
+# style changes). See the git history of this file for the full list of changes.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
