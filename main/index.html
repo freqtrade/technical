@@ -370,6 +370,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtpylib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QTPyLib
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -530,6 +541,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtpylib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QTPyLib
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -637,6 +659,15 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 <li>tema</li>
 </ul>
 <p>We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but also super boring work.</p>
+<h3 id="qtpylib">QTPyLib<a class="headerlink" href="#qtpylib" title="Permanent link">&para;</a></h3>
+<p>Technical ships a fork of the indicators module from <a href="https://github.com/ranaroussi/qtpylib">QTPyLib</a> (Apache License 2.0, Copyright Ran Aroussi).
+The upstream project is no longer maintained (archived January 2024), so this copy is maintained as part of technical, and contains bug fixes and compatibility updates that are not available upstream.</p>
+<p>It's available as <code>technical.qtpylib</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">technical</span><span class="w"> </span><span class="kn">import</span> <span class="n">qtpylib</span>
+
+<span class="n">dataframe</span><span class="p">[</span><span class="s2">"ao"</span><span class="p">]</span> <span class="o">=</span> <span class="n">qtpylib</span><span class="o">.</span><span class="n">awesome_oscillator</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+<span class="n">crossed</span> <span class="o">=</span> <span class="n">qtpylib</span><span class="o">.</span><span class="n">crossed_above</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="s2">"ema_fast"</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="s2">"ema_slow"</span><span class="p">])</span>
+</code></pre></div>
 <h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
 <p>to use the library, please install it with pip</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>technical
