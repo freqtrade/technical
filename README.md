@@ -66,6 +66,20 @@ The following indicators are available and have been 'wrapped' to be used on a d
 
 We will try to add more and more wrappers as we get to it, but please be patient or help out with PR's! It's super easy, but also super boring work.
 
+### QTPyLib
+
+Technical ships a fork of the indicators module from [QTPyLib](https://github.com/ranaroussi/qtpylib) (Apache License 2.0, Copyright Ran Aroussi).
+The upstream project is no longer maintained (archived January 2024), so this copy is maintained as part of technical, and contains bug fixes and compatibility updates that are not available upstream.
+
+It's available as `technical.qtpylib`:
+
+```python
+from technical import qtpylib
+
+dataframe["ao"] = qtpylib.awesome_oscillator(dataframe)
+crossed = qtpylib.crossed_above(dataframe["ema_fast"], dataframe["ema_slow"])
+```
+
 ### Usage
 
 to use the library, please install it with pip
