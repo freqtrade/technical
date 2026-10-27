@@ -26,8 +26,28 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ "ubuntu-22.04", "ubuntu-24.04", "ubuntu-26.04", "macos-15", "macos-26", "windows-2022", "windows-2025" ]
+        os:
+          [
+            "ubuntu-22.04",
+            "ubuntu-24.04",
+            "ubuntu-26.04",
+            "ubuntu-24.04-arm",
+            "macos-15",
+            "macos-26",
+            "windows-2022",
+            "windows-2025",
+          ]
         python-version: ["3.12", "3.13", "3.14"]
+        exclude:
+          # Restrict ARM runs to newer python versions
+          - os: "ubuntu-24.04-arm"
+            python-version: "3.12"
+          # ubuntu 26.04 has 3.14 as default python version
+          - os: "ubuntu-26.04"
+            python-version: "3.12"
+          - os: "ubuntu-26.04"
+            python-version: "3.13"
+
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
