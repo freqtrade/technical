@@ -1,11 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from technical.vendor.qtpylib.indicators import (
-    awesome_oscillator,
-    numpy_rolling_mean,
-    numpy_rolling_window,
-)
+from technical.qtpylib import awesome_oscillator, numpy_rolling_mean, numpy_rolling_window
 
 
 def test_rolling_window_shorter_than_period_is_empty():
@@ -26,6 +22,19 @@ def test_rolling_mean_keeps_warmup_nan():
 
     assert np.isnan(mean[:2]).all()
     np.testing.assert_allclose(mean[2:], [2.0, 3.0])
+
+
+def test_rolling_window_length_equal_to_window_has_one_row():
+    data = np.array([1.0, 2.0, 3.0, 4.0])
+
+    windows = numpy_rolling_window(data, len(data))
+
+    assert windows.shape == (1, 4)
+    np.testing.assert_array_equal(windows[0], data)
+    mean = numpy_rolling_mean(data, len(data))
+    assert mean.shape == (4,)
+    assert np.isnan(mean[:-1]).all()
+    np.testing.assert_allclose(mean[-1], 2.5)
 
 
 def test_rolling_window_full_period_is_unchanged():
