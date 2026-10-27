@@ -38,7 +38,11 @@ warnings.simplefilter(action="ignore", category=RuntimeWarning)
 
 
 def numpy_rolling_window(data, window):
-    shape = data.shape[:-1] + (data.shape[-1] - window + 1, window)
+    # A series shorter than the window has no complete observation. An empty
+    # view lets the rolling reducers return NaN instead of raising.
+    # n - window + 1 stays 1 when the series is exactly one window long.
+    count = max(data.shape[-1] - window + 1, 0)
+    shape = data.shape[:-1] + (count, window)
     strides = data.strides + (data.strides[-1],)
     return np.lib.stride_tricks.as_strided(data, shape=shape, strides=strides)
 
@@ -49,7 +53,9 @@ def numpy_rolling_series(func):
 
         new_series = np.empty(len(series)) * np.nan
         calculated = func(series, window)
-        new_series[-len(calculated) :] = calculated
+        # len == 0 must not use new_series[-0:], which is the whole array.
+        if len(calculated):
+            new_series[-len(calculated) :] = calculated
 
         if as_source and isinstance(data, pd.Series):
             return pd.Series(index=data.index, data=new_series)
