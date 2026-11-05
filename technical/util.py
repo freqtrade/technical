@@ -42,7 +42,7 @@ def ticker_history_to_dataframe(ticker: list) -> DataFrame:
             "volume": "max",
         }
     )
-    frame.drop(frame.tail(1).index, inplace=True)  # eliminate partial candle
+    frame = frame.drop(frame.tail(1).index)  # eliminate partial candle
     return frame
 
 
@@ -64,7 +64,7 @@ def resample_to_interval(dataframe: DataFrame, interval):
     ohlc_dict = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
     # Resample to "left" border as dates are candle open dates
     df = df.resample(str(interval) + "min", label="left").agg(ohlc_dict).dropna()
-    df.reset_index(inplace=True)
+    df = df.reset_index()
 
     return df
 

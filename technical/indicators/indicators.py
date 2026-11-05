@@ -684,15 +684,9 @@ def vfi(dataframe, length=130, coef=0.2, vcoef=2.5, signalLength=5, smoothVFI=Fa
     df["vfi_hist"] = df["vfi"] - df["vfima"]
 
     # clean up columns used vfi calculation but not needed for strategy
-    df.drop("hlc", axis=1, inplace=True)
-    df.drop("inter", axis=1, inplace=True)
-    df.drop("vinter", axis=1, inplace=True)
-    df.drop("cutoff", axis=1, inplace=True)
-    df.drop("vave", axis=1, inplace=True)
-    df.drop("vmax", axis=1, inplace=True)
-    df.drop("vc", axis=1, inplace=True)
-    df.drop("mf", axis=1, inplace=True)
-    df.drop("vcp", axis=1, inplace=True)
+    # (in-place removal, as df is the caller's dataframe)
+    for col in ("hlc", "inter", "vinter", "cutoff", "vave", "vmax", "vc", "mf", "vcp"):
+        del df[col]
 
     return df["vfi"], df["vfima"], df["vfi_hist"]
 
@@ -1247,7 +1241,7 @@ def PMAX(dataframe, period=10, multiplier=3, length=12, MAtype=1, src=1):
         "nan",
     )
     # Remove basic and final bands from the columns
-    df.drop(["basic_ub", "basic_lb", "final_ub", "final_lb", mavalue], inplace=True, axis=1)
+    df = df.drop(columns=["basic_ub", "basic_lb", "final_ub", "final_lb", mavalue])
 
     cols = [pm, pmx, atr]
     df.loc[:, cols] = df.loc[:, cols].fillna(0.0)
