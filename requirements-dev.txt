@@ -1,13 +1,13 @@
 -r requirements.txt
 
-pytest==9.1.1
+pytest==9.2.0
 pytest-cov==7.1.0
 pytest-mock==3.17.0
 pytest-random-order==1.2.0
 # Pytest snapshots
 syrupy==6.1.1
 
-ruff==0.17.1
+ruff==0.17.3
 isort==9.0.2
 codespell==2.4.3
 
