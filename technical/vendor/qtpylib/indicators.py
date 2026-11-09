@@ -556,7 +556,8 @@ def cci(series, window=14):
     """
     price = typical_price(series)
     typical_mean = rolling_mean(price, window)
-    res = (price - typical_mean) / (0.015 * np.std(typical_mean))
+    mean_deviation = price.rolling(window).apply(lambda x: np.abs(x - x.mean()).mean(), raw=True)
+    res = (price - typical_mean) / (0.015 * mean_deviation)
     return pd.Series(index=series.index, data=res)
 
 

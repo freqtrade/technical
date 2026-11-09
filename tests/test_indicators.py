@@ -131,3 +131,14 @@ def test_rma_short_dataframe():
     dataframe = DataFrame({"close": numpy.array([1.0, 2.0, 3.0])})
 
     assert rma(dataframe, 5).isna().all()
+
+
+def test_qtpylib_cci_matches_talib(testdata_1m_btc):
+    import talib
+
+    from technical import qtpylib
+
+    candles = testdata_1m_btc.iloc[:300]
+    result = qtpylib.cci(candles, 14)
+    expected = talib.CCI(candles["high"], candles["low"], candles["close"], 14)
+    numpy.testing.assert_allclose(result.iloc[13:], expected.iloc[13:], atol=1e-6)
