@@ -550,14 +550,20 @@ def roc(series, window=14):
 # ---------------------------------------------
 
 
-def cci(series, window=14):
+def cci(dataframe, window=14):
     """
     compute commodity channel index
+
+    Deprecated - use talib.CCI directly.
     """
-    price = typical_price(series)
-    typical_mean = rolling_mean(price, window)
-    res = (price - typical_mean) / (0.015 * np.std(typical_mean))
-    return pd.Series(index=series.index, data=res)
+    import talib
+
+    warnings.warn(
+        "qtpylib.cci is deprecated and will be removed in a future version, use talib.CCI instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return talib.CCI(dataframe["high"], dataframe["low"], dataframe["close"], timeperiod=window)
 
 
 # ---------------------------------------------
