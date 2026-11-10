@@ -4,6 +4,7 @@ import logging
 
 import pytest
 from pandas import DataFrame
+from syrupy.extensions.single_file import SingleFileAmberSnapshotExtension
 
 from technical.util import ticker_history_to_dataframe
 
@@ -14,3 +15,8 @@ logging.getLogger("").setLevel(logging.INFO)
 def testdata_1m_btc() -> DataFrame:
     with open("tests/testdata/UNITTEST_BTC-1m.json") as data_file:
         return ticker_history_to_dataframe(json.load(data_file))
+
+
+@pytest.fixture
+def snapshot(snapshot):
+    return snapshot.use_extension(SingleFileAmberSnapshotExtension)
