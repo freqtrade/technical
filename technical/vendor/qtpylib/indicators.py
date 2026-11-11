@@ -113,24 +113,18 @@ def session(df, start="17:00", end="16:00"):
 
 
 def heikinashi(bars):
-    bars = bars.copy()
-    bars["ha_close"] = (bars["open"] + bars["high"] + bars["low"] + bars["close"]) / 4
+    import talib
 
-    # ha open
-    bars.at[0, "ha_open"] = (bars.at[0, "open"] + bars.at[0, "close"]) / 2
-    for i in range(1, len(bars)):
-        bars.at[i, "ha_open"] = (bars.at[i - 1, "ha_open"] + bars.at[i - 1, "ha_close"]) / 2
-
-    bars["ha_high"] = bars.loc[:, ["high", "ha_open", "ha_close"]].max(axis=1)
-    bars["ha_low"] = bars.loc[:, ["low", "ha_open", "ha_close"]].min(axis=1)
-
+    ha_open, ha_high, ha_low, ha_close = talib.HA(
+        bars["open"], bars["high"], bars["low"], bars["close"]
+    )
     return pd.DataFrame(
         index=bars.index,
         data={
-            "open": bars["ha_open"],
-            "high": bars["ha_high"],
-            "low": bars["ha_low"],
-            "close": bars["ha_close"],
+            "open": ha_open,
+            "high": ha_high,
+            "low": ha_low,
+            "close": ha_close,
         },
     )
 
