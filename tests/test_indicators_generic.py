@@ -2,58 +2,59 @@ import pytest
 from pandas import DataFrame, Series
 
 import technical.indicators as ftt
+from tests.helpers import indicator_case
 
 
 @pytest.mark.parametrize(
-    "function,args,responsetype,new_column_names",
+    "function,responsetype,args,kwargs",
     [
-        (ftt.atr_percent, [], "series", None),
-        (ftt.atr, [], "series", None),
-        (ftt.bollinger_bands, [], "df", ["bb_lower", "bb_middle", "bb_upper"]),
-        (ftt.chaikin_money_flow, [], "series", None),
-        (ftt.MADR, [], "df", ["rate", "plusdev", "minusdev", "stdcenter"]),
-        (ftt.PMAX, [], "df", ["ATR_10", "pm_10_3_12_1", "pmX_10_3_12_1"]),
-        (ftt.RMI, [], "series", None),
-        (ftt.SSLChannels, [], "tuple", None),
-        (ftt.TKE, [], "tuple", None),
-        (ftt.VIDYA, [], "series", None),
-        (ftt.chopiness, [], "series", None),
-        (ftt.cmf, [], "series", None),
-        (ftt.ema, [10], "series", None),
-        (ftt.fibonacci_retracements, [], "series", None),
-        (ftt.fibonacci_retracements, ["close", 15], "series", None),
-        (ftt.hull_moving_average, [10], "series", None),
-        (ftt.ichimoku, [], "dict", None),
-        (ftt.laguerre, [], "series", None),
-        (ftt.madrid_sqz, [], "tuple", None),
-        (ftt.mmar, [], "tuple", None),
-        (ftt.osc, [], "series", None),
-        # (ftt.return_on_investment, [], 'series', None),
-        (ftt.sma, [10], "series", None),
-        # (ftt.stc, [], "series", None),  # disabled for slightly different results on ARM
-        (ftt.td_sequential, [], "df", ["TD_count"]),
-        (ftt.dema, [10], "series", None),
-        (ftt.tema, [10], "series", None),
-        (ftt.tv_hma, [10], "series", None),
-        (ftt.tv_wma, [10], "series", None),
-        (ftt.tv_alma, [], "series", None),
-        (ftt.vfi, [], "tuple", None),
-        (ftt.vpci, [], "series", None),
-        (ftt.vpcii, [], "series", None),
-        (ftt.vwma, [10], "series", None),
-        (ftt.vwmacd, [], "df", ["vwmacd", "signal", "hist"]),
-        (ftt.williams_percent, [], "series", None),
-        (ftt.supertrend, [], "tuple", None),
-        (ftt.rma, [14], "series", None),
+        indicator_case(ftt.atr_percent, "series"),
+        indicator_case(ftt.atr, "series"),
+        indicator_case(ftt.bollinger_bands, "df"),
+        indicator_case(ftt.chaikin_money_flow, "series"),
+        indicator_case(ftt.MADR, "df"),
+        indicator_case(ftt.PMAX, "df"),
+        indicator_case(ftt.RMI, "series"),
+        indicator_case(ftt.SSLChannels, "tuple"),
+        indicator_case(ftt.TKE, "tuple"),
+        indicator_case(ftt.VIDYA, "series"),
+        indicator_case(ftt.chopiness, "series"),
+        indicator_case(ftt.cmf, "series", id_suffix="cmf"),  # alias of chaikin_money_flow
+        indicator_case(ftt.ema, "series", 10),
+        indicator_case(ftt.fibonacci_retracements, "series"),
+        indicator_case(ftt.fibonacci_retracements, "series", "close", 15, id_suffix="close-15"),
+        indicator_case(ftt.hull_moving_average, "series", 10),
+        indicator_case(ftt.ichimoku, "dict"),
+        indicator_case(ftt.laguerre, "series"),
+        indicator_case(ftt.madrid_sqz, "tuple"),
+        indicator_case(ftt.mmar, "tuple"),
+        indicator_case(ftt.osc, "series"),
+        # indicator_case(ftt.return_on_investment, "series"),
+        indicator_case(ftt.sma, "series", 10),
+        # indicator_case(ftt.stc, "series"),  # disabled for slightly different results on ARM
+        indicator_case(ftt.td_sequential, "df"),
+        indicator_case(ftt.dema, "series", 10),
+        indicator_case(ftt.tema, "series", 10),
+        indicator_case(ftt.tv_hma, "series", 10),
+        indicator_case(ftt.tv_wma, "series", 10),
+        indicator_case(ftt.tv_alma, "series"),
+        indicator_case(ftt.vfi, "tuple"),
+        indicator_case(ftt.vpci, "series"),
+        indicator_case(ftt.vpcii, "series"),
+        indicator_case(ftt.vwma, "series", 10),
+        indicator_case(ftt.vwmacd, "df"),
+        indicator_case(ftt.williams_percent, "series"),
+        indicator_case(ftt.supertrend, "tuple"),
+        indicator_case(ftt.rma, "series", 14),
     ],
 )
 def test_indicators_generic_interface(
-    function, args, responsetype, new_column_names, testdata_1m_btc, snapshot
+    function, responsetype, args, kwargs, testdata_1m_btc, snapshot
 ):
     assert 13680 == len(testdata_1m_btc)
     # Ensure all builtin indicators have the same interface
     input_df = testdata_1m_btc.iloc[-1000:].copy()
-    res = function(input_df, *args)
+    res = function(input_df, *args, **kwargs)
 
     final_result = None
     if responsetype == "tuple":
@@ -81,13 +82,9 @@ def test_indicators_generic_interface(
         assert isinstance(res, DataFrame)
         assert len(res) == 1000
         final_result = res
-        if len(new_column_names) > 0:
-            assert len(res.columns) == len(new_column_names) + 6
-            default_columns = ["date", "open", "high", "low", "close", "volume"]
-            cols = set(res.columns)
-            assert cols == set(new_column_names + default_columns)
-            # assert set()
-            assert all(x in res.columns for x in new_column_names)
+        # Indicator columns are added to the input - the snapshot pins the exact column names.
+        default_columns = ["date", "open", "high", "low", "close", "volume"]
+        assert all(x in res.columns for x in default_columns)
     else:
         assert False
 

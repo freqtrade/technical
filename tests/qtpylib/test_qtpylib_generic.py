@@ -3,69 +3,58 @@ import pytest
 from pandas import DataFrame, Series
 
 from technical import qtpylib
-
-
-def _case(function, source, *args, id_suffix=None, marks=(), **kwargs):
-    """
-    Build a parametrized test case.
-    source is either "df" (the full ohlcv dataframe) or a column name
-    (e.g. "close") which is passed to the indicator as a Series.
-    """
-    case_id = f"{function.__name__}-{source}"
-    if id_suffix:
-        case_id += f"-{id_suffix}"
-    return pytest.param(function, source, args, kwargs, id=case_id, marks=marks)
+from tests.helpers import indicator_case
 
 
 @pytest.mark.parametrize(
     "function,source,args,kwargs",
     [
         # Dataframe based indicators
-        _case(qtpylib.heikinashi, "df"),
-        _case(qtpylib.awesome_oscillator, "df"),
-        _case(qtpylib.awesome_oscillator, "df", id_suffix="weighted", weighted=True),
-        _case(qtpylib.typical_price, "df"),
-        _case(qtpylib.mid_price, "df"),
-        _case(qtpylib.ibs, "df"),
-        _case(qtpylib.true_range, "df"),
-        _case(qtpylib.atr, "df"),
-        _case(qtpylib.atr, "df", id_suffix="exp", exp=True),
-        _case(qtpylib.rolling_vwap, "df"),
-        _case(qtpylib.keltner_channel, "df"),
-        _case(
+        indicator_case(qtpylib.heikinashi, "df"),
+        indicator_case(qtpylib.awesome_oscillator, "df"),
+        indicator_case(qtpylib.awesome_oscillator, "df", id_suffix="weighted", weighted=True),
+        indicator_case(qtpylib.typical_price, "df"),
+        indicator_case(qtpylib.mid_price, "df"),
+        indicator_case(qtpylib.ibs, "df"),
+        indicator_case(qtpylib.true_range, "df"),
+        indicator_case(qtpylib.atr, "df"),
+        indicator_case(qtpylib.atr, "df", id_suffix="exp", exp=True),
+        indicator_case(qtpylib.rolling_vwap, "df"),
+        indicator_case(qtpylib.keltner_channel, "df"),
+        indicator_case(
             qtpylib.cci,
             "df",
             marks=pytest.mark.filterwarnings("ignore:qtpylib.cci is deprecated:FutureWarning"),
         ),
-        _case(qtpylib.stoch, "df"),
-        _case(qtpylib.stoch, "df", id_suffix="fast", fast=True),
-        _case(qtpylib.zscore, "df"),
-        _case(qtpylib.pvt, "df"),
-        _case(qtpylib.chopiness, "df"),
+        indicator_case(qtpylib.stoch, "df"),
+        indicator_case(qtpylib.stoch, "df", id_suffix="fast", fast=True),
+        indicator_case(qtpylib.zscore, "df"),
+        indicator_case(qtpylib.pvt, "df"),
+        indicator_case(qtpylib.chopiness, "df"),
         # Series based indicators
-        _case(qtpylib.tdi, "close"),
-        _case(qtpylib.rolling_std, "close"),
-        _case(qtpylib.rolling_std, "close", 20, 5, id_suffix="min_periods"),
-        _case(qtpylib.rolling_mean, "close"),
-        _case(qtpylib.rolling_mean, "close", 20, 5, id_suffix="min_periods"),
-        _case(qtpylib.rolling_min, "close"),
-        _case(qtpylib.rolling_max, "close"),
-        _case(qtpylib.rolling_weighted_mean, "close"),
-        _case(qtpylib.hull_moving_average, "close"),
-        _case(qtpylib.sma, "close"),
-        _case(qtpylib.wma, "close"),
-        _case(qtpylib.hma, "close"),
-        _case(qtpylib.rsi, "close"),
-        _case(qtpylib.macd, "close"),
-        _case(qtpylib.bollinger_bands, "close"),
-        _case(qtpylib.weighted_bollinger_bands, "close"),
-        _case(qtpylib.returns, "close"),
-        _case(qtpylib.log_returns, "close"),
-        _case(qtpylib.implied_volatility, "close"),
-        _case(qtpylib.roc, "close"),
-        _case(qtpylib.zlma, "close"),
-        _case(qtpylib.zlma, "close", id_suffix="hma", kind="hma"),
-        _case(
+        indicator_case(qtpylib.tdi, "close"),
+        indicator_case(qtpylib.rolling_std, "close"),
+        indicator_case(qtpylib.rolling_std, "close", 20, 5, id_suffix="min_periods"),
+        indicator_case(qtpylib.rolling_mean, "close"),
+        indicator_case(qtpylib.rolling_mean, "close", 20, 5, id_suffix="min_periods"),
+        indicator_case(qtpylib.rolling_min, "close"),
+        indicator_case(qtpylib.rolling_max, "close"),
+        indicator_case(qtpylib.rolling_weighted_mean, "close"),
+        indicator_case(qtpylib.hull_moving_average, "close"),
+        indicator_case(qtpylib.sma, "close"),
+        indicator_case(qtpylib.wma, "close"),
+        indicator_case(qtpylib.hma, "close"),
+        indicator_case(qtpylib.rsi, "close"),
+        indicator_case(qtpylib.macd, "close"),
+        indicator_case(qtpylib.bollinger_bands, "close"),
+        indicator_case(qtpylib.weighted_bollinger_bands, "close"),
+        indicator_case(qtpylib.returns, "close"),
+        indicator_case(qtpylib.log_returns, "close"),
+        indicator_case(qtpylib.implied_volatility, "close"),
+        indicator_case(qtpylib.roc, "close"),
+        indicator_case(qtpylib.zlma, "close"),
+        indicator_case(qtpylib.zlma, "close", id_suffix="hma", kind="hma"),
+        indicator_case(
             qtpylib.zlma,
             "close",
             id_suffix="sma",
@@ -74,8 +63,8 @@ def _case(function, source, *args, id_suffix=None, marks=(), **kwargs):
                 raises=ValueError, strict=True, reason="min_periods > window for sma kind"
             ),
         ),
-        _case(qtpylib.zlema, "close", 20),
-        _case(
+        indicator_case(qtpylib.zlema, "close", 20),
+        indicator_case(
             qtpylib.zlsma,
             "close",
             20,
@@ -83,10 +72,10 @@ def _case(function, source, *args, id_suffix=None, marks=(), **kwargs):
                 raises=ValueError, strict=True, reason="min_periods > window for sma kind"
             ),
         ),
-        _case(qtpylib.zlhma, "close", 20),
-        _case(qtpylib.crossed, "close", 0.0026),
-        _case(qtpylib.crossed_above, "close", 0.0026),
-        _case(qtpylib.crossed_below, "close", 0.0026),
+        indicator_case(qtpylib.zlhma, "close", 20),
+        indicator_case(qtpylib.crossed, "close", 0.0026),
+        indicator_case(qtpylib.crossed_above, "close", 0.0026),
+        indicator_case(qtpylib.crossed_below, "close", 0.0026),
     ],
 )
 def test_qtpylib_indicators_generic_interface(
