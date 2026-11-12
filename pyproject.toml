@@ -24,8 +24,8 @@ classifiers = [
 ]
 
 dependencies = [
-  "TA-lib",
-  "pandas",
+  "TA-lib>=0.8.0",
+  "pandas>=3.0",
 ]
 [project.optional-dependencies]
 tests = [
