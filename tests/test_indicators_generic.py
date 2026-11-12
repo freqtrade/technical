@@ -23,7 +23,14 @@ from tests.helpers import indicator_case
         indicator_case(ftt.ema, "series", 10),
         indicator_case(ftt.fibonacci_retracements, "series"),
         indicator_case(ftt.fibonacci_retracements, "series", "close", 15, id_suffix="close-15"),
-        indicator_case(ftt.hull_moving_average, "series", 10),
+        indicator_case(
+            ftt.hull_moving_average,
+            "series",
+            10,
+            marks=pytest.mark.filterwarnings(
+                "ignore:technical.indicators.hull_moving_average is deprecated:FutureWarning"
+            ),
+        ),
         indicator_case(ftt.ichimoku, "dict"),
         indicator_case(ftt.laguerre, "series"),
         indicator_case(ftt.madrid_sqz, "tuple"),

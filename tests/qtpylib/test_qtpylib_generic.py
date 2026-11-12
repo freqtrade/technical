@@ -40,10 +40,15 @@ from tests.helpers import indicator_case
         indicator_case(qtpylib.rolling_min, "close"),
         indicator_case(qtpylib.rolling_max, "close"),
         indicator_case(qtpylib.rolling_weighted_mean, "close"),
-        indicator_case(qtpylib.hull_moving_average, "close"),
+        indicator_case(
+            qtpylib.hull_moving_average,
+            "close",
+            marks=pytest.mark.filterwarnings(
+                "ignore:qtpylib.hull_moving_average.*is deprecated:FutureWarning"
+            ),
+        ),
         indicator_case(qtpylib.sma, "close"),
         indicator_case(qtpylib.wma, "close"),
-        indicator_case(qtpylib.hma, "close"),
         indicator_case(qtpylib.rsi, "close"),
         indicator_case(qtpylib.macd, "close"),
         indicator_case(qtpylib.bollinger_bands, "close"),
@@ -97,3 +102,31 @@ def test_qtpylib_indicators_generic_interface(
     assert len(final_result) == 1000
     csv_string = final_result.to_csv(index=False, float_format="%.10f")
     assert snapshot == csv_string
+
+
+def test_qtpylib_hma_is_linear_weighted():
+    series = Series(np.arange(1.0, 31.0))
+    with pytest.warns(FutureWarning, match="use talib.HMA instead"):
+        assert qtpylib.hma(series, 14).iloc[-1] == pytest.approx(29.6666666667)
+    with pytest.warns(FutureWarning, match="use talib.HMA instead"):
+        assert qtpylib.hull_moving_average(series, 14).iloc[-1] == pytest.approx(29.6666666667)
+    with pytest.warns(FutureWarning, match="use talib.HMA instead"):
+        series.hma(14)
+
+
+def test_qtpylib_zlhma_no_deprecation_warning(recwarn):
+    series = Series(np.arange(1.0, 61.0))
+    qtpylib.zlhma(series, 20)
+    series.zlhma(20)
+    assert not [w for w in recwarn if issubclass(w.category, FutureWarning)]
+
+
+def test_qtpylib_ema_remains_exponential():
+    series = Series(np.arange(1.0, 31.0))
+    expected = series.ewm(span=14, min_periods=14).mean()
+    assert np.allclose(series.ema(14), expected, equal_nan=True)
+    assert np.allclose(qtpylib.zlema(series, 29), qtpylib.zlma(series, 29), equal_nan=True)
+    lag = (29 - 1) // 2
+    shifted = 2 * series - series.shift(lag)
+    expected_zl = shifted.ewm(span=lag, min_periods=29).mean()
+    assert np.allclose(qtpylib.zlema(series, 29), expected_zl, equal_nan=True)

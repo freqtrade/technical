@@ -322,12 +322,24 @@ def rolling_weighted_mean(series, window=200, min_periods=None):
 
 
 def hull_moving_average(series, window=200, min_periods=None):
-    min_periods = window if min_periods is None else min_periods
-    ma = (2 * rolling_weighted_mean(series, window / 2, min_periods)) - rolling_weighted_mean(
-        series, window, min_periods
-    )
-    return rolling_weighted_mean(ma, np.sqrt(window), min_periods)
+    """
+    Hull moving average (based on linear weighted moving averages).
+    min_periods is kept for backwards compatibility and is ignored.
 
+    Deprecated - use talib.HMA directly.
+    """
+    import talib
+
+    warnings.warn(
+        "qtpylib.hull_moving_average (qtpylib.hma) is deprecated and will be removed "
+        "in a future version, use talib.HMA instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return talib.HMA(series, timeperiod=int(window))
+
+
+hma = hull_moving_average
 
 # ---------------------------------------------
 
@@ -341,13 +353,6 @@ def sma(series, window=200, min_periods=None):
 
 def wma(series, window=200, min_periods=None):
     return rolling_weighted_mean(series, window=window, min_periods=min_periods)
-
-
-# ---------------------------------------------
-
-
-def hma(series, window=200, min_periods=None):
-    return hull_moving_average(series, window=window, min_periods=min_periods)
 
 
 # ---------------------------------------------
@@ -601,9 +606,11 @@ def zlma(series, window=20, min_periods=None, kind="ema"):
     lag = (window - 1) // 2
     series = 2 * series - series.shift(lag)
     if kind in ["ewm", "ema"]:
-        return wma(series, lag, min_periods)
+        return rolling_weighted_mean(series, lag, min_periods)
     elif kind == "hma":
-        return hma(series, lag, min_periods)
+        import talib
+
+        return talib.HMA(series, timeperiod=lag)
     return sma(series, lag, min(min_periods, lag))
 
 
@@ -684,7 +691,7 @@ PandasObject.rolling_weighted_mean = rolling_weighted_mean
 
 PandasObject.sma = sma
 PandasObject.wma = wma
-PandasObject.ema = wma
+PandasObject.ema = rolling_weighted_mean
 PandasObject.hma = hma
 
 PandasObject.zlsma = zlsma

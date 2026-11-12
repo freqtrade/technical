@@ -153,10 +153,22 @@ def tema(dataframe, period, field="close"):
 
 # Other Overlap Studies Functions
 def hull_moving_average(dataframe, period, field="close") -> ndarray:
-    # TODO: Remove this helper method, it's a 1:1 call to qtpylib's HMA.
-    from technical.qtpylib import hma
+    """
+    Hull moving average.
 
-    return hma(dataframe[field], period)
+    Deprecated - use talib.HMA directly.
+    """
+    import warnings
+
+    import talib
+
+    warnings.warn(
+        "technical.indicators.hull_moving_average is deprecated and will be removed "
+        "in a future version, use talib.HMA instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return talib.HMA(dataframe[field], timeperiod=period)
 
 
 def vwma(df, window, price="close"):

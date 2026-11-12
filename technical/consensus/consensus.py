@@ -236,12 +236,12 @@ class Consensus:
         :param prefix:
         :return:
         """
-        from technical.indicators import hull_moving_average
+        import talib
 
         self._weights(impact_buy, impact_sell)
         dataframe = self.dataframe
         name = f"{prefix}_{field}_{period}"
-        dataframe[name] = hull_moving_average(dataframe, period, field)
+        dataframe[name] = talib.HMA(dataframe[field], timeperiod=period)
 
         dataframe.loc[(dataframe[name] > dataframe[field]), f"buy_{name}"] = 1 * impact_buy
 
