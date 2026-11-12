@@ -604,7 +604,7 @@ def zlma(series, window=20, min_periods=None, kind="ema"):
         return wma(series, lag, min_periods)
     elif kind == "hma":
         return hma(series, lag, min_periods)
-    return sma(series, lag, min_periods)
+    return sma(series, lag, min(min_periods, lag))
 
 
 def zlema(series, window, min_periods=None):

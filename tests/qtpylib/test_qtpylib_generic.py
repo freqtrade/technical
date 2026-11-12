@@ -59,19 +59,9 @@ from tests.helpers import indicator_case
             "close",
             id_suffix="sma",
             kind="sma",
-            marks=pytest.mark.xfail(
-                raises=ValueError, strict=True, reason="min_periods > window for sma kind"
-            ),
         ),
         indicator_case(qtpylib.zlema, "close", 20),
-        indicator_case(
-            qtpylib.zlsma,
-            "close",
-            20,
-            marks=pytest.mark.xfail(
-                raises=ValueError, strict=True, reason="min_periods > window for sma kind"
-            ),
-        ),
+        indicator_case(qtpylib.zlsma, "close", 20),
         indicator_case(qtpylib.zlhma, "close", 20),
         indicator_case(qtpylib.crossed, "close", 0.0026),
         indicator_case(qtpylib.crossed_above, "close", 0.0026),
