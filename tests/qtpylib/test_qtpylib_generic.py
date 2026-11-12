@@ -48,7 +48,11 @@ from tests.helpers import indicator_case
             ),
         ),
         indicator_case(qtpylib.sma, "close"),
-        indicator_case(qtpylib.wma, "close"),
+        indicator_case(
+            qtpylib.wma,
+            "close",
+            marks=pytest.mark.filterwarnings("ignore:qtpylib.wma is deprecated:FutureWarning"),
+        ),
         indicator_case(qtpylib.rsi, "close"),
         indicator_case(qtpylib.macd, "close"),
         indicator_case(qtpylib.bollinger_bands, "close"),
@@ -130,3 +134,16 @@ def test_qtpylib_ema_remains_exponential():
     shifted = 2 * series - series.shift(lag)
     expected_zl = shifted.ewm(span=lag, min_periods=29).mean()
     assert np.allclose(qtpylib.zlema(series, 29), expected_zl, equal_nan=True)
+
+
+def test_qtpylib_wma_is_linear_weighted():
+    series = Series(np.arange(1.0, 31.0))
+    # Linear weighted: sum(i * x_i) / sum(i) over the last 14 values
+    weights = np.arange(1, 15)
+    expected_wma = (series.iloc[-14:].to_numpy() * weights).sum() / weights.sum()
+    with pytest.warns(FutureWarning, match="qtpylib.wma is deprecated"):
+        res_wma = qtpylib.wma(series, 14)
+    assert res_wma.iloc[-1] == pytest.approx(expected_wma)
+    assert res_wma.iloc[-1] == pytest.approx(25.6666666667)
+    with pytest.warns(FutureWarning, match="use talib.WMA instead"):
+        series.wma(14)

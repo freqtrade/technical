@@ -352,7 +352,20 @@ def sma(series, window=200, min_periods=None):
 
 
 def wma(series, window=200, min_periods=None):
-    return rolling_weighted_mean(series, window=window, min_periods=min_periods)
+    """
+    Linear weighted moving average.
+    min_periods is kept for backwards compatibility and is ignored.
+
+    Deprecated - use talib.WMA directly.
+    """
+    import talib
+
+    warnings.warn(
+        "qtpylib.wma is deprecated and will be removed in a future version, use talib.WMA instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return talib.WMA(series, timeperiod=int(window))
 
 
 # ---------------------------------------------
