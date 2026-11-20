@@ -39,6 +39,8 @@ buy/sell graph. - MovingAverage Consensus - Oscillator Consensus - Summary Conse
 * [ALMA](https://www.tradingview.com/pine-script-reference/v5/#fun_ta.alma) - Arnaud Legoux Moving Average
 * [Supertrend](https://www.investopedia.com/supertrend-indicator-7976167) - A trend following indicator
 
+* `trend_trader` - Andrew Abraham's Trend Trader trailing level and direction, using the previous bar's rolling close limits and weighted true range. Returns a DataFrame with `trend` and `direction` (`-1`, `0`, `1`) on the original index. Before the rolling limits are available, the level stays at the first close.
+
 ### Utilities
 
 * resample - easily resample your dataframe to a larger interval
